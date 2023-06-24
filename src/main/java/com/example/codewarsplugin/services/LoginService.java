@@ -8,6 +8,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class LoginService {
@@ -15,8 +17,8 @@ public class LoginService {
 
     private static String currentLogin;
     private static String currentPassword;
-
-    private static List<String> setCookie;
+    private static String csrfToken;
+    private static String sessionId;
     private static final RestTemplate restTemplate = new RestTemplate();
 
 
@@ -45,9 +47,11 @@ public class LoginService {
         try{
             ResponseEntity<String> response = restTemplate.exchange("https://www.codewars.com/users/sign_in", HttpMethod.GET, null, String.class);
             System.out.println("response status: " + response.getStatusCodeValue());
-            setCookie = response.getHeaders().get("set-cookie");
-            String csrfToken = extractCsrfToken(setCookie);
+            List<String> setCookie = response.getHeaders().get("set-cookie");
+            csrfToken = URLDecoder.decode(extractToken(setCookie, "CSRF-TOKEN"), StandardCharsets.UTF_8);
             System.out.println("csrf Token: " + csrfToken);
+            sessionId = extractToken(setCookie, "session_id");
+            System.out.println("sessionId: " + sessionId);
             return true;
         } catch (Exception e){
             System.out.println("Exception while getting cookies: " + e.getMessage());
@@ -64,13 +68,11 @@ public class LoginService {
 //        }
     }
 
-    private static String extractCsrfToken(List<String> cookies) {
-
+    private static String extractToken(List<String> cookies, String id) {
         return cookies.stream()
-                .filter(cookie -> cookie.contains("CSRF-TOKEN"))
+                .filter(cookie -> cookie.contains(id))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("No CSRF-TOKEN!"))
+                .orElseThrow(() -> new RuntimeException(id + " not found in set_Cookie!"))
                 .split(";")[0].split("=")[1];
-
     }
 }
