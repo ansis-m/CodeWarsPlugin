@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.services.KataIdService;
+import com.example.codewarsplugin.services.LoginService;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,10 +13,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Arrays;
 
 @EqualsAndHashCode(callSuper = true)
-@Data
-@Getter
 public class LoginManager extends JPanel{
 
     public static JPasswordField passwordField;
@@ -107,7 +107,9 @@ public class LoginManager extends JPanel{
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     System.out.println("Enter key pressed. Input:");
-                    System.out.println(KataIdService.getKataRecord("Expressions Matter").toString());
+                    if (LoginService.login(textField.getText(), Arrays.toString(passwordField.getPassword()))){
+                        System.out.println("Login success!");
+                    }
                 }
             }
             @Override
