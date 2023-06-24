@@ -1,27 +1,35 @@
 package com.example.codewarsplugin.components;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
+import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Getter
-public class LoginManager {
+public class LoginManager extends JPanel{
 
     public static JPasswordField passwordField;
     public static JTextField textField;
     public static JButton submitButton;
+    public static JLabel promptLabel;
 
-    static {
+
+    public LoginManager(){
+        super();
+        setLayout(new GridBagLayout());
         textField = new JTextField(10);
         passwordField = new JPasswordField(10);
         submitButton = new JButton("SIGN IN");
+        promptLabel = new JLabel("sign in with your Codewars credentials");
         textField.setText("email");
         passwordField.setText("password");
         passwordField.setEchoChar((char) 0);
@@ -29,6 +37,37 @@ public class LoginManager {
         addListener(textField, "email");
         addListener(passwordField, "password");
         addEnterKeyListener();
+        addElementsToPanel();
+    }
+
+
+    private void addElementsToPanel() {
+
+        promptLabel.setFont(promptLabel.getFont().deriveFont(10f));
+
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.insets = new Insets(5, 5, 5, 5);
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        add(textField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        add(passwordField, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+
+        constraints.insets = new Insets(10, 5, 5, 5);
+        add(submitButton, constraints);
+
+
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        constraints.insets = new Insets(5, 5, 50, 5);
+        add(promptLabel, constraints);
     }
 
 
