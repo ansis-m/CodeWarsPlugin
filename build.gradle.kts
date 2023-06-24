@@ -17,7 +17,7 @@ dependencies {
     }
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.12.5")
-    compileOnly("org.projectlombok:lombok:1.18.26")
+    implementation("org.jsoup:jsoup:1.14.3")
 }
 
 // Configure Gradle IntelliJ Plugin

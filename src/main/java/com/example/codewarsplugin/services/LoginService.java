@@ -1,5 +1,8 @@
 package com.example.codewarsplugin.services;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,6 +21,7 @@ public class LoginService {
     private static String currentLogin;
     private static String currentPassword;
     private static String csrfToken;
+    private static String authenticityToken;
     private static String sessionId;
     private static final RestTemplate restTemplate = new RestTemplate();
 
@@ -31,7 +35,6 @@ public class LoginService {
         if(notValid(login, password) || !getCookies()){
             return false;
         }
-
         currentLogin = login;
         currentPassword = password;
 
@@ -52,20 +55,16 @@ public class LoginService {
             System.out.println("csrf Token: " + csrfToken);
             sessionId = extractToken(setCookie, "session_id");
             System.out.println("sessionId: " + sessionId);
+
+            Document doc = Jsoup.parse(response.getBody());
+            Element tokenElement = doc.selectFirst("meta[name=csrf-token]");
+            authenticityToken = tokenElement.attr("content");
+            System.out.println("Autenticity Token: " + authenticityToken);
             return true;
         } catch (Exception e){
             System.out.println("Exception while getting cookies: " + e.getMessage());
             return false;
         }
-
-
-//        if (!CollectionUtils.isEmpty(cookies) && csrfToken != null) {
-//            HttpHeaders requestHeaders = new HttpHeaders();
-//            requestHeaders.put(HttpHeaders.COOKIE, cookies);
-//            requestHeaders.set("X-CSRF-Token", csrfToken);
-//            HttpEntity<String> requestEntity = new HttpEntity<>(requestHeaders);
-//
-//        }
     }
 
     private static String extractToken(List<String> cookies, String id) {
@@ -74,5 +73,13 @@ public class LoginService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException(id + " not found in set_Cookie!"))
                 .split(";")[0].split("=")[1];
+    }
+
+    public static String getCsrfToken() {
+        return csrfToken;
+    }
+
+    public static String getSessionId() {
+        return sessionId;
     }
 }

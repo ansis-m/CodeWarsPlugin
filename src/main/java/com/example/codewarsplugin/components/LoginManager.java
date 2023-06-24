@@ -1,10 +1,8 @@
 package com.example.codewarsplugin.components;
 
-import com.example.codewarsplugin.services.KataIdService;
 import com.example.codewarsplugin.services.LoginService;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import groovy.transform.EqualsAndHashCode;
+
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
