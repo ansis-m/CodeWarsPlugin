@@ -1,16 +1,22 @@
-package com.example.codewarsplugin.elements;
+package com.example.codewarsplugin.state.views;
 
+import com.example.codewarsplugin.components.LoginManager;
+import com.example.codewarsplugin.SidePanel;
 import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
 import java.awt.*;
 
-//177, 54, 30
-public class SidePanel extends JPanel {
+public class LoginView extends View {
 
-    public SidePanel() {
+    public LoginView(SidePanel sidePanel) {
+        super(sidePanel);
+    }
 
-        setLayout(new BorderLayout());
+    @Override
+    public boolean setup() {
+
+        sidePanel.setLayout(new BorderLayout());
 
         JPanel imageTopPanel = new JPanel();
         imageTopPanel.setLayout(new BorderLayout());
@@ -19,7 +25,7 @@ public class SidePanel extends JPanel {
         JLabel imageLabel = new JLabel(icon);
         imageTopPanel.add(imageLabel, BorderLayout.CENTER);
         imageTopPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        add(imageTopPanel, BorderLayout.NORTH);
+        sidePanel.add(imageTopPanel, BorderLayout.NORTH);
 
 
         JPanel titlePanel = new JPanel();
@@ -28,7 +34,7 @@ public class SidePanel extends JPanel {
         titleLabel.setFont(titleLabel.getFont().deriveFont(14f));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titlePanel.add(titleLabel, BorderLayout.NORTH);
-        add(titlePanel, BorderLayout.CENTER);
+        sidePanel.add(titlePanel, BorderLayout.CENTER);
 
 
         JPanel inputPanel = new JPanel();
@@ -63,6 +69,13 @@ public class SidePanel extends JPanel {
         constraints.insets = new Insets(5, 5, 50, 5);
         inputPanel.add(promptLabel, constraints);
 
-        add(inputPanel, BorderLayout.SOUTH);
+        sidePanel.add(inputPanel, BorderLayout.SOUTH);
+
+
+        return true;
+    }
+    @Override
+    public boolean cleanUp() {
+        return true;
     }
 }

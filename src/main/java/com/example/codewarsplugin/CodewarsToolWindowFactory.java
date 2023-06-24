@@ -1,6 +1,5 @@
 package com.example.codewarsplugin;
 
-import com.example.codewarsplugin.elements.SidePanel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;

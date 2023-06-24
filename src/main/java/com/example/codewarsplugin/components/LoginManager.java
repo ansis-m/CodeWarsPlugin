@@ -1,4 +1,4 @@
-package com.example.codewarsplugin.elements;
+package com.example.codewarsplugin.components;
 
 import lombok.Data;
 import lombok.Getter;
@@ -14,13 +14,13 @@ import java.awt.event.KeyListener;
 @Getter
 public class LoginManager {
 
-    public static PasswordField passwordField;
-    public static TextField textField;
+    public static JPasswordField passwordField;
+    public static JTextField textField;
     public static JButton submitButton;
 
     static {
-        textField = new TextField(10);
-        passwordField = new PasswordField(10);
+        textField = new JTextField(10);
+        passwordField = new JPasswordField(10);
         submitButton = new JButton("SIGN IN");
         textField.setText("email");
         passwordField.setText("password");
