@@ -10,8 +10,14 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    implementation("org.projectlombok:lombok:1.18.26")
 
+    implementation("org.springframework.boot:spring-boot-starter-web:2.5.4") {
+        exclude(group = "org.slf4j", module = "slf4j-api")
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-json")
+    }
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.12.5")
+    compileOnly("org.projectlombok:lombok:1.18.26")
 }
 
 // Configure Gradle IntelliJ Plugin

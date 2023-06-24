@@ -1,5 +1,6 @@
 package com.example.codewarsplugin;
 
+import com.example.codewarsplugin.services.KataIdService;
 import com.example.codewarsplugin.state.ApplicationState;
 import com.example.codewarsplugin.state.views.View;
 import com.example.codewarsplugin.state.views.LoginView;
@@ -13,6 +14,8 @@ public class SidePanel extends JPanel {
         View loginView = new LoginView(this);
         if (loginView.setup()){
             ApplicationState.setView(loginView);
-        };
+        }
+
+
     }
 }
