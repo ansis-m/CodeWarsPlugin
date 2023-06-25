@@ -3,12 +3,9 @@ package com.example.codewarsplugin.services;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URLDecoder;
@@ -48,18 +45,9 @@ public class LoginService {
     private static boolean getCookies() {
 
         try{
-            ResponseEntity<String> response = restTemplate.exchange("https://www.codewars.com/users/sign_in", HttpMethod.GET, null, String.class);
-            System.out.println("response status: " + response.getStatusCodeValue());
-            List<String> setCookie = response.getHeaders().get("set-cookie");
-            csrfToken = URLDecoder.decode(extractToken(setCookie, "CSRF-TOKEN"), StandardCharsets.UTF_8);
-            System.out.println("csrf Token: " + csrfToken);
-            sessionId = extractToken(setCookie, "session_id");
-            System.out.println("sessionId: " + sessionId);
+            CookieService.login();
+            CookieService.getAllCookies().forEach(c -> System.out.println(c.getName() + " ~~~~ " + c.getValue()));
 
-            Document doc = Jsoup.parse(response.getBody());
-            Element tokenElement = doc.selectFirst("meta[name=csrf-token]");
-            authenticityToken = tokenElement.attr("content");
-            System.out.println("Autenticity Token: " + authenticityToken);
             return true;
         } catch (Exception e){
             System.out.println("Exception while getting cookies: " + e.getMessage());
@@ -77,6 +65,10 @@ public class LoginService {
 
     public static String getCsrfToken() {
         return csrfToken;
+    }
+
+    public static String getAuthenticityToken() {
+        return authenticityToken;
     }
 
     public static String getSessionId() {
