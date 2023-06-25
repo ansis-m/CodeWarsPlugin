@@ -2,22 +2,21 @@ package com.example.codewarsplugin.services;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import net.lightbody.bmp.BrowserMobProxyServer;
+import net.lightbody.bmp.core.har.Har;
+import net.lightbody.bmp.core.har.HarEntry;
+import net.lightbody.bmp.core.har.HarLog;
+import net.lightbody.bmp.proxy.CaptureType;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.springframework.web.client.RestTemplate;
+
 
 import javax.swing.*;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+
 
 public class LoginService {
 
@@ -28,7 +27,6 @@ public class LoginService {
     private static String currentPassword;
     private static String csrfToken;
     private static String sessionId;
-    private static final RestTemplate restTemplate = new RestTemplate();
 
     private LoginService(){
     }
@@ -51,14 +49,29 @@ public class LoginService {
 
     private static boolean getCookies(String login, String password) {
 
+        System.out.println("getCookies");
+
         try{
             SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                 @Override
                 protected Void doInBackground() {
+                    System.out.println("do in background");
+//                    BrowserMobProxyServer proxyServer = new BrowserMobProxyServer();
+//                    proxyServer.start();
+//                    int proxyPort = proxyServer.getPort();
+
                     WebDriverManager.chromedriver().setup();
+//                    ChromeOptions options = new ChromeOptions();
+//                    //options.addArguments("--headless");
+//
+//
+//                    Proxy seleniumProxy = new Proxy();
+//                    seleniumProxy.setHttpProxy("localhost:" + proxyPort);
+//                    seleniumProxy.setSslProxy("localhost:" + proxyPort);
+//                    options.setProxy(seleniumProxy);
                     ChromeOptions options = new ChromeOptions();
-                    options.addArguments("--headless");
                     driver = new ChromeDriver(options);
+
                     driver.get("https://www.codewars.com/users/sign_in");
                     WebElement inputElement = driver.findElement(By.id("user_email"));
                     inputElement.clear();
@@ -67,7 +80,35 @@ public class LoginService {
                     inputElement.clear();
                     inputElement.sendKeys(password);
                     WebElement buttonElement = driver.findElement(By.className("btn"));
+
+
+//                    proxyServer.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT);
+//                    proxyServer.newHar("example");
+
+
+
+
                     buttonElement.click();
+
+
+
+//                    Har har = proxyServer.getHar();
+
+                    // Access the log entries
+//                    HarLog log = har.getLog();
+//                    List<HarEntry> entries = log.getEntries();
+//
+//                    // Print the request and response details for each entry
+//                    for (HarEntry entry : entries) {
+//                        System.out.println("URL: " + entry.getRequest().getUrl());
+//                        System.out.println("Method: " + entry.getRequest().getMethod());
+//                        System.out.println("Status: " + entry.getResponse().getStatus());
+//                        System.out.println("Response Content: " + entry.getResponse().getContent().getText());
+//                        System.out.println("------------------------------");
+//                    }
+
+
+
 
 
                     allCookies = driver.manage().getCookies();
@@ -88,7 +129,6 @@ public class LoginService {
                 protected void done() {
                     SwingUtilities.invokeLater(() -> {
                         System.out.println("Invoke Later!!! " + csrfToken + "\nid: " + sessionId);
-                        KataService.getKata();
                     });
                 }
             };

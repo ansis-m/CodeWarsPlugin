@@ -1,6 +1,5 @@
 package com.example.codewarsplugin;
 
-import com.example.codewarsplugin.services.KataIdService;
 import com.example.codewarsplugin.state.ApplicationState;
 import com.example.codewarsplugin.state.views.View;
 import com.example.codewarsplugin.state.views.LoginView;

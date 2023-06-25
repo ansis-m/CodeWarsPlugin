@@ -11,18 +11,14 @@ repositories {
 }
 dependencies {
 
-    implementation("org.springframework.boot:spring-boot-starter-web:2.5.4") {
-        exclude(group = "org.slf4j", module = "slf4j-api")
-        exclude(group = "org.slf4j", module = "slf4j-logback")
-        exclude(group = "org.springframework.boot", module = "spring-boot-starter-json")
-    }
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.12.5")
     implementation("org.jsoup:jsoup:1.14.3")
     implementation("io.github.bonigarcia:webdrivermanager:5.0.3")
     implementation("org.seleniumhq.selenium:selenium-java:3.141.59")
     implementation("org.seleniumhq.selenium:selenium-api:3.141.59")
-    implementation ("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("net.lightbody.bmp:browsermob-core:2.1.5")
 }
 
 // Configure Gradle IntelliJ Plugin
