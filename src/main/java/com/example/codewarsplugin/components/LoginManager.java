@@ -25,8 +25,8 @@ public class LoginManager extends JPanel{
     public LoginManager(){
         super();
         setLayout(new GridBagLayout());
-        textField = new JTextField(10);
-        passwordField = new JPasswordField(10);
+        textField = new JTextField(20);
+        passwordField = new JPasswordField(20);
         submitButton = new JButton("SIGN IN");
         promptLabel = new JLabel("sign in with your Codewars credentials");
         textField.setText("email");
