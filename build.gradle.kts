@@ -11,6 +11,12 @@ repositories {
 }
 dependencies {
 
+    implementation("org.springframework.boot:spring-boot-starter-web:2.5.4") {
+        exclude(group = "org.slf4j", module = "slf4j-api")
+        exclude(group = "org.slf4j", module = "slf4j-logback")
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-json")
+    }
+
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.12.5")
     implementation("org.jsoup:jsoup:1.14.3")

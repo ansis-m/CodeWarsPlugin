@@ -10,6 +10,7 @@ import net.lightbody.bmp.proxy.CaptureType;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.CapabilityType;
 
 
 import javax.swing.*;
@@ -56,34 +57,36 @@ public class LoginService {
                 @Override
                 protected Void doInBackground() {
                     System.out.println("do in background");
-//                    BrowserMobProxyServer proxyServer = new BrowserMobProxyServer();
-//                    proxyServer.start();
-//                    int proxyPort = proxyServer.getPort();
+                    BrowserMobProxyServer proxyServer = new BrowserMobProxyServer();
+                    proxyServer.setTrustAllServers(true);
+                    proxyServer.start();
+                    int proxyPort = proxyServer.getPort();
 
                     WebDriverManager.chromedriver().setup();
-//                    ChromeOptions options = new ChromeOptions();
+                    ChromeOptions options = new ChromeOptions();
+                    options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+                    options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
 //                    //options.addArguments("--headless");
 //
 //
-//                    Proxy seleniumProxy = new Proxy();
-//                    seleniumProxy.setHttpProxy("localhost:" + proxyPort);
-//                    seleniumProxy.setSslProxy("localhost:" + proxyPort);
-//                    options.setProxy(seleniumProxy);
-                    ChromeOptions options = new ChromeOptions();
+                    Proxy seleniumProxy = new Proxy();
+                    seleniumProxy.setHttpProxy("localhost:" + proxyPort);
+                    seleniumProxy.setSslProxy("localhost:" + proxyPort);
+                    options.setProxy(seleniumProxy);
                     driver = new ChromeDriver(options);
 
                     driver.get("https://www.codewars.com/users/sign_in");
                     WebElement inputElement = driver.findElement(By.id("user_email"));
                     inputElement.clear();
-                    inputElement.sendKeys(login);
+                    inputElement.sendKeys("maleckisansis@gmail.com");
                     inputElement = driver.findElement(By.id("user_password"));
                     inputElement.clear();
-                    inputElement.sendKeys(password);
+                    inputElement.sendKeys("Eloraps1!");
                     WebElement buttonElement = driver.findElement(By.className("btn"));
 
 
-//                    proxyServer.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT);
-//                    proxyServer.newHar("example");
+                    proxyServer.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT);
+                    proxyServer.newHar("example");
 
 
 
@@ -92,20 +95,19 @@ public class LoginService {
 
 
 
-//                    Har har = proxyServer.getHar();
+                    Har har = proxyServer.getHar();
 
-                    // Access the log entries
-//                    HarLog log = har.getLog();
-//                    List<HarEntry> entries = log.getEntries();
-//
-//                    // Print the request and response details for each entry
-//                    for (HarEntry entry : entries) {
-//                        System.out.println("URL: " + entry.getRequest().getUrl());
-//                        System.out.println("Method: " + entry.getRequest().getMethod());
-//                        System.out.println("Status: " + entry.getResponse().getStatus());
-//                        System.out.println("Response Content: " + entry.getResponse().getContent().getText());
-//                        System.out.println("------------------------------");
-//                    }
+                    HarLog log = har.getLog();
+                    List<HarEntry> entries = log.getEntries();
+
+                    // Print the request and response details for each entry
+                    for (HarEntry entry : entries) {
+                        System.out.println("URL: " + entry.getRequest().getUrl());
+                        System.out.println("Method: " + entry.getRequest().getMethod());
+                        System.out.println("Status: " + entry.getResponse().getStatus());
+                        System.out.println("Response Content: " + entry.getResponse().getContent().getText());
+                        System.out.println("------------------------------");
+                    }
 
 
 
@@ -121,7 +123,7 @@ public class LoginService {
                     currentPassword = password;
                     currentLogin = login;
 
-                    quit();
+                    //quit();
                     return null;
                 }
 
