@@ -13,6 +13,7 @@ public class KataIdService {
 
     private static final String BASE_URL = "https://www.codewars.com/api/v1/code-challenges/";
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final HttpClient httpClient = HttpClient.newHttpClient();
 
     private KataIdService(){
     }
@@ -20,7 +21,7 @@ public class KataIdService {
     public static KataRecord getKataRecord(String id) {
         id = formatString(id);
 
-        HttpClient httpClient = HttpClient.newHttpClient();
+
 
         String url = BASE_URL + id;
         HttpRequest request = HttpRequest.newBuilder()

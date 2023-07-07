@@ -8,11 +8,12 @@ import java.util.Arrays;
 
 public class KataRecord {
 
-    String id;
-    String name;
-    String slug;
-    String url;
-    String category;
+    private String id;
+    private String name;
+    private String slug;
+    private String url;
+    private String category;
+    String[] languages;
 
     public String getId() {
         return id;
@@ -21,6 +22,8 @@ public class KataRecord {
     public void setId(String id) {
         this.id = id;
     }
+
+
 
     @Override
     public String toString() {
@@ -74,5 +77,4 @@ public class KataRecord {
         this.languages = languages;
     }
 
-    String[] languages;
 }

@@ -1,5 +1,9 @@
 package com.example.codewarsplugin.services;
 
+import com.example.codewarsplugin.models.KataInput;
+import com.example.codewarsplugin.models.KataRecord;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.http.HttpClient;
@@ -12,10 +16,10 @@ import java.nio.charset.StandardCharsets;
 
 public class KataService {
 
+    private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-
-    public static void getKata() {
-        HttpClient httpClient = HttpClient.newHttpClient();
+    public static KataInput getKata() {
 
         String csrfToken = LoginService.getCsrfToken();
         String sessionId = LoginService.getSessionId();
@@ -33,12 +37,16 @@ public class KataService {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
 
-            System.out.println("Kata Response Body: " + responseBody);
 
-            HttpHeaders responseHeaders = response.headers();
-            responseHeaders.map().forEach((key, value) -> System.out.println(key + ": " + value));
+            KataInput kata = objectMapper.readValue(response.body(), KataInput.class);
+
+            System.out.println("Kata Response Body: " + kata.toString());
+            return kata;
+
+
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
+            return null;
         }
     }
 }
