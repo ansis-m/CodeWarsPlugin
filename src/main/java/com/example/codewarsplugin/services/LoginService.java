@@ -2,11 +2,6 @@ package com.example.codewarsplugin.services;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
-import net.lightbody.bmp.BrowserMobProxyServer;
-import net.lightbody.bmp.core.har.Har;
-import net.lightbody.bmp.core.har.HarEntry;
-import net.lightbody.bmp.core.har.HarLog;
-import net.lightbody.bmp.proxy.CaptureType;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -84,6 +79,8 @@ public class LoginService {
                     currentPassword = password;
                     currentLogin = login;
                     KataService.getKata();
+                    KataService.getKata();
+                    System.out.println("ID service: " + KataIdService.getKataRecord("Geometric Progression Sequence").toString());
                     return null;
                 }
 
