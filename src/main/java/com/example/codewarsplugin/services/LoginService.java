@@ -55,7 +55,7 @@ public class LoginService {
         try{
             SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                 @Override
-                protected Void doInBackground() {
+                protected Void doInBackground() throws InterruptedException {
 
                     WebDriverManager.chromedriver().setup();
                     ChromeOptions options = new ChromeOptions();
@@ -74,12 +74,16 @@ public class LoginService {
                     inputElement.sendKeys("Eloraps1!");
                     WebElement buttonElement = driver.findElement(By.className("btn"));
                     buttonElement.click();
+
+                    Thread.sleep(4000);
+
                     allCookies = driver.manage().getCookies();
                     allCookies.forEach(cookie -> System.out.println(cookie.getName() + "~~~" + cookie.getValue()));
                     csrfToken = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get().getValue();
                     sessionId = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get().getValue();
                     currentPassword = password;
                     currentLogin = login;
+                    KataService.getKata();
                     return null;
                 }
 
