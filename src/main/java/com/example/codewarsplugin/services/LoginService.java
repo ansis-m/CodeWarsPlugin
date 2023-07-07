@@ -56,23 +56,13 @@ public class LoginService {
             SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                 @Override
                 protected Void doInBackground() {
-                    System.out.println("do in background");
-                    BrowserMobProxyServer proxyServer = new BrowserMobProxyServer();
-                    proxyServer.setTrustAllServers(true);
-                    proxyServer.start();
-                    int proxyPort = proxyServer.getPort();
 
                     WebDriverManager.chromedriver().setup();
                     ChromeOptions options = new ChromeOptions();
                     options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
                     options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
 //                    //options.addArguments("--headless");
-//
-//
-                    Proxy seleniumProxy = new Proxy();
-                    seleniumProxy.setHttpProxy("localhost:" + proxyPort);
-                    seleniumProxy.setSslProxy("localhost:" + proxyPort);
-                    options.setProxy(seleniumProxy);
+
                     driver = new ChromeDriver(options);
 
                     driver.get("https://www.codewars.com/users/sign_in");
@@ -83,47 +73,13 @@ public class LoginService {
                     inputElement.clear();
                     inputElement.sendKeys("Eloraps1!");
                     WebElement buttonElement = driver.findElement(By.className("btn"));
-
-
-                    proxyServer.enableHarCaptureTypes(CaptureType.REQUEST_CONTENT, CaptureType.RESPONSE_CONTENT);
-                    proxyServer.newHar("example");
-
-
-
-
                     buttonElement.click();
-
-
-
-                    Har har = proxyServer.getHar();
-
-                    HarLog log = har.getLog();
-                    List<HarEntry> entries = log.getEntries();
-
-                    // Print the request and response details for each entry
-                    for (HarEntry entry : entries) {
-                        System.out.println("URL: " + entry.getRequest().getUrl());
-                        System.out.println("Method: " + entry.getRequest().getMethod());
-                        System.out.println("Status: " + entry.getResponse().getStatus());
-                        System.out.println("Response Content: " + entry.getResponse().getContent().getText());
-                        System.out.println("------------------------------");
-                    }
-
-
-
-
-
                     allCookies = driver.manage().getCookies();
-
                     allCookies.forEach(cookie -> System.out.println(cookie.getName() + "~~~" + cookie.getValue()));
-
                     csrfToken = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get().getValue();
                     sessionId = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get().getValue();
-
                     currentPassword = password;
                     currentLogin = login;
-
-                    //quit();
                     return null;
                 }
 
