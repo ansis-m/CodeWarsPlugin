@@ -3,6 +3,7 @@ package com.example.codewarsplugin.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Arrays;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -167,5 +168,11 @@ public class KataInput {
     public void setFixture(String fixture) {
         this.fixture = fixture;
     }
+
+        public static String moveTen(String s) {
+            return s.codePoints().map(p -> p + 10 > 'z'? 'a' + (p + 10) % 'z' : p + 10).collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                    .toString();
+        }
+
 
 }
