@@ -73,15 +73,14 @@ public class LoginService {
                     Thread.sleep(4000);
 
                     allCookies = driver.manage().getCookies();
-                    allCookies.forEach(cookie -> System.out.println(cookie.getName() + "~~~" + cookie.getValue()));
+
                     csrfToken = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get().getValue();
                     sessionId = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get().getValue();
                     currentPassword = password;
                     currentLogin = login;
-                    KataService.getKata();
-                    KataService.getKata();
-                    System.out.println("ID service: " + KataIdService.getKataId("Geometric Progression Sequence"));
-                    SubmitService.run();
+                    KataService.getKata("Geometric Progression Sequence");
+                    //System.out.println("ID service: " + KataIdService.getKataId("Geometric Progression Sequence"));
+                    //SubmitService.run();
                     return null;
                 }
 

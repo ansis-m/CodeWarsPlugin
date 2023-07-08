@@ -1,16 +1,19 @@
 package com.example.codewarsplugin.services;
 
-import com.example.codewarsplugin.models.KataInput;
 import com.example.codewarsplugin.models.KataRecord;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class KataIdService {
 
@@ -67,18 +70,47 @@ public class KataIdService {
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
-            return responseBody;
 
+            String script = findScriptWithAppSetup(responseBody);
 
+            int startIndex = script.indexOf("session");
+
+            // Find the ending index of the substring
+            int endIndex = script.lastIndexOf("session");
+
+            if (startIndex != -1 && endIndex != -1 && startIndex != endIndex) {
+                // Extract the substring
+                String substring = script.substring(startIndex, endIndex + "session".length());
+
+                startIndex = substring.indexOf("/kata/projects/");
+
+                // Find the ending index of the substring
+                endIndex = substring.lastIndexOf("%7Blanguage%7D");
+
+                System.out.println("Substring: " + substring);
+                return substring.substring(startIndex, endIndex);
+            } else {
+                System.out.println("Substring not found.");
+                return "";
+            }
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
+            Arrays.stream(e.getStackTrace()).forEach(System.out::println);
             return null;
         }
 
     }
 
 
+    private static String findScriptWithAppSetup(String html) {
+        int startIndex = html.indexOf("App.setup(");
+        int endIndex = html.indexOf("</script>", startIndex);
+        return html.substring(startIndex, endIndex);
+    }
+
     private static String formatString(String id) {
         return id.toLowerCase().replaceAll("\\s+-\\s+", "-").replaceAll("-\\s+|\\s+-|\\s+", "-");
     }
+
+
 }
