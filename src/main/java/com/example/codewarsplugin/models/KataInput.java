@@ -2,6 +2,8 @@ package com.example.codewarsplugin.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,14 +23,6 @@ public class KataInput {
     private List<LanguageVersion> languageVersions;
     private String testFramework;
     private String path;
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
 
     @JsonProperty("package")
     private String _package;
@@ -178,10 +172,11 @@ public class KataInput {
         this.fixture = fixture;
     }
 
-        public static String moveTen(String s) {
-            return s.codePoints().map(p -> p + 10 > 'z'? 'a' + (p + 10) % 'z' : p + 10).collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
-                    .toString();
-        }
+    public String getPath() {
+        return path;
+    }
 
-
+    public void setPath(String path) {
+        this.path = path;
+    }
 }

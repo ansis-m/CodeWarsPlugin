@@ -13,7 +13,6 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-logging:2.5.4") {
     }
-
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.12.5")
     implementation("io.github.bonigarcia:webdrivermanager:5.0.3")

@@ -1,5 +1,6 @@
 package com.example.codewarsplugin.services;
 
+import com.example.codewarsplugin.models.KataInput;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 import org.openqa.selenium.*;
@@ -78,8 +79,8 @@ public class LoginService {
                     sessionId = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get().getValue();
                     currentPassword = password;
                     currentLogin = login;
-                    KataService.getKata("Fibonacci Streaming");
-                    //System.out.println("ID service: " + KataIdService.getKataId("Geometric Progression Sequence"));
+                    KataInput input = KataService.getKata("Fibonacci Streaming");
+                    System.out.println("Kata input: " + input.toString());
                     //SubmitService.run();
                     return null;
                 }

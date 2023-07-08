@@ -39,7 +39,6 @@ public class KataService {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             KataInput kata = objectMapper.readValue(response.body(), KataInput.class);
             kata.setPath(record.getPath());
-            System.out.println("Kata Response Body: " + kata.toString());
             return kata;
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
