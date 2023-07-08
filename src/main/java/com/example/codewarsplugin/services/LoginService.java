@@ -81,7 +81,7 @@ public class LoginService {
                     KataService.getKata();
                     KataService.getKata();
                     System.out.println("ID service: " + KataIdService.getKataRecord("Geometric Progression Sequence").toString());
-                    SubmitService.getToken();
+                    SubmitService.run();
                     return null;
                 }
 
