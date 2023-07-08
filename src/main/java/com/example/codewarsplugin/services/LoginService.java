@@ -78,7 +78,7 @@ public class LoginService {
                     sessionId = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get().getValue();
                     currentPassword = password;
                     currentLogin = login;
-                    KataService.getKata("Geometric Progression Sequence");
+                    KataService.getKata("Fibonacci Streaming");
                     //System.out.println("ID service: " + KataIdService.getKataId("Geometric Progression Sequence"));
                     //SubmitService.run();
                     return null;

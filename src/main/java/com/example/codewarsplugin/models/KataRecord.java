@@ -13,7 +13,16 @@ public class KataRecord {
     private String slug;
     private String url;
     private String category;
-    String[] languages;
+    private String[] languages;
+    private String path;
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
 
     public String getId() {
         return id;

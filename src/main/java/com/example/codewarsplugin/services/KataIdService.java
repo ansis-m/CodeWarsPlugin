@@ -26,9 +26,6 @@ public class KataIdService {
 
     public static KataRecord getKataRecord(String name) {
         name = formatString(name);
-
-
-
         String url = BASE_URL + name;
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -39,6 +36,7 @@ public class KataIdService {
 
             if (response.statusCode() >= 200 && response.statusCode() < 300) {
                 KataRecord kata = objectMapper.readValue(response.body(), KataRecord.class);
+                kata.setPath(getKataPath(kata.getId()));
                 return kata;
             } else {
                 System.out.println("Request failed with status: " + response.statusCode());
@@ -50,16 +48,12 @@ public class KataIdService {
         }
     }
 
-    public static String getKataId(String name) {
-        KataRecord kata = getKataRecord(name);
-        System.out.println("Kata record: " + kata);
-
-
+    public static String getKataPath(String id) {
         String csrfToken = LoginService.getCsrfToken();
         String sessionId = LoginService.getSessionId();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format("https://www.codewars.com/kata/%s/train/java", kata.getId())))
+                .uri(URI.create(String.format("https://www.codewars.com/kata/%s/train/java", id)))
                 .header("X-Csrf-Token", URLDecoder.decode(csrfToken, StandardCharsets.UTF_8))
                 .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
@@ -72,19 +66,13 @@ public class KataIdService {
             String responseBody = response.body();
 
             String script = findScriptWithAppSetup(responseBody);
-
             int startIndex = script.indexOf("session");
-
-            // Find the ending index of the substring
             int endIndex = script.lastIndexOf("session");
 
             if (startIndex != -1 && endIndex != -1 && startIndex != endIndex) {
-                // Extract the substring
+
                 String substring = script.substring(startIndex, endIndex + "session".length());
-
                 startIndex = substring.indexOf("/kata/projects/");
-
-                // Find the ending index of the substring
                 endIndex = substring.lastIndexOf("%7Blanguage%7D");
 
                 System.out.println("Substring: " + substring);
@@ -98,9 +86,7 @@ public class KataIdService {
             Arrays.stream(e.getStackTrace()).forEach(System.out::println);
             return null;
         }
-
     }
-
 
     private static String findScriptWithAppSetup(String html) {
         int startIndex = html.indexOf("App.setup(");
@@ -111,6 +97,4 @@ public class KataIdService {
     private static String formatString(String id) {
         return id.toLowerCase().replaceAll("\\s+-\\s+", "-").replaceAll("-\\s+|\\s+-|\\s+", "-");
     }
-
-
 }
