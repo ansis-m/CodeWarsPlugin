@@ -81,7 +81,9 @@ public class LoginService {
                     currentLogin = login;
                     KataInput input = KataService.getKata("Fibonacci Streaming");
                     System.out.println("Kata input: " + input.toString());
-                    //SubmitService.run();
+
+                    System.out.println("Submit service: Submitted the solution: " + SubmitService.run(input));
+
                     return null;
                 }
 
