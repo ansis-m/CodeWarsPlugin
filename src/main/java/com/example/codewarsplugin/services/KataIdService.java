@@ -72,7 +72,7 @@ public class KataIdService {
             if (startIndex != -1 && endIndex != -1 && startIndex != endIndex) {
 
                 String substring = script.substring(startIndex, endIndex + "session".length());
-                startIndex = substring.indexOf("/kata/projects/");
+                startIndex = substring.indexOf("/projects/");
                 endIndex = substring.lastIndexOf("%7Blanguage%7D");
 
                 System.out.println("Substring: " + substring);

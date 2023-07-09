@@ -79,10 +79,14 @@ public class LoginService {
                     sessionId = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get().getValue();
                     currentPassword = password;
                     currentLogin = login;
-                    KataInput input = KataService.getKata("Fibonacci Streaming");
+                    KataInput input = KataService.getKata("54fe05c4762e2e3047000add");
                     System.out.println("Kata input: " + input.toString());
 
-                    System.out.println("Submit service: Submitted the solution: " + SubmitService.run(input));
+                    KataManager manager = new KataManager(input);
+
+                    System.out.println("Submit service: Submitted the solution: " + manager.run());
+
+                    System.out.println("\n\nCommit the solution: " + manager.commit());
 
                     return null;
                 }

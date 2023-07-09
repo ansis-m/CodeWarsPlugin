@@ -27,7 +27,7 @@ public class KataService {
         String sessionId = LoginService.getSessionId();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://www.codewars.com" + record.getPath() + "java/session"))
+                .uri(URI.create("https://www.codewars.com/kata" + record.getPath() + "java/session"))
                 .header("X-Csrf-Token", URLDecoder.decode(csrfToken, StandardCharsets.UTF_8))
                 .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
