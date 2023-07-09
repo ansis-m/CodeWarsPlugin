@@ -2,17 +2,15 @@ package com.example.codewarsplugin.services;
 
 import com.example.codewarsplugin.models.KataRecord;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 import java.util.Arrays;
-import java.util.regex.Matcher;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class KataIdService {
@@ -20,12 +18,14 @@ public class KataIdService {
     private static final String BASE_URL = "https://www.codewars.com/api/v1/code-challenges/";
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private static final Pattern NON_LATIN_PATTERN = Pattern.compile("[^\\w-]");
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
 
     private KataIdService(){
     }
 
     public static KataRecord getKataRecord(String name) {
-        name = formatString(name);
+        name = generateSlug(name);
         String url = BASE_URL + name;
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -94,7 +94,11 @@ public class KataIdService {
         return html.substring(startIndex, endIndex);
     }
 
-    private static String formatString(String id) {
-        return id.toLowerCase().replaceAll("\\s+-\\s+", "-").replaceAll("-\\s+|\\s+-|\\s+", "-");
+    public static String generateSlug(String input) {
+        String noWhiteSpace = WHITESPACE_PATTERN.matcher(input.trim()).replaceAll("-");
+        String normalized = Normalizer.normalize(noWhiteSpace, Normalizer.Form.NFD);
+        return NON_LATIN_PATTERN.matcher(normalized)
+                .replaceAll("")
+                .toLowerCase(Locale.ENGLISH);
     }
 }

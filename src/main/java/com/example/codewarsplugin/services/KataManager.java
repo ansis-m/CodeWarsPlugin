@@ -155,16 +155,16 @@ public class KataManager {
         //output.setCode(input.getSetup());
 
         output.setCode("public class Ship {\n" +
-                "  private final double draft;\n" +
-                "  private final int crew;\n" +
+                "  private final double d;\n" +
+                "  private final int c;\n" +
                 "    \n" +
-                "  public Ship(double draft, int crew) {\n" +
-                "    this.draft = draft;\n" +
-                "    this.crew = crew;\n" +
+                "  public Ship(double d, int c) {\n" +
+                "    this.d = d;\n" +
+                "    this.c = c;\n" +
                 "  }\n" +
                 "\n" +
                 "  public boolean isWorthIt(){\n" +
-                "    return draft - crew * 1.5 > 20;\n" +
+                "    return d - c * 1.5 >= 20;\n" +
                 "  }\n" +
                 "} ");
         output.setFixture(input.getFixture());

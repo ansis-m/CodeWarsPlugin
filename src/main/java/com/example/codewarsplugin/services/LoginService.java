@@ -79,7 +79,7 @@ public class LoginService {
                     sessionId = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get().getValue();
                     currentPassword = password;
                     currentLogin = login;
-                    KataInput input = KataService.getKata("54fe05c4762e2e3047000add");
+                    KataInput input = KataService.getKata("OOP: Object Oriented Piracy ");
                     System.out.println("Kata input: " + input.toString());
 
                     KataManager manager = new KataManager(input);

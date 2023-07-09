@@ -23,6 +23,10 @@ public class KataService {
 
 
         KataRecord record = KataIdService.getKataRecord(title);
+
+        System.out.println("Record: " + record.toString());
+
+
         String csrfToken = LoginService.getCsrfToken();
         String sessionId = LoginService.getSessionId();
 
