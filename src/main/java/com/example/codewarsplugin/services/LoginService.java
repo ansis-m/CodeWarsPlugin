@@ -23,7 +23,7 @@ public class LoginService {
 
     private static LoginService loginService = new LoginService();
     private static Set<Cookie> allCookies = new HashSet<>();
-    private static WebDriver driver;
+    private static ChromeDriver driver;
     private static String currentLogin;
     private static String currentPassword;
     private static String csrfToken;

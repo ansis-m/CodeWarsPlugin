@@ -7,10 +7,7 @@ import groovy.transform.EqualsAndHashCode;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.Arrays;
 
 @EqualsAndHashCode(callSuper = true)
@@ -36,7 +33,16 @@ public class LoginManager extends JPanel{
         addListener(textField, "email");
         addListener(passwordField, "password");
         addEnterKeyListener();
+        addButtonPushedListener();
         addElementsToPanel();
+    }
+
+    private void addButtonPushedListener() {
+        submitButton.addActionListener(e -> {
+            if (LoginService.login(textField.getText(), Arrays.toString(passwordField.getPassword()))){
+                System.out.println("Login success!");
+            }
+        });
     }
 
 
