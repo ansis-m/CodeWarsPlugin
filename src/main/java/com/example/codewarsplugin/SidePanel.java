@@ -1,5 +1,6 @@
 package com.example.codewarsplugin;
 
+import com.example.codewarsplugin.services.WebDriver;
 import com.example.codewarsplugin.services.project.ProjectManager;
 import com.example.codewarsplugin.state.ApplicationState;
 import com.example.codewarsplugin.state.views.View;
@@ -18,5 +19,6 @@ public class SidePanel extends JPanel {
             ApplicationState.setView(loginView);
         }
         ProjectManager.init(project, toolWindow);
+        WebDriver.init();
     }
 }

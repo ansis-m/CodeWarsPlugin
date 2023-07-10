@@ -1,16 +1,7 @@
 package com.example.codewarsplugin.services;
 
-import com.example.codewarsplugin.models.kata.KataInput;
-import com.example.codewarsplugin.services.files.FileService;
-import com.example.codewarsplugin.services.katas.KataManager;
-import com.example.codewarsplugin.services.katas.KataService;
-import com.intellij.openapi.application.ApplicationManager;
-import io.github.bonigarcia.wdm.WebDriverManager;
-
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.CapabilityType;
 
 
 import javax.swing.*;
@@ -31,6 +22,7 @@ public class LoginService {
 
     private LoginService(){
     }
+
     public static LoginService getInstance(){
         if (loginService == null){
             loginService = new LoginService();
@@ -57,14 +49,9 @@ public class LoginService {
                 @Override
                 protected Void doInBackground() throws InterruptedException {
 
-                    WebDriverManager.chromedriver().setup();
-                    ChromeOptions options = new ChromeOptions();
-                    options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-                    options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
-//                    //options.addArguments("--headless");
 
-                    driver = new ChromeDriver(options);
 
+                    driver = WebDriver.getChromeDriver();
                     driver.get("https://www.codewars.com/users/sign_in");
                     WebElement inputElement = driver.findElement(By.id("user_email"));
                     inputElement.clear();
@@ -74,26 +61,12 @@ public class LoginService {
                     inputElement.sendKeys("Eloraps1!");
                     WebElement buttonElement = driver.findElement(By.className("btn"));
                     buttonElement.click();
-
-                    Thread.sleep(4000);
-
+                    Thread.sleep(2000);
                     allCookies = driver.manage().getCookies();
-
                     csrfToken = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get().getValue();
                     sessionId = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get().getValue();
                     currentPassword = password;
                     currentLogin = login;
-                    KataInput input = KataService.getKata("OOP: Object Oriented Piracy ");
-                    System.out.println("Kata input: " + input.toString());
-
-                    ApplicationManager.getApplication().invokeLater(() -> FileService.createFile(input));
-
-                    //FileService.createFile(input);
-
-                    //KataManager manager = new KataManager(input);
-                    //System.out.println("Submit service: Submitted the solution: " + manager.run());
-                    //System.out.println("\n\nCommit the solution: " + manager.commit());
-
                     return null;
                 }
 
@@ -104,9 +77,7 @@ public class LoginService {
                     });
                 }
             };
-
             worker.execute();
-
             return true;
         } catch (Exception e){
             System.out.println("Exception trying to login: " + e.getMessage());
@@ -133,9 +104,11 @@ public class LoginService {
     private static boolean notValid(String login, String password) {
         return !(login != null && password != null && login.length() > 0 && password.length() > 0);
     }
+    public static String getCurrentLogin() {
+        return currentLogin;
+    }
 
-    public static void quit(){
-        driver.quit();
-        driver = null;
+    public static String getCurrentPassword() {
+        return currentPassword;
     }
 }

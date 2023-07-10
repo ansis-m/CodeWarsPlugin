@@ -1,0 +1,10 @@
+                    KataInput input = KataService.getKata("OOP: Object Oriented Piracy ");
+                    System.out.println("Kata input: " + input.toString());
+
+                    ApplicationManager.getApplication().invokeLater(() -> FileService.createFile(input));
+
+                    //FileService.createFile(input);
+
+                    //KataManager manager = new KataManager(input);
+                    //System.out.println("Submit service: Submitted the solution: " + manager.run());
+                    //System.out.println("\n\nCommit the solution: " + manager.commit());

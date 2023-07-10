@@ -37,15 +37,6 @@ public class LoginManager extends JPanel{
         addElementsToPanel();
     }
 
-    private void addButtonPushedListener() {
-        submitButton.addActionListener(e -> {
-            if (LoginService.login(textField.getText(), Arrays.toString(passwordField.getPassword()))){
-                System.out.println("Login success!");
-            }
-        });
-    }
-
-
     private void addElementsToPanel() {
 
         promptLabel.setFont(promptLabel.getFont().deriveFont(10f));
@@ -110,7 +101,6 @@ public class LoginManager extends JPanel{
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    System.out.println("Enter key pressed. Input:");
                     if (LoginService.login(textField.getText(), Arrays.toString(passwordField.getPassword()))){
                         System.out.println("Login success!");
                     }
@@ -118,6 +108,14 @@ public class LoginManager extends JPanel{
             }
             @Override
             public void keyReleased(KeyEvent e) {
+            }
+        });
+    }
+
+    private void addButtonPushedListener() {
+        submitButton.addActionListener(e -> {
+            if (LoginService.login(textField.getText(), Arrays.toString(passwordField.getPassword()))){
+                System.out.println("Login success!");
             }
         });
     }
