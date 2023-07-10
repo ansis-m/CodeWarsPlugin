@@ -1,13 +1,13 @@
-package com.example.codewarsplugin.services;
+package com.example.codewarsplugin.services.katas;
 
-import com.example.codewarsplugin.models.KataInput;
-import com.example.codewarsplugin.models.KataRecord;
+import com.example.codewarsplugin.models.kata.KataInput;
+import com.example.codewarsplugin.models.kata.KataRecord;
+import com.example.codewarsplugin.services.LoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;

@@ -1,6 +1,7 @@
-package com.example.codewarsplugin.services;
+package com.example.codewarsplugin.services.katas;
 
-import com.example.codewarsplugin.models.KataRecord;
+import com.example.codewarsplugin.models.kata.KataRecord;
+import com.example.codewarsplugin.services.LoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
 import java.net.URLDecoder;

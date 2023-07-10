@@ -1,6 +1,10 @@
 package com.example.codewarsplugin.services;
 
-import com.example.codewarsplugin.models.KataInput;
+import com.example.codewarsplugin.models.kata.KataInput;
+import com.example.codewarsplugin.services.files.FileService;
+import com.example.codewarsplugin.services.katas.KataManager;
+import com.example.codewarsplugin.services.katas.KataService;
+import com.intellij.openapi.application.ApplicationManager;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 import org.openqa.selenium.*;
@@ -82,11 +86,13 @@ public class LoginService {
                     KataInput input = KataService.getKata("OOP: Object Oriented Piracy ");
                     System.out.println("Kata input: " + input.toString());
 
-                    KataManager manager = new KataManager(input);
+                    ApplicationManager.getApplication().invokeLater(() -> FileService.createFile(input));
 
-                    System.out.println("Submit service: Submitted the solution: " + manager.run());
+                    //FileService.createFile(input);
 
-                    System.out.println("\n\nCommit the solution: " + manager.commit());
+                    //KataManager manager = new KataManager(input);
+                    //System.out.println("Submit service: Submitted the solution: " + manager.run());
+                    //System.out.println("\n\nCommit the solution: " + manager.commit());
 
                     return null;
                 }

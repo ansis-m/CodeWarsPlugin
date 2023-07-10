@@ -1,4 +1,4 @@
-package com.example.codewarsplugin.models;
+package com.example.codewarsplugin.models.kata;
 
 public class SubmitResponse {
     private String type;

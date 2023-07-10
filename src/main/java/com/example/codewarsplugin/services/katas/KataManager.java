@@ -1,7 +1,11 @@
-package com.example.codewarsplugin.services;
+package com.example.codewarsplugin.services.katas;
 
 
 import com.example.codewarsplugin.models.*;
+import com.example.codewarsplugin.models.kata.KataInput;
+import com.example.codewarsplugin.models.kata.KataOutput;
+import com.example.codewarsplugin.models.kata.SubmitResponse;
+import com.example.codewarsplugin.services.LoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -164,13 +168,12 @@ public class KataManager {
                 "  }\n" +
                 "\n" +
                 "  public boolean isWorthIt(){\n" +
-                "    return d - c * 1.5 >= 20;\n" +
+                "    return d - c * 1.5 > 20;\n" +
                 "  }\n" +
                 "} ");
         output.setFixture(input.getFixture());
         output.setTestFramework(input.getTestFramework());
-        output.setLanguageVersion("17");
-        //output.setLanguageVersion(input.getLanguageVersions().stream().filter(LanguageVersion::isSupported).findFirst().get().getLabel());
+        output.setLanguageVersion(input.getActiveVersion());
         output.setRelayId(input.getSolutionId());
         return output;
     }

@@ -1,4 +1,4 @@
-package com.example.codewarsplugin.models;
+package com.example.codewarsplugin.models.kata;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
