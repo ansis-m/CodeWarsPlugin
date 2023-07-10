@@ -2,7 +2,10 @@ package com.example.codewarsplugin.services.files;
 
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.services.project.ProjectManager;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -11,6 +14,7 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +53,13 @@ public class FileService {
             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
             fileEditorManager.openFile(virtualFile, true);
             Editor editor = fileEditorManager.openTextEditor(descriptor, true);
+
+
+            WriteCommandAction.runWriteCommandAction(project, () -> {
+                Document document = editor.getDocument();
+                document.insertString(document.getTextLength(), input.getSetup());
+                PsiDocumentManager.getInstance(project).commitDocument(document);
+            });
 
 
         }
