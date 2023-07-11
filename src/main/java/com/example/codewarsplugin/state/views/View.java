@@ -9,8 +9,13 @@ public abstract class View {
     public View(SidePanel sidePanel){
         View.sidePanel = sidePanel;
     }
+    public View(){}
 
-    public abstract boolean setup();
+    public static boolean setup(){
+        return true;
+    }
 
-    public abstract boolean cleanUp();
+    public static boolean cleanUp(){
+        return true;
+    }
 }

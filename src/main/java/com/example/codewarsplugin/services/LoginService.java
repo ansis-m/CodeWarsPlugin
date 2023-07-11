@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.services;
 
 import com.example.codewarsplugin.state.Panels;
+import com.example.codewarsplugin.state.views.LoginView;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -34,6 +35,7 @@ public class LoginService {
 
     public static void login(String login, String password){
         if(valid(login, password)){
+            LoginView.cleanUp();
             getCookies(login, password);
         } else {
             Panels.getLoginManager().showLoginFailLabel("Enter a valid login and password to sign in!");
@@ -79,9 +81,11 @@ public class LoginService {
                 @Override
                 protected void done() {
                     if (!loginSuccess) {
+                        LoginView.getReady();
                         Panels.getLoginManager().showLoginFailLabel("Login failed. Bad email and/or password!");
                     } else {
                         Panels.getLoginManager().showLoginFailLabel("Login success!");
+
                     }
                 }
             };

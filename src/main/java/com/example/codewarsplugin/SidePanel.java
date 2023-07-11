@@ -14,7 +14,7 @@ import javax.swing.*;
 public class SidePanel extends JPanel {
 
     public SidePanel(Project project, ToolWindow toolWindow) {
-        View loginView = new LoginView(this);
+        LoginView loginView = new LoginView(this);
         if (loginView.setup()){
             ApplicationState.setView(loginView);
         }
