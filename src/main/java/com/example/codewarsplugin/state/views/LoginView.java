@@ -26,6 +26,7 @@ public class LoginView extends View {
         if (!ready)
             return false;
         sidePanel.remove(Panels.getLoginManager());
+        sidePanel.add(Panels.getWaitPanel(), BorderLayout.SOUTH);
         sidePanel.revalidate();
         sidePanel.repaint();
         ready = false;
@@ -36,6 +37,7 @@ public class LoginView extends View {
         if(ready) {
             return false;
         }
+        sidePanel.remove(Panels.getWaitPanel());
         sidePanel.add(Panels.getLoginManager(), BorderLayout.SOUTH);
         sidePanel.revalidate();
         sidePanel.repaint();
