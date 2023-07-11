@@ -8,7 +8,6 @@ import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Arrays;
 
 @EqualsAndHashCode(callSuper = true)
 public class LoginManager extends JPanel{
@@ -17,6 +16,8 @@ public class LoginManager extends JPanel{
     public static JTextField textField;
     public static JButton submitButton;
     public static JLabel promptLabel;
+    public static JLabel invalidPasswordLabel;
+    private static final GridBagConstraints constraints = new GridBagConstraints();
 
 
     public LoginManager(){
@@ -30,6 +31,9 @@ public class LoginManager extends JPanel{
         passwordField.setText("password");
         passwordField.setEchoChar((char) 0);
         passwordField.setFont(textField.getFont());
+        invalidPasswordLabel = new JLabel("\u202F");
+        invalidPasswordLabel.setForeground(Color.red);
+        invalidPasswordLabel.setFont(promptLabel.getFont().deriveFont(20f));
         addListener(textField, "email");
         addListener(passwordField, "password");
         addEnterKeyListener();
@@ -41,7 +45,7 @@ public class LoginManager extends JPanel{
 
         promptLabel.setFont(promptLabel.getFont().deriveFont(10f));
 
-        GridBagConstraints constraints = new GridBagConstraints();
+
         constraints.anchor = GridBagConstraints.CENTER;
         constraints.insets = new Insets(5, 5, 5, 5);
 
@@ -64,6 +68,25 @@ public class LoginManager extends JPanel{
         constraints.gridy = 3;
         constraints.insets = new Insets(5, 5, 50, 5);
         add(promptLabel, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 4;
+        constraints.insets = new Insets(5, 5, 5, 5);
+        add(invalidPasswordLabel, constraints);
+    }
+
+    public void showInvalidPasswordLabel(){
+
+        invalidPasswordLabel.setText("Enter a valid login and password to sign in!");
+        revalidate();
+        repaint();
+        Timer timer = new Timer(3000, e -> SwingUtilities.invokeLater(() -> {
+            invalidPasswordLabel.setText("\u202F");
+            revalidate();
+            repaint();
+        }));
+        timer.setRepeats(false);
+        timer.start();
     }
 
 
@@ -101,9 +124,7 @@ public class LoginManager extends JPanel{
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    if (LoginService.login(textField.getText(), Arrays.toString(passwordField.getPassword()))){
-                        System.out.println("Login success!");
-                    }
+                    LoginService.login(textField.getText(), new String(passwordField.getPassword()));
                 }
             }
             @Override
@@ -114,9 +135,7 @@ public class LoginManager extends JPanel{
 
     private void addButtonPushedListener() {
         submitButton.addActionListener(e -> {
-            if (LoginService.login(textField.getText(), Arrays.toString(passwordField.getPassword()))){
-                System.out.println("Login success!");
-            }
+            LoginService.login(textField.getText(), new String(passwordField.getPassword()));
         });
     }
 }

@@ -1,5 +1,6 @@
 package com.example.codewarsplugin.services;
 
+import com.example.codewarsplugin.state.Panels;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -30,17 +31,16 @@ public class LoginService {
         return loginService;
     }
 
-    public static boolean login(String login, String password){
-        if(notValid(login, password) || !getCookies(login, password)){
-            return false;
+    public static void login(String login, String password){
+        if(valid(login, password)){
+            getCookies(login, password);
+        } else {
+            Panels.getLoginManager().showInvalidPasswordLabel();
         }
-        currentLogin = login;
-        currentPassword = password;
 
-        return true;
     }
 
-    private static boolean getCookies(String login, String password) {
+    private static void getCookies(String login, String password) {
 
         System.out.println("getCookies");
 
@@ -48,8 +48,6 @@ public class LoginService {
             SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                 @Override
                 protected Void doInBackground() throws InterruptedException {
-
-
 
                     driver = WebDriver.getChromeDriver();
                     driver.get("https://www.codewars.com/users/sign_in");
@@ -78,10 +76,8 @@ public class LoginService {
                 }
             };
             worker.execute();
-            return true;
         } catch (Exception e){
             System.out.println("Exception trying to login: " + e.getMessage());
-            return false;
         }
     }
 
@@ -101,8 +97,10 @@ public class LoginService {
         return sessionId;
     }
 
-    private static boolean notValid(String login, String password) {
-        return !(login != null && password != null && login.length() > 0 && password.length() > 0);
+    private static boolean valid(String login, String password) {
+
+        System.out.println("login and password: " + login + " " + password);
+        return login != null && password != null && login.length() > 0 && password.length() > 0 && !login.equals("email") && !password.equals("password");
     }
     public static String getCurrentLogin() {
         return currentLogin;
