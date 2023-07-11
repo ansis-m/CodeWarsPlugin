@@ -20,6 +20,7 @@ public class LoginService {
     private static String currentPassword;
     private static String csrfToken;
     private static String sessionId;
+    private static boolean loginSuccess = false;
 
     private LoginService(){
     }
@@ -35,7 +36,7 @@ public class LoginService {
         if(valid(login, password)){
             getCookies(login, password);
         } else {
-            Panels.getLoginManager().showInvalidPasswordLabel();
+            Panels.getLoginManager().showLoginFailLabel("Enter a valid login and password to sign in!");
         }
 
     }
@@ -56,35 +57,17 @@ public class LoginService {
                     inputElement.sendKeys("maleckisansis@gmail.com");
                     inputElement = driver.findElement(By.id("user_password"));
                     inputElement.clear();
-                    inputElement.sendKeys("Eloraps1!");
+                    inputElement.sendKeys(password);
                     WebElement buttonElement = driver.findElement(By.className("btn"));
                     buttonElement.click();
                     Thread.sleep(2000);
-                    System.out.println("current url: " + driver.getCurrentUrl());
+                    if (!driver.getCurrentUrl().contains("codewars.com/dashboard")){
+                        loginSuccess = false;
+                        return null;
+                    }
+                    loginSuccess = true;
 
-
-                    JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-                    String history = (String) jsExecutor.executeScript(
-                            "var entries = performance.getEntriesByType('navigation');" +
-                                    "var urls = entries.map(function(entry) { return entry.name; });" +
-                                    "return JSON.stringify(urls);"
-                    );
-                    System.out.println("Request History: " + history);
-
-
-                    String responseBody = (String) jsExecutor.executeScript(
-                            "var xhr = new XMLHttpRequest();" +
-                                    "xhr.open('GET', 'https://www.codewars.com/dashboard', false);" +
-                                    "xhr.send();" +
-                                    "return xhr.responseText;"
-                    );
-                    System.out.println("Response Body: " + responseBody);
-
-
-
-
-
-
+                    //laikam vajadzetu turpinat ar draiveri, bet pagaidam paliek
                     allCookies = driver.manage().getCookies();
                     csrfToken = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get().getValue();
                     sessionId = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get().getValue();
@@ -95,9 +78,11 @@ public class LoginService {
 
                 @Override
                 protected void done() {
-                    SwingUtilities.invokeLater(() -> {
-                        System.out.println("Invoke Later!!! " + csrfToken + "\nid: " + sessionId);
-                    });
+                    if (!loginSuccess) {
+                        Panels.getLoginManager().showLoginFailLabel("Login failed. Bad email and/or password!");
+                    } else {
+                        Panels.getLoginManager().showLoginFailLabel("Login success!");
+                    }
                 }
             };
             worker.execute();

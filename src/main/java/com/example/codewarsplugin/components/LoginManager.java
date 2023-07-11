@@ -75,9 +75,9 @@ public class LoginManager extends JPanel{
         add(invalidPasswordLabel, constraints);
     }
 
-    public void showInvalidPasswordLabel(){
+    public void showLoginFailLabel(String message){
 
-        invalidPasswordLabel.setText("Enter a valid login and password to sign in!");
+        invalidPasswordLabel.setText(message);
         revalidate();
         repaint();
         Timer timer = new Timer(3000, e -> SwingUtilities.invokeLater(() -> {
