@@ -60,6 +60,31 @@ public class LoginService {
                     WebElement buttonElement = driver.findElement(By.className("btn"));
                     buttonElement.click();
                     Thread.sleep(2000);
+                    System.out.println("current url: " + driver.getCurrentUrl());
+
+
+                    JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+                    String history = (String) jsExecutor.executeScript(
+                            "var entries = performance.getEntriesByType('navigation');" +
+                                    "var urls = entries.map(function(entry) { return entry.name; });" +
+                                    "return JSON.stringify(urls);"
+                    );
+                    System.out.println("Request History: " + history);
+
+
+                    String responseBody = (String) jsExecutor.executeScript(
+                            "var xhr = new XMLHttpRequest();" +
+                                    "xhr.open('GET', 'https://www.codewars.com/dashboard', false);" +
+                                    "xhr.send();" +
+                                    "return xhr.responseText;"
+                    );
+                    System.out.println("Response Body: " + responseBody);
+
+
+
+
+
+
                     allCookies = driver.manage().getCookies();
                     csrfToken = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get().getValue();
                     sessionId = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get().getValue();

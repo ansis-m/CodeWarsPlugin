@@ -15,7 +15,7 @@ public class WebDriver {
         options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
         options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
 //                    //options.addArguments("--headless");
-
+        options.addArguments("--disable-notifications");
         chromeDriver = new ChromeDriver(options);
     }
 
