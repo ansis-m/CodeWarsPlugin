@@ -1,6 +1,9 @@
 package com.example.codewarsplugin.services;
 
+import com.example.codewarsplugin.components.dialog;
+import com.example.codewarsplugin.models.user.User;
 import com.example.codewarsplugin.state.Panels;
+import com.example.codewarsplugin.state.views.LogedInView;
 import com.example.codewarsplugin.state.views.LoginView;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -35,7 +38,7 @@ public class LoginService {
 
     public static void login(String login, String password){
         if(valid(login, password)){
-            LoginView.cleanUp();
+            LoginView.login();
             getCookies(login, password);
         } else {
             Panels.getLoginManager().showLoginFailLabel("Enter a valid login and password to sign in!");
@@ -68,7 +71,8 @@ public class LoginService {
                         return null;
                     }
                     loginSuccess = true;
-
+                    String[] arg = {};
+                    dialog.main(arg);
                     //laikam vajadzetu turpinat ar draiveri, bet pagaidam paliek
                     allCookies = driver.manage().getCookies();
                     csrfToken = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get().getValue();
@@ -84,8 +88,10 @@ public class LoginService {
                         LoginView.getReady();
                         Panels.getLoginManager().showLoginFailLabel("Login failed. Bad email and/or password!");
                     } else {
-                        Panels.getLoginManager().showLoginFailLabel("Login success!");
-
+                        System.out.println("\n\nDONE\n\n");
+                        LogedInView.init();
+                        LoginView.cleanUp();
+                        LogedInView.setup();
                     }
                 }
             };

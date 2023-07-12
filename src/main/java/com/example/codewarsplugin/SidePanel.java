@@ -1,8 +1,10 @@
 package com.example.codewarsplugin;
 
+import com.example.codewarsplugin.components.dialog;
 import com.example.codewarsplugin.services.WebDriver;
 import com.example.codewarsplugin.services.project.ProjectManager;
 import com.example.codewarsplugin.state.ApplicationState;
+import com.example.codewarsplugin.state.views.LogedInView;
 import com.example.codewarsplugin.state.views.View;
 import com.example.codewarsplugin.state.views.LoginView;
 import com.intellij.openapi.project.Project;
@@ -14,11 +16,16 @@ import javax.swing.*;
 public class SidePanel extends JPanel {
 
     public SidePanel(Project project, ToolWindow toolWindow) {
+        initViews();
         LoginView loginView = new LoginView(this);
         if (loginView.setup()){
             ApplicationState.setView(loginView);
         }
         ProjectManager.init(project, toolWindow);
         WebDriver.init();
+    }
+
+    private void initViews() {
+        LogedInView logedInView = new LogedInView(this);
     }
 }
