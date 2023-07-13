@@ -1,7 +1,6 @@
 package com.example.codewarsplugin.state.views;
 
 import com.example.codewarsplugin.SidePanel;
-import com.example.codewarsplugin.components.TestPanel;
 import com.example.codewarsplugin.state.Panels;
 
 import java.awt.*;
@@ -13,10 +12,9 @@ public class LoginView extends View {
 
     public static boolean setup() {
         sidePanel.setLayout(new BorderLayout());
-        sidePanel.add(new TestPanel());
-//        sidePanel.add(Panels.getTopImagePanel(), BorderLayout.NORTH);
-//        sidePanel.add(Panels.getTitlePanel(), BorderLayout.CENTER);
-//        sidePanel.add(Panels.getLoginManager(), BorderLayout.SOUTH);
+        sidePanel.add(Panels.getTopImagePanel(), BorderLayout.NORTH);
+        sidePanel.add(Panels.getTitlePanel(), BorderLayout.CENTER);
+        sidePanel.add(Panels.getLoginManager(), BorderLayout.SOUTH);
         return true;
     }
 

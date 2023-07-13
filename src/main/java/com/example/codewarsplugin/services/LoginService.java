@@ -1,7 +1,5 @@
 package com.example.codewarsplugin.services;
 
-import com.example.codewarsplugin.components.dialog;
-import com.example.codewarsplugin.models.user.User;
 import com.example.codewarsplugin.state.Panels;
 import com.example.codewarsplugin.state.views.LogedInView;
 import com.example.codewarsplugin.state.views.LoginView;
@@ -72,7 +70,6 @@ public class LoginService {
                     }
                     loginSuccess = true;
                     String[] arg = {};
-                    dialog.main(arg);
                     //laikam vajadzetu turpinat ar draiveri, bet pagaidam paliek
                     allCookies = driver.manage().getCookies();
                     csrfToken = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get().getValue();
