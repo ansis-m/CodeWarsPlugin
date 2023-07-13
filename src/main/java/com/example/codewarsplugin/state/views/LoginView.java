@@ -13,29 +13,27 @@ public class LoginView extends View {
     public static boolean setup() {
         sidePanel.setLayout(new BorderLayout());
         sidePanel.add(Panels.getTopImagePanel(), BorderLayout.NORTH);
-        sidePanel.add(Panels.getTitlePanel(), BorderLayout.CENTER);
+        //sidePanel.add(Panels.getTitlePanel(), BorderLayout.CENTER);
         sidePanel.add(Panels.getLoginManager(), BorderLayout.SOUTH);
         return true;
     }
 
     public static boolean login() {
-        sidePanel.remove(Panels.getLoginManager());
-        sidePanel.add(Panels.getWaitPanel(), BorderLayout.SOUTH);
+        Panels.getLoginManager().waitResponse();
         sidePanel.revalidate();
         sidePanel.repaint();
         return true;
     }
 
     public static boolean cleanUp() {
-        sidePanel.remove(Panels.getWaitPanel());
+        sidePanel.remove(Panels.getLoginManager());
         sidePanel.remove(Panels.getTitlePanel());
         sidePanel.remove(Panels.getTopImagePanel());
         return true;
     }
 
     public static boolean getReady(){
-        sidePanel.remove(Panels.getWaitPanel());
-        sidePanel.add(Panels.getLoginManager(), BorderLayout.SOUTH);
+        Panels.getLoginManager().getReady();
         sidePanel.revalidate();
         sidePanel.repaint();
         return true;

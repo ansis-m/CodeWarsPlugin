@@ -83,9 +83,8 @@ public class LoginService {
                 protected void done() {
                     if (!loginSuccess) {
                         LoginView.getReady();
-                        Panels.getLoginManager().showLoginFailLabel("Login failed. Bad email and/or password!");
+                        Panels.getLoginManager().showLoginFailLabel("Login failed. Bad email or password!");
                     } else {
-                        System.out.println("\n\nDONE\n\n");
                         LogedInView.init();
                         LoginView.cleanUp();
                         LogedInView.setup();

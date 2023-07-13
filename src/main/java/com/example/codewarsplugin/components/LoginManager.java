@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.services.LoginService;
+import com.intellij.ui.AnimatedIcon;
 import groovy.transform.EqualsAndHashCode;
 
 
@@ -18,6 +19,7 @@ public class LoginManager extends JPanel{
     public static JLabel promptLabel;
     public static JLabel invalidPasswordLabel;
     private static final GridBagConstraints constraints = new GridBagConstraints();
+    private static JLabel waitLabel = new JLabel(new AnimatedIcon.Big());
 
 
     public LoginManager(){
@@ -26,14 +28,11 @@ public class LoginManager extends JPanel{
         textField = new JTextField(20);
         passwordField = new JPasswordField(20);
         submitButton = new JButton("SIGN IN");
-        promptLabel = new JLabel("sign in with your Codewars credentials");
+        promptLabel = new JLabel("Sign in with your Codewars credentials!");
         textField.setText("email");
         passwordField.setText("password");
         passwordField.setEchoChar((char) 0);
         passwordField.setFont(textField.getFont());
-        invalidPasswordLabel = new JLabel("\u202F");
-        invalidPasswordLabel.setForeground(Color.red);
-        invalidPasswordLabel.setFont(promptLabel.getFont().deriveFont(20f));
         addListener(textField, "email");
         addListener(passwordField, "password");
         addEnterKeyListener();
@@ -44,7 +43,6 @@ public class LoginManager extends JPanel{
     private void addElementsToPanel() {
 
         promptLabel.setFont(promptLabel.getFont().deriveFont(10f));
-
 
         constraints.anchor = GridBagConstraints.CENTER;
         constraints.insets = new Insets(5, 5, 5, 5);
@@ -59,29 +57,32 @@ public class LoginManager extends JPanel{
 
         constraints.gridx = 0;
         constraints.gridy = 2;
-
+        constraints.weighty = 1.0;
         constraints.insets = new Insets(10, 5, 5, 5);
         add(submitButton, constraints);
 
-
         constraints.gridx = 0;
         constraints.gridy = 3;
-        constraints.insets = new Insets(5, 5, 50, 5);
+        constraints.weighty = 0.0;
+        constraints.insets = new Insets(10, 5, 50, 5);
+        constraints.ipady = 0;
         add(promptLabel, constraints);
-
-        constraints.gridx = 0;
-        constraints.gridy = 4;
-        constraints.insets = new Insets(5, 5, 5, 5);
-        add(invalidPasswordLabel, constraints);
     }
 
     public void showLoginFailLabel(String message){
 
-        invalidPasswordLabel.setText(message);
+        var defaultColor = promptLabel.getForeground();
+        var defaultText = promptLabel.getText();
+
+        promptLabel.setText(message);
+        promptLabel.setForeground(Color.red);
+
+
         revalidate();
         repaint();
         Timer timer = new Timer(3000, e -> SwingUtilities.invokeLater(() -> {
-            invalidPasswordLabel.setText("\u202F");
+            promptLabel.setText(defaultText);
+            promptLabel.setForeground(defaultColor);
             revalidate();
             repaint();
         }));
@@ -137,5 +138,23 @@ public class LoginManager extends JPanel{
         submitButton.addActionListener(e -> {
             LoginService.login(textField.getText(), new String(passwordField.getPassword()));
         });
+    }
+
+    public void waitResponse() {
+        remove(submitButton);
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+
+        constraints.insets = new Insets(10, 5, 5, 5);
+        add(waitLabel, constraints);
+    }
+
+    public void getReady() {
+        remove(waitLabel);
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+
+        constraints.insets = new Insets(10, 5, 5, 5);
+        add(submitButton, constraints);
     }
 }

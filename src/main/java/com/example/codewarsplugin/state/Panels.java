@@ -7,7 +7,6 @@ public class Panels {
     private static final LoginManager loginManager = new LoginManager();
     private static final TopImagePanel topImagePanel = new TopImagePanel();
     private static final TitlePanel titlePanel = new TitlePanel();
-    private static final WaitPanel waitPanel = new WaitPanel();
     private static final KataPrompt kataPrompt = new KataPrompt();
 
     public static LoginManager getLoginManager() {
@@ -18,9 +17,6 @@ public class Panels {
     }
     public static TitlePanel getTitlePanel() {
         return titlePanel;
-    }
-    public static WaitPanel getWaitPanel() {
-        return waitPanel;
     }
     public static KataPrompt getKataPrompt() {
         return kataPrompt;
