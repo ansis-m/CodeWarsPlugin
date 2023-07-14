@@ -36,7 +36,7 @@ public class LoginService {
 
     public static void login(String login, String password){
         if(valid(login, password)){
-            LoginView.login();
+            LoginView.startSpinner();
             getCookies(login, password);
         } else {
             Panels.getLoginManager().showLoginFailLabel("Enter a valid login and password to sign in!");
@@ -82,7 +82,7 @@ public class LoginService {
                 @Override
                 protected void done() {
                     if (!loginSuccess) {
-                        LoginView.getReady();
+                        LoginView.stopSpinner();
                         Panels.getLoginManager().showLoginFailLabel("Login failed. Bad email or password!");
                     } else {
                         LogedInView.init();

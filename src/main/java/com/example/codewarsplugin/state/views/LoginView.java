@@ -18,24 +18,22 @@ public class LoginView extends View {
         return true;
     }
 
-    public static boolean login() {
-        Panels.getLoginManager().waitResponse();
+    public static void startSpinner() {
+        Panels.getLoginManager().startSpinner();
         sidePanel.revalidate();
         sidePanel.repaint();
-        return true;
     }
 
     public static boolean cleanUp() {
         sidePanel.remove(Panels.getLoginManager());
         sidePanel.remove(Panels.getTitlePanel());
         sidePanel.remove(Panels.getTopImagePanel());
-        return true;
+        return false;
     }
 
-    public static boolean getReady(){
-        Panels.getLoginManager().getReady();
+    public static void stopSpinner(){
+        Panels.getLoginManager().stopSpinner();
         sidePanel.revalidate();
         sidePanel.repaint();
-        return true;
     }
 }

@@ -1,8 +1,18 @@
 package com.example.codewarsplugin.services.katas;
 
+import com.example.codewarsplugin.components.KataPrompt;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.LoginService;
+import com.example.codewarsplugin.services.WebDriver;
+import com.example.codewarsplugin.state.Panels;
+import com.example.codewarsplugin.state.views.LogedInView;
+import com.example.codewarsplugin.state.views.LoginView;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import javax.swing.*;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.http.HttpClient;
@@ -21,32 +31,37 @@ public class KataIdService {
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private static final Pattern NON_LATIN_PATTERN = Pattern.compile("[^\\w-]");
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
+    public static KataRecord record = null;
 
     private KataIdService(){
     }
 
     public static KataRecord getKataRecord(String name) {
-        name = generateSlug(name);
-        String url = BASE_URL + name;
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .build();
+        try{
+            SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                @Override
+                protected Void doInBackground() throws InterruptedException, IOException {
+                    var slug = generateSlug(name);
+                    String url = BASE_URL + slug;
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(URI.create(url))
+                            .build();
+                    HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        try {
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() >= 200 && response.statusCode() < 300) {
-                KataRecord kata = objectMapper.readValue(response.body(), KataRecord.class);
-                kata.setPath(getKataPath(kata.getId()));
-                return kata;
-            } else {
-                System.out.println("Request failed with status: " + response.statusCode());
-                return null;
-            }
-        } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
-            return null;
-        }
+                    if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                        record = objectMapper.readValue(response.body(), KataRecord.class);
+                        record.setPath(getKataPath(record.getId()));
+                    }
+                    return null;
+                }
+                @Override
+                protected void done() {
+                    KataPrompt.complete();
+                }
+            };
+            worker.execute();
+        } catch (Exception ignored){}
+        return record;
     }
 
     public static String getKataPath(String id) {

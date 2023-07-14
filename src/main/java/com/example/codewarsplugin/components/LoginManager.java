@@ -140,7 +140,7 @@ public class LoginManager extends JPanel{
         });
     }
 
-    public void waitResponse() {
+    public void startSpinner() {
         remove(submitButton);
         constraints.gridx = 0;
         constraints.gridy = 2;
@@ -149,7 +149,7 @@ public class LoginManager extends JPanel{
         add(waitLabel, constraints);
     }
 
-    public void getReady() {
+    public void stopSpinner() {
         remove(waitLabel);
         constraints.gridx = 0;
         constraints.gridy = 2;
