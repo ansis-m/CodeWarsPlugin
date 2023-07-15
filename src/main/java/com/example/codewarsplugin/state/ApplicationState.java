@@ -4,16 +4,16 @@ import com.example.codewarsplugin.state.views.View;
 
 
 public class ApplicationState {
-    private static View currentView;
-    private static View nextView;
-    private static View previousView;
+    private static Class currentView;
+    private static Class nextView;
+    private static Class previousView;
 
 
-    public static void setView(View view) {
+    public static void setView(Class view) {
         currentView = view;
     }
 
-    public static View getView() {
+    public static Class getView() {
         return currentView;
     }
 }

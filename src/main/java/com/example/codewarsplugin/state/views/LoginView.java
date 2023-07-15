@@ -3,12 +3,13 @@ package com.example.codewarsplugin.state.views;
 import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.state.Panels;
 
+import javax.swing.*;
 import java.awt.*;
 
-public class LoginView extends View {
-    public LoginView(SidePanel sidePanel) {
-        super(sidePanel);
-    }
+public class LoginView extends JPanel implements View {
+
+
+    private static JPanel sidePanel = Panels.getSidePanel();
 
     public static boolean setup() {
         sidePanel.setLayout(new BorderLayout());

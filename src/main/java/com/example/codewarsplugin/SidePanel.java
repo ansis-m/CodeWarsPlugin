@@ -15,17 +15,14 @@ import javax.swing.*;
 public class SidePanel extends JPanel {
 
     public SidePanel(Project project, ToolWindow toolWindow) {
-        initViews();
-        LoginView loginView = new LoginView(this);
-        if (loginView.setup()){
-            ApplicationState.setView(loginView);
+        Panels.setSidePanel(this);
+
+        if (LoginView.setup()){
+            ApplicationState.setView(LoginView.class);
         }
         ProjectManager.init(project, toolWindow);
+        //ielikt ieksh swing workera
         WebDriver.init();
     }
 
-    private void initViews() {
-        Panels.setSidePanel(this);
-        LogedInView logedInView = new LogedInView(this);
-    }
 }
