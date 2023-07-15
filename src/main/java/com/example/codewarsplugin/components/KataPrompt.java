@@ -7,14 +7,21 @@ import com.intellij.ui.AnimatedIcon;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class KataPrompt extends JPanel {
 
-    public static JTextField textField;
-    public static JButton submitButton;
-    public static JLabel promptLabel;
-    public static JLabel invalidKataLabel;
-    private static JLabel waitLabel = new JLabel(new AnimatedIcon.Big());
+    private static JTextField textField;
+    private static JButton submitButton;
+    private static JLabel promptLabel;
+    private static JLabel invalidKataLabel;
+    private static JPanel cardButtonPanel = new JPanel();
+    private static CardLayout cardButtonLayout = new CardLayout();
+
+    private static JPanel cardKataPanel = new JPanel();
+    private static CardLayout cardKataLayout = new CardLayout();
+    private static JPanel emptyKataPanel = new JPanel();
+    private static JLabel spinner = new JLabel(new AnimatedIcon.Big());
     private static final GridBagConstraints constraints = new GridBagConstraints();
 
 
@@ -27,30 +34,32 @@ public class KataPrompt extends JPanel {
         invalidKataLabel = new JLabel("Kata not found!");
         invalidKataLabel.setForeground(Color.red);
         invalidKataLabel.setFont(promptLabel.getFont().deriveFont(15f));
-        invalidKataLabel.setVisible(false);
-        waitLabel.setVisible(false);
+        cardButtonPanel.setLayout(cardButtonLayout);
+        cardKataPanel.setLayout(cardKataLayout);
         //addEnterKeyListener();
         addElementsToPanel();
         addButtonPushedListener();
     }
 
     private void addButtonPushedListener() {
-        submitButton.addActionListener((event) -> {
-            startSpinner();
-            KataRecord record = KataIdService.getKataRecord(textField.getText());
-            System.out.println(record);
-        });
+        submitButton.addActionListener(this::searchKata);
+    }
+
+    private void searchKata(ActionEvent event) {
+        startSpinner();
+        KataRecord record = KataIdService.getKataRecord(textField.getText());
+        System.out.println(record);
     }
 
     public static void complete(boolean success){
         System.out.println("complete: " + KataIdService.record);
         Panels.getKataPrompt().stopSpinner();
         if (!success) {
-            invalidKataLabel.setVisible(true);
+            cardKataLayout.show(cardKataPanel, "invalid");
             Panels.getSidePanel().revalidate();
             Panels.getSidePanel().repaint();
             Timer timer = new Timer(2000, e -> SwingUtilities.invokeLater(() -> {
-                invalidKataLabel.setVisible(false);
+                cardKataLayout.show(cardKataPanel, "empty");
                 Panels.getSidePanel().revalidate();
                 Panels.getSidePanel().repaint();
             }));
@@ -76,29 +85,31 @@ public class KataPrompt extends JPanel {
         constraints.insets = new Insets(0, 5, 5, 5);
         add(promptLabel, constraints);
 
+        cardButtonPanel.add(submitButton, "submitButton");
+        cardButtonPanel.add(spinner, "spinner");
+
         constraints.gridx = 0;
         constraints.gridy = 2;
         constraints.insets = new Insets(5, 5, 50, 5);
-        add(submitButton, constraints);
-        add(waitLabel, constraints);
+        add(cardButtonPanel, constraints);
+
+        cardKataPanel.add(emptyKataPanel, "empty");
+        cardKataPanel.add(invalidKataLabel, "invalid");
 
         constraints.gridx = 0;
         constraints.gridy = 3;
         constraints.insets = new Insets(5, 5, 5, 5);
-        add(invalidKataLabel, constraints);
-
+        add(cardKataPanel, constraints);
     }
 
     public void startSpinner() {
-        submitButton.setVisible(false);
-        waitLabel.setVisible(true);
+        cardButtonLayout.show(cardButtonPanel, "spinner");
         revalidate();
         repaint();
     }
 
     public void stopSpinner() {
-        submitButton.setVisible(true);
-        waitLabel.setVisible(false);
+        cardButtonLayout.show(cardButtonPanel, "submitButton");
         revalidate();
         repaint();
     }
