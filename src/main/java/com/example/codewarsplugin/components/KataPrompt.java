@@ -27,6 +27,7 @@ public class KataPrompt extends JPanel {
         invalidKataLabel = new JLabel("\u202F");
         invalidKataLabel.setForeground(Color.red);
         invalidKataLabel.setFont(promptLabel.getFont().deriveFont(20f));
+        waitLabel.setVisible(false);
         //addEnterKeyListener();
         addElementsToPanel();
         addButtonPushedListener();
@@ -66,6 +67,7 @@ public class KataPrompt extends JPanel {
         constraints.gridy = 2;
         constraints.insets = new Insets(5, 5, 50, 5);
         add(submitButton, constraints);
+        add(waitLabel, constraints);
 
         constraints.gridx = 0;
         constraints.gridy = 3;
@@ -75,21 +77,15 @@ public class KataPrompt extends JPanel {
     }
 
     public void startSpinner() {
-        remove(submitButton);
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        constraints.insets = new Insets(5, 5, 50, 5);
-        add(waitLabel, constraints);
+        submitButton.setVisible(false);
+        waitLabel.setVisible(true);
         revalidate();
         repaint();
     }
 
     public void stopSpinner() {
-        remove(waitLabel);
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        constraints.insets = new Insets(5, 5, 50, 5);
-        add(submitButton, constraints);
+        submitButton.setVisible(true);
+        waitLabel.setVisible(false);
         revalidate();
         repaint();
     }

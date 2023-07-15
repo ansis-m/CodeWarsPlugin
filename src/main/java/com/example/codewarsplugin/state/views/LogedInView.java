@@ -15,8 +15,7 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LogedInView extends View {
-
+public class LogedInView extends JPanel implements View {
 
     private static User user;
     private static JPanel userPanel = new JPanel();
@@ -24,8 +23,8 @@ public class LogedInView extends View {
     private static final String[] options = {"Java", "Kotlin", "Scala", "Groovy", "Python", "C"};
     public static ComboBox<String> languageBox = new ComboBox<>(options);
 
-    public LogedInView(SidePanel sidePanel) {
-        super(sidePanel);
+    public LogedInView() {
+        super();
     }
 
 
