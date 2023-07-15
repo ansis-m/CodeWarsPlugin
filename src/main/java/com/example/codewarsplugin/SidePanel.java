@@ -17,10 +17,15 @@ public class SidePanel extends JPanel {
     public SidePanel(Project project, ToolWindow toolWindow) {
         Panels.setSidePanel(this);
         WebDriver.init();
+        Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
         if (LoginView.setup()){
             ApplicationState.setView(LoginView.class);
         }
         ProjectManager.init(project, toolWindow);
+    }
+
+    private void cleanup() {
+        WebDriver.quit();
     }
 
 }
