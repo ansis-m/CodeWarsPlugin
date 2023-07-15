@@ -17,6 +17,7 @@ public class WebDriver {
 //                    //options.addArguments("--headless");
         options.addArguments("--disable-notifications");
         chromeDriver = new ChromeDriver(options);
+        chromeDriver.get("https://www.codewars.com/users/sign_in");
     }
 
 

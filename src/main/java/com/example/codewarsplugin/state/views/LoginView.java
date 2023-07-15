@@ -6,10 +6,11 @@ import com.example.codewarsplugin.state.Panels;
 import javax.swing.*;
 import java.awt.*;
 
-public class LoginView extends JPanel implements View {
+public class LoginView extends JPanel{
 
 
     private static JPanel sidePanel = Panels.getSidePanel();
+
 
     public static boolean setup() {
         sidePanel.setLayout(new BorderLayout());
@@ -27,7 +28,6 @@ public class LoginView extends JPanel implements View {
 
     public static boolean cleanUp() {
         sidePanel.remove(Panels.getLoginManager());
-        sidePanel.remove(Panels.getTitlePanel());
         sidePanel.remove(Panels.getTopImagePanel());
         return false;
     }

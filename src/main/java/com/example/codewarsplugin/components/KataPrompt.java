@@ -24,9 +24,10 @@ public class KataPrompt extends JPanel {
         textField = new JTextField(30);
         submitButton = new JButton("Get Kata");
         promptLabel = new JLabel("Paste kata title!");
-        invalidKataLabel = new JLabel("\u202F");
+        invalidKataLabel = new JLabel("Kata not found!");
         invalidKataLabel.setForeground(Color.red);
-        invalidKataLabel.setFont(promptLabel.getFont().deriveFont(20f));
+        invalidKataLabel.setFont(promptLabel.getFont().deriveFont(15f));
+        invalidKataLabel.setVisible(false);
         waitLabel.setVisible(false);
         //addEnterKeyListener();
         addElementsToPanel();
@@ -41,9 +42,21 @@ public class KataPrompt extends JPanel {
         });
     }
 
-    public static void complete(){
+    public static void complete(boolean success){
         System.out.println("complete: " + KataIdService.record);
         Panels.getKataPrompt().stopSpinner();
+        if (!success) {
+            invalidKataLabel.setVisible(true);
+            Panels.getSidePanel().revalidate();
+            Panels.getSidePanel().repaint();
+            Timer timer = new Timer(2000, e -> SwingUtilities.invokeLater(() -> {
+                invalidKataLabel.setVisible(false);
+                Panels.getSidePanel().revalidate();
+                Panels.getSidePanel().repaint();
+            }));
+            timer.setRepeats(false);
+            timer.start();
+        }
     }
 
     private void addElementsToPanel() {

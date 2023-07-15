@@ -54,7 +54,6 @@ public class LoginService {
                 protected Void doInBackground() throws InterruptedException {
 
                     driver = WebDriver.getChromeDriver();
-                    driver.get("https://www.codewars.com/users/sign_in");
                     WebElement inputElement = driver.findElement(By.id("user_email"));
                     inputElement.clear();
                     inputElement.sendKeys("maleckisansis@gmail.com");

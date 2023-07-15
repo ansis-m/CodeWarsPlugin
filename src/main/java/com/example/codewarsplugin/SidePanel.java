@@ -16,13 +16,11 @@ public class SidePanel extends JPanel {
 
     public SidePanel(Project project, ToolWindow toolWindow) {
         Panels.setSidePanel(this);
-
+        WebDriver.init();
         if (LoginView.setup()){
             ApplicationState.setView(LoginView.class);
         }
         ProjectManager.init(project, toolWindow);
-        //ielikt ieksh swing workera
-        WebDriver.init();
     }
 
 }

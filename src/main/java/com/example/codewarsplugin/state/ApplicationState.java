@@ -1,7 +1,5 @@
 package com.example.codewarsplugin.state;
 
-import com.example.codewarsplugin.state.views.View;
-
 
 public class ApplicationState {
     private static Class currentView;

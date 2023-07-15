@@ -19,7 +19,10 @@ public class LoginManager extends JPanel{
     public static JLabel promptLabel;
     public static JLabel invalidPasswordLabel;
     private static final GridBagConstraints constraints = new GridBagConstraints();
-    private static JLabel waitLabel = new JLabel(new AnimatedIcon.Big());
+    private static JLabel spinner = new JLabel(new AnimatedIcon.Big());
+
+    private static JPanel cardPanel;
+    private static CardLayout cardLayout;
 
 
     public LoginManager(){
@@ -33,6 +36,9 @@ public class LoginManager extends JPanel{
         passwordField.setText("password");
         passwordField.setEchoChar((char) 0);
         passwordField.setFont(textField.getFont());
+        cardPanel = new JPanel();
+        cardLayout = new CardLayout();
+        cardPanel.setLayout(cardLayout);
         addListener(textField, "email");
         addListener(passwordField, "password");
         addEnterKeyListener();
@@ -55,11 +61,13 @@ public class LoginManager extends JPanel{
         constraints.gridy = 1;
         add(passwordField, constraints);
 
+        setupCardPanel();
+
         constraints.gridx = 0;
         constraints.gridy = 2;
         constraints.weighty = 1.0;
         constraints.insets = new Insets(10, 5, 5, 5);
-        add(submitButton, constraints);
+        add(cardPanel, constraints);
 
         constraints.gridx = 0;
         constraints.gridy = 3;
@@ -67,6 +75,11 @@ public class LoginManager extends JPanel{
         constraints.insets = new Insets(10, 5, 50, 5);
         constraints.ipady = 0;
         add(promptLabel, constraints);
+    }
+
+    private void setupCardPanel() {
+        cardPanel.add(submitButton, "submitButton");
+        cardPanel.add(spinner, "spinner");
     }
 
     public void showLoginFailLabel(String message){
@@ -80,7 +93,7 @@ public class LoginManager extends JPanel{
 
         revalidate();
         repaint();
-        Timer timer = new Timer(3000, e -> SwingUtilities.invokeLater(() -> {
+        Timer timer = new Timer(1500, e -> SwingUtilities.invokeLater(() -> {
             promptLabel.setText(defaultText);
             promptLabel.setForeground(defaultColor);
             revalidate();
@@ -141,20 +154,10 @@ public class LoginManager extends JPanel{
     }
 
     public void startSpinner() {
-        remove(submitButton);
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-
-        constraints.insets = new Insets(10, 5, 5, 5);
-        add(waitLabel, constraints);
+        cardLayout.show(cardPanel, "spinner");
     }
 
     public void stopSpinner() {
-        remove(waitLabel);
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-
-        constraints.insets = new Insets(10, 5, 5, 5);
-        add(submitButton, constraints);
+        cardLayout.show(cardPanel, "submitButton");
     }
 }

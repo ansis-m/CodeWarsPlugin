@@ -1,6 +1,5 @@
 package com.example.codewarsplugin.state.views;
 
-import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.models.user.User;
 import com.example.codewarsplugin.services.UserService;
 import com.example.codewarsplugin.state.Panels;
@@ -15,10 +14,11 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LogedInView extends JPanel implements View {
+public class LogedInView extends JPanel {
 
     private static User user;
     private static JPanel userPanel = new JPanel();
+    private static JPanel sidePanel = Panels.getSidePanel();
 
     private static final String[] options = {"Java", "Kotlin", "Scala", "Groovy", "Python", "C"};
     public static ComboBox<String> languageBox = new ComboBox<>(options);
