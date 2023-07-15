@@ -3,13 +3,9 @@ package com.example.codewarsplugin.services.katas;
 import com.example.codewarsplugin.components.KataPrompt;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.LoginService;
-import com.example.codewarsplugin.services.WebDriver;
 import com.example.codewarsplugin.state.Panels;
-import com.example.codewarsplugin.state.views.LogedInView;
-import com.example.codewarsplugin.state.views.LoginView;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+
 
 import javax.swing.*;
 import java.io.IOException;
@@ -59,7 +55,7 @@ public class KataIdService {
                 }
                 @Override
                 protected void done() {
-                    KataPrompt.complete(success);
+                    Panels.getKataPrompt().complete(success);
                 }
             };
             worker.execute();

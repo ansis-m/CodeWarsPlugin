@@ -3,14 +3,14 @@ package com.example.codewarsplugin.services.project;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 
-public class ProjectManager {
+public class MyProjectManager {
 
     private static Project project;
     private static ToolWindow toolWindow;
 
     public static void init(Project project, ToolWindow toolWindow) {
-        ProjectManager.project = project;
-        ProjectManager.toolWindow = toolWindow;
+        MyProjectManager.project = project;
+        MyProjectManager.toolWindow = toolWindow;
     }
 
     public static Project getProject() {

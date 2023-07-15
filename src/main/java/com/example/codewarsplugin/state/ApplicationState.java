@@ -6,7 +6,6 @@ public class ApplicationState {
     private static Class nextView;
     private static Class previousView;
 
-
     public static void setView(Class view) {
         currentView = view;
     }

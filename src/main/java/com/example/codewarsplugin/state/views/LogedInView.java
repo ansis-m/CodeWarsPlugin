@@ -17,14 +17,15 @@ import java.util.regex.Pattern;
 public class LogedInView extends JPanel {
 
     private static User user;
-    private static JPanel userPanel = new JPanel();
-    private static JPanel sidePanel = Panels.getSidePanel();
+    private static JPanel userPanel;
 
     private static final String[] options = {"Java", "Kotlin", "Scala", "Groovy", "Python", "C"};
-    public static ComboBox<String> languageBox = new ComboBox<>(options);
+    public static ComboBox<String> languageBox;
 
     public LogedInView() {
         super();
+        userPanel = new JPanel();
+        languageBox = new ComboBox<>(options);
     }
 
 
@@ -32,9 +33,9 @@ public class LogedInView extends JPanel {
 
         setupUserFields(user);
 
-        sidePanel.add(Panels.getKataPrompt(), BorderLayout.CENTER);
-        sidePanel.revalidate();
-        sidePanel.repaint();
+        Panels.getSidePanel().add(Panels.getKataPrompt(), BorderLayout.CENTER);
+        Panels.getSidePanel().revalidate();
+        Panels.getSidePanel().repaint();
         return true;
     }
 
@@ -91,7 +92,7 @@ public class LogedInView extends JPanel {
 
         userPanel.add(languageBox);
 
-        sidePanel.add(userPanel, BorderLayout.NORTH);
+        Panels.getSidePanel().add(userPanel, BorderLayout.NORTH);
     }
 
 }

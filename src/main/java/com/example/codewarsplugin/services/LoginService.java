@@ -15,28 +15,23 @@ import java.util.Set;
 
 public class LoginService {
 
-    private static LoginService loginService = new LoginService();
-    private static Set<Cookie> allCookies = new HashSet<>();
+    private static Set<Cookie> allCookies;
     private static ChromeDriver driver;
     private static String currentLogin;
     private static String currentPassword;
     private static String csrfToken;
     private static String sessionId;
-    private static boolean loginSuccess = false;
+    private static boolean loginSuccess;
 
     private LoginService(){
+        loginSuccess = false;
+        allCookies = new HashSet<>();
     }
 
-    public static LoginService getInstance(){
-        if (loginService == null){
-            loginService = new LoginService();
-        }
-        return loginService;
-    }
 
     public static void login(String login, String password){
         if(valid(login, password)){
-            LoginView.startSpinner();
+            Panels.getLoginView().startSpinner();
             getCookies(login, password);
         } else {
             Panels.getLoginManager().showLoginFailLabel("Enter a valid login and password to sign in!");
@@ -81,12 +76,12 @@ public class LoginService {
                 @Override
                 protected void done() {
                     if (!loginSuccess) {
-                        LoginView.stopSpinner();
+                        Panels.getLoginView().stopSpinner();
                         Panels.getLoginManager().showLoginFailLabel("Login failed. Bad email or password!");
                     } else {
-                        LogedInView.init();
-                        LoginView.cleanUp();
-                        LogedInView.setup();
+                        Panels.getLogedInView().init();
+                        Panels.getLoginView().cleanUp();
+                        Panels.getLogedInView().setup();
                     }
                 }
             };

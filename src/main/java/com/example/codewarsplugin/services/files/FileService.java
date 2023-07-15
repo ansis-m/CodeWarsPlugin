@@ -1,7 +1,7 @@
 package com.example.codewarsplugin.services.files;
 
 import com.example.codewarsplugin.models.kata.KataInput;
-import com.example.codewarsplugin.services.project.ProjectManager;
+import com.example.codewarsplugin.services.project.MyProjectManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -21,7 +21,7 @@ public class FileService {
 
     public static void createFile(KataInput input){
 
-        Project project = ProjectManager.getProject();
+        Project project = MyProjectManager.getProject();
 
         System.out.println("Base path: " + project.getBasePath());
         System.out.println("Base name: " + project.getName());

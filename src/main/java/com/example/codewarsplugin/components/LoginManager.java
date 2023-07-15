@@ -18,15 +18,16 @@ public class LoginManager extends JPanel{
     public static JButton submitButton;
     public static JLabel promptLabel;
     public static JLabel invalidPasswordLabel;
-    private static final GridBagConstraints constraints = new GridBagConstraints();
-    private static JLabel spinner = new JLabel(new AnimatedIcon.Big());
-
+    private static GridBagConstraints constraints;
+    private static JLabel spinner;
     private static JPanel cardPanel;
     private static CardLayout cardLayout;
 
 
     public LoginManager(){
         super();
+        constraints = new GridBagConstraints();
+        spinner = new JLabel(new AnimatedIcon.Big());
         setLayout(new GridBagLayout());
         textField = new JTextField(20);
         passwordField = new JPasswordField(20);

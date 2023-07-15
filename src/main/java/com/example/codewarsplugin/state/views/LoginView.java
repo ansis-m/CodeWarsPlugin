@@ -9,32 +9,35 @@ import java.awt.*;
 public class LoginView extends JPanel{
 
 
-    private static JPanel sidePanel = Panels.getSidePanel();
-
-
     public static boolean setup() {
-        sidePanel.setLayout(new BorderLayout());
-        sidePanel.add(Panels.getTopImagePanel(), BorderLayout.NORTH);
+
+        System.out.println("\n\n\nSETUP\n\n\n");
+
+
+        Panels.getSidePanel().setLayout(new BorderLayout());
+        Panels.getSidePanel().add(Panels.getTopImagePanel(), BorderLayout.NORTH);
         //sidePanel.add(Panels.getTitlePanel(), BorderLayout.CENTER);
-        sidePanel.add(Panels.getLoginManager(), BorderLayout.SOUTH);
+        Panels.getSidePanel().add(Panels.getLoginManager(), BorderLayout.SOUTH);
+        Panels.getSidePanel().revalidate();
+        Panels.getSidePanel().repaint();
         return true;
     }
 
     public static void startSpinner() {
         Panels.getLoginManager().startSpinner();
-        sidePanel.revalidate();
-        sidePanel.repaint();
+        Panels.getSidePanel().revalidate();
+        Panels.getSidePanel().repaint();
     }
 
     public static boolean cleanUp() {
-        sidePanel.remove(Panels.getLoginManager());
-        sidePanel.remove(Panels.getTopImagePanel());
+        Panels.getSidePanel().remove(Panels.getLoginManager());
+        Panels.getSidePanel().remove(Panels.getTopImagePanel());
         return false;
     }
 
     public static void stopSpinner(){
         Panels.getLoginManager().stopSpinner();
-        sidePanel.revalidate();
-        sidePanel.repaint();
+        Panels.getSidePanel().revalidate();
+        Panels.getSidePanel().repaint();
     }
 }

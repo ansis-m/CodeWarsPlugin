@@ -15,18 +15,27 @@ public class KataPrompt extends JPanel {
     private static JButton submitButton;
     private static JLabel promptLabel;
     private static JLabel invalidKataLabel;
-    private static JPanel cardButtonPanel = new JPanel();
-    private static CardLayout cardButtonLayout = new CardLayout();
+    private static JPanel cardButtonPanel;
+    private static CardLayout cardButtonLayout;
 
-    private static JPanel cardKataPanel = new JPanel();
-    private static CardLayout cardKataLayout = new CardLayout();
-    private static JPanel emptyKataPanel = new JPanel();
-    private static JLabel spinner = new JLabel(new AnimatedIcon.Big());
-    private static final GridBagConstraints constraints = new GridBagConstraints();
+    private static JPanel cardKataPanel;
+    private static CardLayout cardKataLayout;
+    private static JPanel emptyKataPanel;
+    private static JLabel spinner;
+    private static GridBagConstraints constraints;
 
 
     public KataPrompt(){
         super();
+
+        cardButtonPanel = new JPanel();
+        cardButtonLayout = new CardLayout();
+        cardKataPanel = new JPanel();
+        cardKataLayout = new CardLayout();
+        emptyKataPanel = new JPanel();
+        spinner = new JLabel(new AnimatedIcon.Big());
+        constraints = new GridBagConstraints();
+
         setLayout(new GridBagLayout());
         textField = new JTextField(30);
         submitButton = new JButton("Get Kata");
@@ -42,13 +51,18 @@ public class KataPrompt extends JPanel {
     }
 
     private void addButtonPushedListener() {
-        submitButton.addActionListener(this::searchKata);
+        submitButton.addActionListener((e) ->{
+            KataRecord record = KataIdService.getKataRecord(textField.getText());
+            System.out.println(record);
+            cardButtonLayout.show(cardButtonPanel, "spinner");
+            revalidate();
+            repaint();
+        });
     }
 
     private void searchKata(ActionEvent event) {
         startSpinner();
-        KataRecord record = KataIdService.getKataRecord(textField.getText());
-        System.out.println(record);
+
     }
 
     public static void complete(boolean success){
@@ -103,9 +117,7 @@ public class KataPrompt extends JPanel {
     }
 
     public void startSpinner() {
-        cardButtonLayout.show(cardButtonPanel, "spinner");
-        revalidate();
-        repaint();
+
     }
 
     public void stopSpinner() {

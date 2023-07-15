@@ -8,10 +8,11 @@ import java.awt.*;
 
 public class TopImagePanel extends JPanel {
 
-    private static Icon icon = IconLoader.getIcon("/icons/logo-square.png", SidePanel.class);
+    private static Icon icon;
 
     public TopImagePanel(){
         super();
+        icon = IconLoader.getIcon("/icons/logo-square.png", SidePanel.class);
         setLayout(new BorderLayout());
         JLabel imageLabel = new JLabel(icon);
         add(imageLabel, BorderLayout.CENTER);
