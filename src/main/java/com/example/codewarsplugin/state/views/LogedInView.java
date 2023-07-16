@@ -16,11 +16,11 @@ import java.util.regex.Pattern;
 
 public class LogedInView extends JPanel {
 
-    private static User user;
-    private static JPanel userPanel;
+    private User user;
+    private JPanel userPanel;
 
-    private static final String[] options = {"Java", "Kotlin", "Scala", "Groovy", "Python", "C"};
-    public static ComboBox<String> languageBox;
+    private String[] options = {"Java", "Kotlin", "Scala", "Groovy", "Python", "C"};
+    private ComboBox<String> languageBox;
     private Panels panels;
 
     public LogedInView(Panels panels) {

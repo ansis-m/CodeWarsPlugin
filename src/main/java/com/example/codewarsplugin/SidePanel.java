@@ -1,5 +1,6 @@
 package com.example.codewarsplugin;
 
+import com.example.codewarsplugin.services.LoginService;
 import com.example.codewarsplugin.services.WebDriver;
 import com.example.codewarsplugin.services.project.MyProjectManager;
 import com.example.codewarsplugin.state.ApplicationState;
@@ -10,6 +11,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.wm.ToolWindow;
 
 import javax.swing.*;
+import java.awt.*;
 
 //177, 54, 30
 public class SidePanel extends JPanel {
@@ -20,8 +22,13 @@ public class SidePanel extends JPanel {
         panels.setSidePanel(this);
         WebDriver.init();
         Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
-        if (panels.getLoginView().setup()){
+        if (!LoginService.loginSuccess){
+            panels.getLoginView().setup();
             ApplicationState.setView(LoginView.class);
+        } else {
+            setLayout(new BorderLayout());
+            panels.getLogedInView().init();
+            panels.getLogedInView().setup();
         }
         MyProjectManager.init(project, toolWindow);
         ProjectManager.getInstance().addProjectManagerListener(new MyProjectManagerListener()); //kautkaada servisa metode

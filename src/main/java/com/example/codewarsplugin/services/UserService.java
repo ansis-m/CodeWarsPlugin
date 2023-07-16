@@ -10,8 +10,12 @@ public class UserService {
 
 
     private static ChromeDriver chromeDriver;
+    private static User user;
 
     public static User getUser() {
+        if(user != null) {
+            return user;
+        }
         chromeDriver = WebDriver.getChromeDriver();
         JavascriptExecutor jsExecutor = (JavascriptExecutor) chromeDriver;
         String serializedObjects = (String) jsExecutor.executeScript(
@@ -35,7 +39,8 @@ public class UserService {
         try {
             JsonNode rootNode = objectMapper.readTree(serializedObjects);
             JsonNode targetObject = findObjectWithField(rootNode, "career_paths");
-            return objectMapper.treeToValue(targetObject, User.class);
+            user = objectMapper.treeToValue(targetObject, User.class);
+            return user;
         } catch (Exception e) {
             e.printStackTrace();
         }

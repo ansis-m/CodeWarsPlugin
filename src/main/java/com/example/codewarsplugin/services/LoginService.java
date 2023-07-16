@@ -13,17 +13,15 @@ import java.util.Set;
 
 public class LoginService {
 
-    private static Set<Cookie> allCookies;
+    private static Set<Cookie> allCookies = new HashSet<>();
     private static ChromeDriver driver;
     private static String currentLogin;
     private static String currentPassword;
     private static String csrfToken;
     private static String sessionId;
-    private static boolean loginSuccess;
+    public static boolean loginSuccess = false;
 
     private LoginService(){
-        loginSuccess = false;
-        allCookies = new HashSet<>();
     }
 
 
@@ -38,6 +36,12 @@ public class LoginService {
     private static void getCookies(String login, String password, Panels panels) {
 
         System.out.println("getCookies");
+
+        if (loginSuccess) {
+            panels.getLogedInView().init();
+            panels.getLoginView().cleanUp();
+            panels.getLogedInView().setup();
+        }
 
         try{
             SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
