@@ -69,8 +69,6 @@ public class LoginService {
                         return null;
                     }
                     loginSuccess = true;
-                    String[] arg = {};
-                    //laikam vajadzetu turpinat ar draiveri, bet pagaidam paliek
                     allCookies = driver.manage().getCookies();
                     csrfToken = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get().getValue();
                     sessionId = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get().getValue();
@@ -82,7 +80,7 @@ public class LoginService {
                 @Override
                 protected void done() {
                     if (!loginSuccess) {
-                        vars.getLoginManager().stopSpinner();
+                        SyncService.stopLoginSpinner();
                         vars.getLoginManager().showLoginFailLabel("Login failed. Bad email or password!");
                     } else {
                         SyncService.login();
@@ -91,7 +89,7 @@ public class LoginService {
             };
             worker.execute();
         } catch (Exception e){
-            vars.getLoginManager().stopSpinner();
+            SyncService.stopLoginSpinner();
             System.out.println("Exception trying to login: " + e.getMessage());
         }
     }

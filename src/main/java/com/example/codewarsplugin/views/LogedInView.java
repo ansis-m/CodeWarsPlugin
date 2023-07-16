@@ -98,12 +98,9 @@ public class LogedInView extends JPanel {
     }
 
     public void cleanUp(){
-
         vars.getSidePanel().remove(userPanel);
         vars.getSidePanel().remove(vars.getKataPrompt());
-
         userPanel = null;
-
     }
 
 }

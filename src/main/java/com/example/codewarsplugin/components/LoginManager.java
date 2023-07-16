@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.services.LoginService;
+import com.example.codewarsplugin.state.SyncService;
 import com.example.codewarsplugin.state.Vars;
 import com.intellij.ui.AnimatedIcon;
 import groovy.transform.EqualsAndHashCode;
@@ -139,7 +140,7 @@ public class LoginManager extends JPanel{
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    startSpinner();
+                    SyncService.startLoginSpinner();
                     LoginService.login(textField.getText(), new String(passwordField.getPassword()), vars);
                 }
             }
@@ -153,7 +154,7 @@ public class LoginManager extends JPanel{
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                startSpinner();
+                SyncService.startLoginSpinner();
                 LoginService.login(textField.getText(), new String(passwordField.getPassword()), vars);
             }
         });

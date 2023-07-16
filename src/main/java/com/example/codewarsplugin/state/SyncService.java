@@ -45,4 +45,21 @@ public class SyncService {
         }
 
     }
+
+    public static void startLoginSpinner(){
+        for(StateParams p : stateParamsList) {
+            var vars = p.getVars();
+            vars.getLoginManager().startSpinner();
+        }
+
+    }
+
+    public static void stopLoginSpinner(){
+        for(StateParams p : stateParamsList) {
+            var vars = p.getVars();
+            vars.getLoginManager().stopSpinner();
+        }
+
+    }
+
 }
