@@ -1,7 +1,7 @@
 package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.SidePanel;
-import com.example.codewarsplugin.state.Panels;
+import com.example.codewarsplugin.state.Vars;
 import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
@@ -11,7 +11,7 @@ public class TopImagePanel extends JPanel {
 
     private Icon icon;
 
-    public TopImagePanel(Panels panels){
+    public TopImagePanel(Vars vars){
         super();
         icon = IconLoader.getIcon("/icons/logo-square.png", SidePanel.class);
         setLayout(new BorderLayout());

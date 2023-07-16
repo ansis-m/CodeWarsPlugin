@@ -1,7 +1,7 @@
 package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.services.LoginService;
-import com.example.codewarsplugin.state.Panels;
+import com.example.codewarsplugin.state.Vars;
 import com.intellij.ui.AnimatedIcon;
 import groovy.transform.EqualsAndHashCode;
 
@@ -23,12 +23,12 @@ public class LoginManager extends JPanel{
     private JLabel spinner;
     private JPanel cardPanel;
     private CardLayout cardLayout;
-    private Panels panels;
+    private Vars vars;
 
 
-    public LoginManager(Panels panels){
+    public LoginManager(Vars vars){
         super();
-        this.panels = panels;
+        this.vars = vars;
         constraints = new GridBagConstraints();
         spinner = new JLabel(new AnimatedIcon.Big());
         setLayout(new GridBagLayout());
@@ -90,11 +90,8 @@ public class LoginManager extends JPanel{
 
         var defaultColor = promptLabel.getForeground();
         var defaultText = promptLabel.getText();
-
         promptLabel.setText(message);
         promptLabel.setForeground(Color.red);
-
-
         revalidate();
         repaint();
         Timer timer = new Timer(1500, e -> SwingUtilities.invokeLater(() -> {
@@ -142,7 +139,8 @@ public class LoginManager extends JPanel{
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    LoginService.login(textField.getText(), new String(passwordField.getPassword()), panels);
+                    startSpinner();
+                    LoginService.login(textField.getText(), new String(passwordField.getPassword()), vars);
                 }
             }
             @Override
@@ -156,7 +154,7 @@ public class LoginManager extends JPanel{
             @Override
             public void actionPerformed(ActionEvent e) {
                 startSpinner();
-                LoginService.login(textField.getText(), new String(passwordField.getPassword()), panels);
+                LoginService.login(textField.getText(), new String(passwordField.getPassword()), vars);
             }
         });
     }
@@ -169,5 +167,7 @@ public class LoginManager extends JPanel{
 
     public void stopSpinner() {
         cardLayout.show(cardPanel, "submitButton");
+        revalidate();
+        repaint();
     }
 }

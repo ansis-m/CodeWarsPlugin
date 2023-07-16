@@ -1,8 +1,8 @@
-package com.example.codewarsplugin.state.views;
+package com.example.codewarsplugin.views;
 
 import com.example.codewarsplugin.models.user.User;
 import com.example.codewarsplugin.services.UserService;
-import com.example.codewarsplugin.state.Panels;
+import com.example.codewarsplugin.state.Vars;
 import com.intellij.openapi.ui.ComboBox;
 
 import javax.imageio.ImageIO;
@@ -21,11 +21,11 @@ public class LogedInView extends JPanel {
 
     private String[] options = {"Java", "Kotlin", "Scala", "Groovy", "Python", "C"};
     private ComboBox<String> languageBox;
-    private Panels panels;
+    private Vars vars;
 
-    public LogedInView(Panels panels) {
+    public LogedInView(Vars vars) {
         super();
-        this.panels = panels;
+        this.vars = vars;
         userPanel = new JPanel();
         languageBox = new ComboBox<>(options);
     }
@@ -33,20 +33,12 @@ public class LogedInView extends JPanel {
 
     public boolean setup() {
 
-        setupUserFields(user);
-
-        panels.getSidePanel().add(panels.getKataPrompt(), BorderLayout.CENTER);
-        panels.getSidePanel().revalidate();
-        panels.getSidePanel().repaint();
-        return true;
-    }
-
-    public static boolean cleanUp() {
-        return false;
-    }
-
-    public void init() {
         user = UserService.getUser();
+        setupUserFields(user);
+        vars.getSidePanel().add(vars.getKataPrompt(), BorderLayout.CENTER);
+        vars.getSidePanel().revalidate();
+        vars.getSidePanel().repaint();
+        return true;
     }
 
     private static String extractImageUrl(String html) {
@@ -94,7 +86,7 @@ public class LogedInView extends JPanel {
 
         userPanel.add(languageBox);
 
-        panels.getSidePanel().add(userPanel, BorderLayout.NORTH);
+        vars.getSidePanel().add(userPanel, BorderLayout.NORTH);
     }
 
 }

@@ -2,7 +2,7 @@ package com.example.codewarsplugin.services.katas;
 
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.LoginService;
-import com.example.codewarsplugin.state.Panels;
+import com.example.codewarsplugin.state.Vars;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -31,7 +31,7 @@ public class KataIdService {
     public KataIdService(){
     }
 
-    public void getKataRecord(String name, Panels panels) {
+    public void getKataRecord(String name, Vars vars) {
         success = false;
         KataRecord record = null;
         try{
@@ -57,9 +57,9 @@ public class KataIdService {
                 protected void done() {
                     try{
                         KataRecord record = get();
-                        panels.getKataPrompt().complete(record);
+                        vars.getKataPrompt().complete(record);
                     } catch (Exception e) {
-                        panels.getKataPrompt().complete(null);
+                        vars.getKataPrompt().complete(null);
                     }
 
                 }

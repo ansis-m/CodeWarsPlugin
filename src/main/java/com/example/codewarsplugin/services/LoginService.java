@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.services;
 
-import com.example.codewarsplugin.state.Panels;
+import com.example.codewarsplugin.state.StaticVars;
+import com.example.codewarsplugin.state.Vars;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -25,22 +26,23 @@ public class LoginService {
     }
 
 
-    public static void login(String login, String password, Panels panels){
+    public static void login(String login, String password, Vars vars){
         if(valid(login, password)){
-            getCookies(login, password, panels);
+            getCookies(login, password, vars);
         } else {
-            panels.getLoginManager().showLoginFailLabel("Enter a valid login and password to sign in!");
+            vars.getLoginManager().stopSpinner();
+            vars.getLoginManager().showLoginFailLabel("Enter a valid login and password to sign in!");
         }
     }
 
-    private static void getCookies(String login, String password, Panels panels) {
+    private static void getCookies(String login, String password, Vars vars) {
 
         System.out.println("getCookies");
 
         if (loginSuccess) {
-            panels.getLogedInView().init();
-            panels.getLoginView().cleanUp();
-            panels.getLogedInView().setup();
+            vars.getLoginManager().stopSpinner();
+            vars.getLoginView().cleanUp();
+            vars.getLogedInView().setup();
             return;
         }
 
@@ -77,17 +79,16 @@ public class LoginService {
                 @Override
                 protected void done() {
                     if (!loginSuccess) {
-                        panels.getLoginView().stopSpinner();
-                        panels.getLoginManager().showLoginFailLabel("Login failed. Bad email or password!");
+                        vars.getLoginManager().stopSpinner();
+                        vars.getLoginManager().showLoginFailLabel("Login failed. Bad email or password!");
                     } else {
-                        panels.getLogedInView().init();
-                        panels.getLoginView().cleanUp();
-                        panels.getLogedInView().setup();
+                        StaticVars.login();
                     }
                 }
             };
             worker.execute();
         } catch (Exception e){
+            vars.getLoginManager().stopSpinner();
             System.out.println("Exception trying to login: " + e.getMessage());
         }
     }

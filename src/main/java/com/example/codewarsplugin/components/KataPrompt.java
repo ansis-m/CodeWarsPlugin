@@ -2,7 +2,7 @@ package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.katas.KataIdService;
-import com.example.codewarsplugin.state.Panels;
+import com.example.codewarsplugin.state.Vars;
 import com.intellij.ui.AnimatedIcon;
 
 import javax.swing.*;
@@ -23,12 +23,12 @@ public class KataPrompt extends JPanel {
     private JPanel emptyKataPanel;
     private JLabel spinner;
     private GridBagConstraints constraints;
-    private Panels panels;
+    private Vars vars;
 
 
-    public KataPrompt(Panels panels){
+    public KataPrompt(Vars vars){
         super();
-        this.panels = panels;
+        this.vars = vars;
         cardButtonPanel = new JPanel();
         cardButtonLayout = new CardLayout();
         cardKataPanel = new JPanel();
@@ -55,7 +55,7 @@ public class KataPrompt extends JPanel {
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new KataIdService().getKataRecord(textField.getText(), panels);
+                new KataIdService().getKataRecord(textField.getText(), vars);
                 cardButtonLayout.show(cardButtonPanel, "spinner");
                 revalidate();
                 repaint();
@@ -73,12 +73,12 @@ public class KataPrompt extends JPanel {
         stopSpinner();
         if (record == null) {
             cardKataLayout.show(cardKataPanel, "invalid");
-            panels.getSidePanel().revalidate();
-            panels.getSidePanel().repaint();
+            vars.getSidePanel().revalidate();
+            vars.getSidePanel().repaint();
             Timer timer = new Timer(2000, e -> SwingUtilities.invokeLater(() -> {
                 cardKataLayout.show(cardKataPanel, "empty");
-                panels.getSidePanel().revalidate();
-                panels.getSidePanel().repaint();
+                vars.getSidePanel().revalidate();
+                vars.getSidePanel().repaint();
             }));
             timer.setRepeats(false);
             timer.start();

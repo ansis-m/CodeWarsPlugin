@@ -1,12 +1,13 @@
 package com.example.codewarsplugin.state;
 
 import com.example.codewarsplugin.components.*;
-import com.example.codewarsplugin.state.views.LogedInView;
-import com.example.codewarsplugin.state.views.LoginView;
+import com.example.codewarsplugin.views.LogedInView;
+import com.example.codewarsplugin.views.LoginView;
+
 
 import javax.swing.*;
 
-public class Panels {
+public class Vars {
 
     private JPanel sidePanel;
     private LoginManager loginManager;
