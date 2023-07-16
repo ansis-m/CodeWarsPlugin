@@ -20,15 +20,13 @@ public class LogedInView extends JPanel implements View{
     private User user;
     private JPanel userPanel;
 
-    private String[] options = {"Java", "Kotlin", "Scala", "Groovy", "Python", "C"};
-    private ComboBox<String> languageBox;
+
     private JButton logoutButton = new JButton("LOG OUT");
     private Vars vars;
 
     public LogedInView(Vars vars) {
         super();
         this.vars = vars;
-        languageBox = new ComboBox<>(options);
     }
 
 
@@ -56,7 +54,6 @@ public class LogedInView extends JPanel implements View{
 
         userPanel = new JPanel();
         if (user == null) {
-            userPanel.add(languageBox);
             return;
         }
         userPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 20, 20));
@@ -80,7 +77,6 @@ public class LogedInView extends JPanel implements View{
         JLabel honorLabel = new JLabel(String.valueOf(user.getHonor()));
         honorLabel.setFont(newFont);
         userPanel.add(honorLabel);
-        userPanel.add(languageBox);
         logoutButton.addActionListener((e) -> {
             SyncService.logout();
         });

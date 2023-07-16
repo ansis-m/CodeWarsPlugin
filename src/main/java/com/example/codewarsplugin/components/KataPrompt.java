@@ -3,6 +3,7 @@ package com.example.codewarsplugin.components;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.katas.KataIdService;
 import com.example.codewarsplugin.state.Vars;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.AnimatedIcon;
 
 import javax.swing.*;
@@ -21,6 +22,7 @@ public class KataPrompt extends JPanel {
     private JPanel cardKataPanel;
     private CardLayout cardKataLayout;
     private JPanel emptyKataPanel;
+    private JPanel filledKataPanel;
     private JLabel spinner;
     private GridBagConstraints constraints;
     private KataRecord record;
@@ -36,6 +38,7 @@ public class KataPrompt extends JPanel {
         cardKataPanel = new JPanel();
         cardKataLayout = new CardLayout();
         emptyKataPanel = new JPanel();
+        filledKataPanel = getFilledKataPanel(null);
         spinner = new JLabel(new AnimatedIcon.Big());
         constraints = new GridBagConstraints();
 
@@ -51,6 +54,36 @@ public class KataPrompt extends JPanel {
         //addEnterKeyListener();
         addElementsToPanel();
         addKataRecordSearchListeners();
+    }
+
+    private JPanel getFilledKataPanel(KataRecord record) {
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+
+        var constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.CENTER;
+        constraints.insets = new Insets(5, 5, 5, 5);
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+
+        var label = new JLabel(record == null ? "Selected Kata: " : "Selected Kata: " + record.getName());
+        label.setFont(label.getFont().deriveFont(14f));
+        panel.add(label, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+
+        ComboBox<String> languageBox = new ComboBox<>(record == null ? new String[]{} : record.getLanguages());
+        panel.add(languageBox, constraints);
+
+
+        var button = new JButton("Setup Kata");
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        panel.add(button, constraints);
+        return panel;
     }
 
     private void addKataRecordSearchListeners() {
@@ -88,6 +121,13 @@ public class KataPrompt extends JPanel {
             }));
             timer.setRepeats(false);
             timer.start();
+        } else {
+            cardKataPanel.remove(filledKataPanel);
+            filledKataPanel = getFilledKataPanel(record);
+            cardKataPanel.add(filledKataPanel, "kata");
+            cardKataLayout.show(cardKataPanel, "kata");
+            cardKataPanel.revalidate();
+            cardKataPanel.repaint();
         }
     }
 
@@ -118,6 +158,7 @@ public class KataPrompt extends JPanel {
 
         cardKataPanel.add(emptyKataPanel, "empty");
         cardKataPanel.add(invalidKataLabel, "invalid");
+        cardKataPanel.add(filledKataPanel, "kata");
 
         constraints.gridx = 0;
         constraints.gridy = 3;
