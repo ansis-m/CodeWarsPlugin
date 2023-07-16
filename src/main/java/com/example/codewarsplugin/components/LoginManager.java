@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.services.LoginService;
+import com.example.codewarsplugin.state.Panels;
 import com.intellij.ui.AnimatedIcon;
 import groovy.transform.EqualsAndHashCode;
 
@@ -13,19 +14,21 @@ import java.awt.event.*;
 @EqualsAndHashCode(callSuper = true)
 public class LoginManager extends JPanel{
 
-    public static JPasswordField passwordField;
-    public static JTextField textField;
-    public static JButton submitButton;
-    public static JLabel promptLabel;
-    public static JLabel invalidPasswordLabel;
-    private static GridBagConstraints constraints;
-    private static JLabel spinner;
-    private static JPanel cardPanel;
-    private static CardLayout cardLayout;
+    public JPasswordField passwordField;
+    public JTextField textField;
+    public JButton submitButton;
+    public JLabel promptLabel;
+    public JLabel invalidPasswordLabel;
+    private GridBagConstraints constraints;
+    private JLabel spinner;
+    private JPanel cardPanel;
+    private CardLayout cardLayout;
+    private Panels panels;
 
 
-    public LoginManager(){
+    public LoginManager(Panels panels){
         super();
+        this.panels = panels;
         constraints = new GridBagConstraints();
         spinner = new JLabel(new AnimatedIcon.Big());
         setLayout(new GridBagLayout());
@@ -105,7 +108,7 @@ public class LoginManager extends JPanel{
     }
 
 
-    private static void addListener(JTextComponent textField, String input) {
+    private void addListener(JTextComponent textField, String input) {
         textField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -131,7 +134,7 @@ public class LoginManager extends JPanel{
         });
     }
 
-    private static void addEnterKeyListener(){
+    private void addEnterKeyListener(){
         passwordField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -139,7 +142,7 @@ public class LoginManager extends JPanel{
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    LoginService.login(textField.getText(), new String(passwordField.getPassword()));
+                    LoginService.login(textField.getText(), new String(passwordField.getPassword()), panels);
                 }
             }
             @Override
@@ -149,13 +152,19 @@ public class LoginManager extends JPanel{
     }
 
     private void addButtonPushedListener() {
-        submitButton.addActionListener(e -> {
-            LoginService.login(textField.getText(), new String(passwordField.getPassword()));
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                startSpinner();
+                LoginService.login(textField.getText(), new String(passwordField.getPassword()), panels);
+            }
         });
     }
 
     public void startSpinner() {
         cardLayout.show(cardPanel, "spinner");
+        revalidate();
+        repaint();
     }
 
     public void stopSpinner() {

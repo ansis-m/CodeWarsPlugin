@@ -1,6 +1,5 @@
 package com.example.codewarsplugin.services.katas;
 
-import com.example.codewarsplugin.components.KataPrompt;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.LoginService;
 import com.example.codewarsplugin.state.Panels;
@@ -22,23 +21,23 @@ import java.util.regex.Pattern;
 
 public class KataIdService {
 
-    private static final String BASE_URL = "https://www.codewars.com/api/v1/code-challenges/";
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private final String BASE_URL = "https://www.codewars.com/api/v1/code-challenges/";
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final HttpClient httpClient = HttpClient.newHttpClient();
     private static final Pattern NON_LATIN_PATTERN = Pattern.compile("[^\\w-]");
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
-    public static KataRecord record = null;
     public static boolean success = false;
 
-    private KataIdService(){
+    public KataIdService(){
     }
 
-    public static KataRecord getKataRecord(String name) {
+    public void getKataRecord(String name, Panels panels) {
         success = false;
+        KataRecord record = null;
         try{
-            SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            SwingWorker<KataRecord, Void> worker = new SwingWorker<KataRecord, Void>() {
                 @Override
-                protected Void doInBackground() throws InterruptedException, IOException {
+                protected KataRecord doInBackground() throws InterruptedException, IOException {
                     var slug = generateSlug(name);
                     String url = BASE_URL + slug;
                     HttpRequest request = HttpRequest.newBuilder()
@@ -47,23 +46,29 @@ public class KataIdService {
                     HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
                     if (response.statusCode() >= 200 && response.statusCode() < 300) {
-                        record = objectMapper.readValue(response.body(), KataRecord.class);
+                        KataRecord record = objectMapper.readValue(response.body(), KataRecord.class);
                         record.setPath(getKataPath(record.getId()));
                         success = true;
+                        return record;
                     }
                     return null;
                 }
                 @Override
                 protected void done() {
-                    Panels.getKataPrompt().complete(success);
+                    try{
+                        KataRecord record = get();
+                        panels.getKataPrompt().complete(record);
+                    } catch (Exception e) {
+                        panels.getKataPrompt().complete(null);
+                    }
+
                 }
             };
             worker.execute();
         } catch (Exception ignored){}
-        return record;
     }
 
-    public static String getKataPath(String id) {
+    public String getKataPath(String id) {
         String csrfToken = LoginService.getCsrfToken();
         String sessionId = LoginService.getSessionId();
 

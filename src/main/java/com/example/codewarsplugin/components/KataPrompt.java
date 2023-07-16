@@ -8,26 +8,27 @@ import com.intellij.ui.AnimatedIcon;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class KataPrompt extends JPanel {
 
-    private static JTextField textField;
-    private static JButton submitButton;
-    private static JLabel promptLabel;
-    private static JLabel invalidKataLabel;
-    private static JPanel cardButtonPanel;
-    private static CardLayout cardButtonLayout;
+    private JTextField textField;
+    private JButton submitButton;
+    private JLabel promptLabel;
+    private JLabel invalidKataLabel;
+    private JPanel cardButtonPanel;
+    private CardLayout cardButtonLayout;
+    private JPanel cardKataPanel;
+    private CardLayout cardKataLayout;
+    private JPanel emptyKataPanel;
+    private JLabel spinner;
+    private GridBagConstraints constraints;
+    private Panels panels;
 
-    private static JPanel cardKataPanel;
-    private static CardLayout cardKataLayout;
-    private static JPanel emptyKataPanel;
-    private static JLabel spinner;
-    private static GridBagConstraints constraints;
 
-
-    public KataPrompt(){
+    public KataPrompt(Panels panels){
         super();
-
+        this.panels = panels;
         cardButtonPanel = new JPanel();
         cardButtonLayout = new CardLayout();
         cardKataPanel = new JPanel();
@@ -51,12 +52,14 @@ public class KataPrompt extends JPanel {
     }
 
     private void addButtonPushedListener() {
-        submitButton.addActionListener((e) ->{
-            KataRecord record = KataIdService.getKataRecord(textField.getText());
-            System.out.println(record);
-            cardButtonLayout.show(cardButtonPanel, "spinner");
-            revalidate();
-            repaint();
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new KataIdService().getKataRecord(textField.getText(), panels);
+                cardButtonLayout.show(cardButtonPanel, "spinner");
+                revalidate();
+                repaint();
+            }
         });
     }
 
@@ -65,17 +68,17 @@ public class KataPrompt extends JPanel {
 
     }
 
-    public static void complete(boolean success){
-        System.out.println("complete: " + KataIdService.record);
-        Panels.getKataPrompt().stopSpinner();
-        if (!success) {
+    public void complete(KataRecord record){
+        System.out.println("complete: " + this+ record);
+        stopSpinner();
+        if (record == null) {
             cardKataLayout.show(cardKataPanel, "invalid");
-            Panels.getSidePanel().revalidate();
-            Panels.getSidePanel().repaint();
+            panels.getSidePanel().revalidate();
+            panels.getSidePanel().repaint();
             Timer timer = new Timer(2000, e -> SwingUtilities.invokeLater(() -> {
                 cardKataLayout.show(cardKataPanel, "empty");
-                Panels.getSidePanel().revalidate();
-                Panels.getSidePanel().repaint();
+                panels.getSidePanel().revalidate();
+                panels.getSidePanel().repaint();
             }));
             timer.setRepeats(false);
             timer.start();

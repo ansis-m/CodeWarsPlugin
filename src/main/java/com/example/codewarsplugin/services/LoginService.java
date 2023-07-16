@@ -1,8 +1,6 @@
 package com.example.codewarsplugin.services;
 
 import com.example.codewarsplugin.state.Panels;
-import com.example.codewarsplugin.state.views.LogedInView;
-import com.example.codewarsplugin.state.views.LoginView;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -29,17 +27,15 @@ public class LoginService {
     }
 
 
-    public static void login(String login, String password){
+    public static void login(String login, String password, Panels panels){
         if(valid(login, password)){
-            Panels.getLoginView().startSpinner();
-            getCookies(login, password);
+            getCookies(login, password, panels);
         } else {
-            Panels.getLoginManager().showLoginFailLabel("Enter a valid login and password to sign in!");
+            panels.getLoginManager().showLoginFailLabel("Enter a valid login and password to sign in!");
         }
-
     }
 
-    private static void getCookies(String login, String password) {
+    private static void getCookies(String login, String password, Panels panels) {
 
         System.out.println("getCookies");
 
@@ -76,12 +72,12 @@ public class LoginService {
                 @Override
                 protected void done() {
                     if (!loginSuccess) {
-                        Panels.getLoginView().stopSpinner();
-                        Panels.getLoginManager().showLoginFailLabel("Login failed. Bad email or password!");
+                        panels.getLoginView().stopSpinner();
+                        panels.getLoginManager().showLoginFailLabel("Login failed. Bad email or password!");
                     } else {
-                        Panels.getLogedInView().init();
-                        Panels.getLoginView().cleanUp();
-                        Panels.getLogedInView().setup();
+                        panels.getLogedInView().init();
+                        panels.getLoginView().cleanUp();
+                        panels.getLogedInView().setup();
                     }
                 }
             };

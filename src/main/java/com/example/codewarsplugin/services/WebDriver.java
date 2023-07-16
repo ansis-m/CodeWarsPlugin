@@ -13,10 +13,10 @@ public class WebDriver {
 
     public static void init() {
 
-//        if (chromeDriver != null) {
-//            System.out.println("\n\n\nNOT NULL\n\n\n");
-//            return;
-//        }
+        if (chromeDriver != null) {
+            System.out.println("\n\n\nNOT NULL\n\n\n");
+            return;
+        }
 
         SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
             @Override

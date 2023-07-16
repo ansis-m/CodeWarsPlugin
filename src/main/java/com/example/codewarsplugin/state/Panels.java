@@ -8,42 +8,42 @@ import javax.swing.*;
 
 public class Panels {
 
-    private static JPanel sidePanel;
-    private static LoginManager loginManager;
-    private static TopImagePanel topImagePanel;
-    private static KataPrompt kataPrompt;
-    private static LogedInView logedInView;
-    private static LoginView loginView;
+    private JPanel sidePanel;
+    private LoginManager loginManager;
+    private TopImagePanel topImagePanel;
+    private KataPrompt kataPrompt;
+    private LogedInView logedInView;
+    private LoginView loginView;
 
-    public static void init(){
-        loginManager = new LoginManager();
-        topImagePanel = new TopImagePanel();
-        kataPrompt = new KataPrompt();
-        logedInView = new LogedInView();
-        loginView = new LoginView();
+    public void init(){
+        loginManager = new LoginManager(this);
+        topImagePanel = new TopImagePanel(this);
+        kataPrompt = new KataPrompt(this);
+        logedInView = new LogedInView(this);
+        loginView = new LoginView(this);
     }
 
-    public static LogedInView getLogedInView() {
+    public LogedInView getLogedInView() {
         return logedInView;
     }
 
-    public static LoginView getLoginView() {
+    public LoginView getLoginView() {
         return loginView;
     }
 
-    public static LoginManager getLoginManager() {
+    public LoginManager getLoginManager() {
         return loginManager;
     }
-    public static TopImagePanel getTopImagePanel() {
+    public TopImagePanel getTopImagePanel() {
         return topImagePanel;
     }
-    public static KataPrompt getKataPrompt() {
+    public KataPrompt getKataPrompt() {
         return kataPrompt;
     }
-    public static JPanel getSidePanel() {
+    public JPanel getSidePanel() {
         return sidePanel;
     }
-    public static void setSidePanel(JPanel sidePanel) {
-        Panels.sidePanel = sidePanel;
+    public void setSidePanel(JPanel sidePanel) {
+        this.sidePanel = sidePanel;
     }
 }

@@ -21,21 +21,23 @@ public class LogedInView extends JPanel {
 
     private static final String[] options = {"Java", "Kotlin", "Scala", "Groovy", "Python", "C"};
     public static ComboBox<String> languageBox;
+    private Panels panels;
 
-    public LogedInView() {
+    public LogedInView(Panels panels) {
         super();
+        this.panels = panels;
         userPanel = new JPanel();
         languageBox = new ComboBox<>(options);
     }
 
 
-    public static boolean setup() {
+    public boolean setup() {
 
         setupUserFields(user);
 
-        Panels.getSidePanel().add(Panels.getKataPrompt(), BorderLayout.CENTER);
-        Panels.getSidePanel().revalidate();
-        Panels.getSidePanel().repaint();
+        panels.getSidePanel().add(panels.getKataPrompt(), BorderLayout.CENTER);
+        panels.getSidePanel().revalidate();
+        panels.getSidePanel().repaint();
         return true;
     }
 
@@ -43,7 +45,7 @@ public class LogedInView extends JPanel {
         return false;
     }
 
-    public static void init() {
+    public void init() {
         user = UserService.getUser();
     }
 
@@ -59,7 +61,7 @@ public class LogedInView extends JPanel {
     }
 
 
-    private static void setupUserFields(User user) {
+    private void setupUserFields(User user) {
 
         if (user == null) {
             userPanel.add(languageBox);
@@ -92,7 +94,7 @@ public class LogedInView extends JPanel {
 
         userPanel.add(languageBox);
 
-        Panels.getSidePanel().add(userPanel, BorderLayout.NORTH);
+        panels.getSidePanel().add(userPanel, BorderLayout.NORTH);
     }
 
 }
