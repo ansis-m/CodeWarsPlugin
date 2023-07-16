@@ -7,8 +7,8 @@ import com.intellij.ui.AnimatedIcon;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class KataPrompt extends JPanel {
 
@@ -23,7 +23,9 @@ public class KataPrompt extends JPanel {
     private JPanel emptyKataPanel;
     private JLabel spinner;
     private GridBagConstraints constraints;
+    private KataRecord record;
     private Vars vars;
+    private KataIdService kataIdService = new KataIdService();
 
 
     public KataPrompt(Vars vars){
@@ -48,28 +50,32 @@ public class KataPrompt extends JPanel {
         cardKataPanel.setLayout(cardKataLayout);
         //addEnterKeyListener();
         addElementsToPanel();
-        addButtonPushedListener();
+        addKataRecordSearchListeners();
     }
 
-    private void addButtonPushedListener() {
-        submitButton.addActionListener(new ActionListener() {
+    private void addKataRecordSearchListeners() {
+        submitButton.addActionListener(e -> {
+            startSpinner();
+            kataIdService.getKataRecord(textField.getText(), vars);
+        });
+        textField.addKeyListener(new KeyListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                new KataIdService().getKataRecord(textField.getText(), vars);
-                cardButtonLayout.show(cardButtonPanel, "spinner");
-                revalidate();
-                repaint();
+            public void keyTyped(KeyEvent e) {}
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    startSpinner();
+                    kataIdService.getKataRecord(textField.getText(), vars);
+                }
             }
+            @Override
+            public void keyReleased(KeyEvent e) {}
         });
     }
 
-    private void searchKata(ActionEvent event) {
-        startSpinner();
-
-    }
-
-    public void complete(KataRecord record){
-        System.out.println("complete: " + this+ record);
+    public void completeCallback(KataRecord record){
+        System.out.println("completeCallback: " + record);
+        this.record = record;
         stopSpinner();
         if (record == null) {
             cardKataLayout.show(cardKataPanel, "invalid");
@@ -120,7 +126,9 @@ public class KataPrompt extends JPanel {
     }
 
     public void startSpinner() {
-
+        cardButtonLayout.show(cardButtonPanel, "spinner");
+        revalidate();
+        repaint();
     }
 
     public void stopSpinner() {
@@ -128,5 +136,4 @@ public class KataPrompt extends JPanel {
         revalidate();
         repaint();
     }
-
 }

@@ -19,7 +19,6 @@ public class LoginManager extends JPanel{
     public JTextField textField;
     public JButton submitButton;
     public JLabel promptLabel;
-    public JLabel invalidPasswordLabel;
     private GridBagConstraints constraints;
     private JLabel spinner;
     private JPanel cardPanel;
@@ -151,12 +150,9 @@ public class LoginManager extends JPanel{
     }
 
     private void addButtonPushedListener() {
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SyncService.startLoginSpinner();
-                LoginService.login(textField.getText(), new String(passwordField.getPassword()), vars);
-            }
+        submitButton.addActionListener(e -> {
+            SyncService.startLoginSpinner();
+            LoginService.login(textField.getText(), new String(passwordField.getPassword()), vars);
         });
     }
 

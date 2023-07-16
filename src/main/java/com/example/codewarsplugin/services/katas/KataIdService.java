@@ -27,13 +27,13 @@ public class KataIdService {
     private static final Pattern NON_LATIN_PATTERN = Pattern.compile("[^\\w-]");
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
     public static boolean success = false;
+    private KataRecord record;
 
     public KataIdService(){
     }
 
     public void getKataRecord(String name, Vars vars) {
         success = false;
-        KataRecord record = null;
         try{
             SwingWorker<KataRecord, Void> worker = new SwingWorker<KataRecord, Void>() {
                 @Override
@@ -56,12 +56,10 @@ public class KataIdService {
                 @Override
                 protected void done() {
                     try{
-                        KataRecord record = get();
-                        vars.getKataPrompt().complete(record);
+                        vars.getKataPrompt().completeCallback(get());
                     } catch (Exception e) {
-                        vars.getKataPrompt().complete(null);
+                        vars.getKataPrompt().completeCallback(null);
                     }
-
                 }
             };
             worker.execute();
