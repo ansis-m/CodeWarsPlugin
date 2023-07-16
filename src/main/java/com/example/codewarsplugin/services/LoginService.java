@@ -41,6 +41,7 @@ public class LoginService {
             panels.getLogedInView().init();
             panels.getLoginView().cleanUp();
             panels.getLogedInView().setup();
+            return;
         }
 
         try{
