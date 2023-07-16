@@ -8,7 +8,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 public class UserService {
 
-
     private static ChromeDriver chromeDriver;
     private static User user;
 
@@ -62,5 +61,9 @@ public class UserService {
             }
         }
         return null;
+    }
+
+    public static void clearUser() {
+        user = null;
     }
 }

@@ -46,4 +46,17 @@ public class WebDriver {
         chromeDriver.quit();
         chromeDriver = null;
     }
+
+    public static void logout(){
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() {
+                chromeDriver.manage().deleteAllCookies();
+                chromeDriver.get("https://www.codewars.com/users/sign_in");
+                return null;
+            }
+        };
+        worker.execute();
+    }
+
 }

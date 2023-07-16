@@ -1,6 +1,6 @@
 package com.example.codewarsplugin.services;
 
-import com.example.codewarsplugin.state.StaticVars;
+import com.example.codewarsplugin.state.SyncService;
 import com.example.codewarsplugin.state.Vars;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -52,6 +52,9 @@ public class LoginService {
                 protected Void doInBackground() throws InterruptedException {
 
                     driver = WebDriver.getChromeDriver();
+                    if (!driver.getCurrentUrl().equals("https://www.codewars.com/users/sign_in")){
+                        driver.get("https://www.codewars.com/users/sign_in");
+                    }
                     WebElement inputElement = driver.findElement(By.id("user_email"));
                     inputElement.clear();
                     inputElement.sendKeys("maleckisansis@gmail.com");
@@ -82,7 +85,7 @@ public class LoginService {
                         vars.getLoginManager().stopSpinner();
                         vars.getLoginManager().showLoginFailLabel("Login failed. Bad email or password!");
                     } else {
-                        StaticVars.login();
+                        SyncService.login();
                     }
                 }
             };
@@ -120,5 +123,14 @@ public class LoginService {
 
     public static String getCurrentPassword() {
         return currentPassword;
+    }
+
+    public static void logout() {
+        allCookies = new HashSet<>();
+        currentLogin = null;
+        currentPassword = null;
+        csrfToken = null;
+        sessionId = null;
+        loginSuccess = false;
     }
 }

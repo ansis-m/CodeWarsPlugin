@@ -1,11 +1,14 @@
 package com.example.codewarsplugin.state;
 
+import com.example.codewarsplugin.services.LoginService;
+import com.example.codewarsplugin.services.UserService;
+import com.example.codewarsplugin.services.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class StaticVars {
+public class SyncService {
 
     private static ChromeDriver driver;
     private static List<StateParams> stateParamsList = new ArrayList();
@@ -23,20 +26,23 @@ public class StaticVars {
     }
 
     public static void login(){
-
         for(StateParams p : stateParamsList) {
-
             var vars = p.getVars();
-
             vars.getLoginManager().stopSpinner();
             vars.getLoginView().cleanUp();
             vars.getLogedInView().setup();
-
-
         }
-
-
-
     }
 
+    public static void logout() {
+        LoginService.logout();
+        UserService.clearUser();
+        WebDriver.logout();
+        for(StateParams p : stateParamsList) {
+            var vars = p.getVars();
+            vars.getLogedInView().cleanUp();
+            vars.getLoginView().setup();
+        }
+
+    }
 }

@@ -4,7 +4,7 @@ import com.example.codewarsplugin.services.LoginService;
 import com.example.codewarsplugin.services.WebDriver;
 import com.example.codewarsplugin.services.project.MyProjectManager;
 import com.example.codewarsplugin.state.StateParams;
-import com.example.codewarsplugin.state.StaticVars;
+import com.example.codewarsplugin.state.SyncService;
 import com.example.codewarsplugin.state.Vars;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -41,7 +41,7 @@ public class SidePanel extends JPanel {
         stateParams.setToolWindow(toolWindow);
         stateParams.setSidePanel(this);
         stateParams.setVars(vars);
-        StaticVars.addParams(stateParams);
+        SyncService.addParams(stateParams);
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
     }

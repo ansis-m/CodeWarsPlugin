@@ -2,6 +2,7 @@ package com.example.codewarsplugin.views;
 
 import com.example.codewarsplugin.models.user.User;
 import com.example.codewarsplugin.services.UserService;
+import com.example.codewarsplugin.state.SyncService;
 import com.example.codewarsplugin.state.Vars;
 import com.intellij.openapi.ui.ComboBox;
 
@@ -21,12 +22,12 @@ public class LogedInView extends JPanel {
 
     private String[] options = {"Java", "Kotlin", "Scala", "Groovy", "Python", "C"};
     private ComboBox<String> languageBox;
+    private JButton logoutButton = new JButton("LOG OUT");
     private Vars vars;
 
     public LogedInView(Vars vars) {
         super();
         this.vars = vars;
-        userPanel = new JPanel();
         languageBox = new ComboBox<>(options);
     }
 
@@ -55,6 +56,7 @@ public class LogedInView extends JPanel {
 
     private void setupUserFields(User user) {
 
+        userPanel = new JPanel();
         if (user == null) {
             userPanel.add(languageBox);
             return;
@@ -83,10 +85,25 @@ public class LogedInView extends JPanel {
         JLabel honorLabel = new JLabel(String.valueOf(user.getHonor()));
         honorLabel.setFont(newFont);
         userPanel.add(honorLabel);
-
         userPanel.add(languageBox);
 
+
+        logoutButton.addActionListener((e) -> {
+            SyncService.logout();
+        });
+        logoutButton.setVisible(true);
+        userPanel.add(logoutButton);
+
         vars.getSidePanel().add(userPanel, BorderLayout.NORTH);
+    }
+
+    public void cleanUp(){
+
+        vars.getSidePanel().remove(userPanel);
+        vars.getSidePanel().remove(vars.getKataPrompt());
+
+        userPanel = null;
+
     }
 
 }

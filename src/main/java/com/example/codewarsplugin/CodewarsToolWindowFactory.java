@@ -1,6 +1,6 @@
 package com.example.codewarsplugin;
 
-import com.example.codewarsplugin.state.StaticVars;
+import com.example.codewarsplugin.state.SyncService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -27,7 +27,7 @@ public class CodewarsToolWindowFactory implements ToolWindowFactory {
             @Override
             public void windowClosing(WindowEvent e) {
                 System.out.println("closing");
-                StaticVars.remove(panel.getStateParams());
+                SyncService.remove(panel.getStateParams());
             }
         });
     }
