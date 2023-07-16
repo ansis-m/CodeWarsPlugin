@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LogedInView extends JPanel {
+public class LogedInView extends JPanel implements View{
 
     private User user;
     private JPanel userPanel;
@@ -32,14 +32,12 @@ public class LogedInView extends JPanel {
     }
 
 
-    public boolean setup() {
-
+    public void setup() {
         user = UserService.getUser();
         setupUserFields(user);
         vars.getSidePanel().add(vars.getKataPrompt(), BorderLayout.CENTER);
         vars.getSidePanel().revalidate();
         vars.getSidePanel().repaint();
-        return true;
     }
 
     private static String extractImageUrl(String html) {
@@ -61,13 +59,11 @@ public class LogedInView extends JPanel {
             userPanel.add(languageBox);
             return;
         }
-
         userPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 20, 20));
         JLabel nameLabel = new JLabel(user.getUsername());
         Font newFont = nameLabel.getFont().deriveFont(15f);
         nameLabel.setFont(newFont);
         userPanel.add(nameLabel);
-
         try{
             String url = extractImageUrl(user.getAvatar_tag());
             URL imageUrl = new URL(url);
@@ -81,13 +77,10 @@ public class LogedInView extends JPanel {
         JLabel rankLabel = new JLabel(String.valueOf(Math.abs(user.getRank())) + " kyu");
         rankLabel.setFont(newFont);
         userPanel.add(rankLabel);
-
         JLabel honorLabel = new JLabel(String.valueOf(user.getHonor()));
         honorLabel.setFont(newFont);
         userPanel.add(honorLabel);
         userPanel.add(languageBox);
-
-
         logoutButton.addActionListener((e) -> {
             SyncService.logout();
         });
@@ -97,9 +90,8 @@ public class LogedInView extends JPanel {
         vars.getSidePanel().add(userPanel, BorderLayout.NORTH);
     }
 
-    public void cleanUp(){
-        vars.getSidePanel().remove(userPanel);
-        vars.getSidePanel().remove(vars.getKataPrompt());
+    public void cleanup(){
+        vars.getSidePanel().removeAll();
         userPanel = null;
     }
 

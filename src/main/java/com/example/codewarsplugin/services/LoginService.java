@@ -30,7 +30,7 @@ public class LoginService {
         if(valid(login, password)){
             getCookies(login, password, vars);
         } else {
-            vars.getLoginManager().stopSpinner();
+            SyncService.stopLoginSpinner();
             vars.getLoginManager().showLoginFailLabel("Enter a valid login and password to sign in!");
         }
     }
@@ -40,8 +40,8 @@ public class LoginService {
         System.out.println("getCookies");
 
         if (loginSuccess) {
-            vars.getLoginManager().stopSpinner();
-            vars.getLoginView().cleanUp();
+            SyncService.stopLoginSpinner();
+            vars.getLoginView().cleanup();
             vars.getLogedInView().setup();
             return;
         }
