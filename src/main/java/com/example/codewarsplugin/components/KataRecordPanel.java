@@ -6,6 +6,7 @@ import com.example.codewarsplugin.services.katas.KataInputService;
 import com.example.codewarsplugin.services.katas.KataInputServiceClient;
 import com.example.codewarsplugin.state.Vars;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.ui.AnimatedIcon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,8 +15,11 @@ public class KataRecordPanel extends JPanel implements KataInputServiceClient {
 
     private KataRecord record;
     private Vars vars;
-    JButton button = new JButton("Setup Kata");
-    ComboBox<String> languageBox;
+    private JButton button = new JButton("Setup Kata");
+    private ComboBox<String> languageBox;
+    private JPanel cardButtonPanel = new JPanel();
+    private CardLayout cardButtonLayout = new CardLayout();
+    private JLabel spinner = new JLabel(new AnimatedIcon.Big());
 
     public KataRecordPanel(KataRecord record, Vars vars){
         super();
@@ -23,7 +27,17 @@ public class KataRecordPanel extends JPanel implements KataInputServiceClient {
         this.vars = vars;
         setLayout(new GridBagLayout());
         setupButtonListeners();
+        setupCardPanel();
+        addComponents();
+    }
 
+    private void setupCardPanel() {
+        cardButtonPanel.setLayout(cardButtonLayout);
+        cardButtonPanel.add(button, "button");
+        cardButtonPanel.add(spinner, "spinner");
+    }
+
+    private void addComponents() {
         var constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.CENTER;
         constraints.insets = new Insets(5, 5, 5, 5);
@@ -44,7 +58,7 @@ public class KataRecordPanel extends JPanel implements KataInputServiceClient {
 
         constraints.gridx = 0;
         constraints.gridy = 2;
-        add(button, constraints);
+        add(cardButtonPanel, constraints);
     }
 
     private void setupButtonListeners() {
@@ -59,10 +73,7 @@ public class KataRecordPanel extends JPanel implements KataInputServiceClient {
 
     @Override
     public void processKataInput(KataInput kataInput) {
-
         System.out.println("Kata input received: " + kataInput.toString());
-
-
     }
 
     @Override
@@ -72,5 +83,20 @@ public class KataRecordPanel extends JPanel implements KataInputServiceClient {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    @Override
+    public void startSpinner() {
+        cardButtonLayout.show(cardButtonPanel, "spinner");
+        revalidate();
+        repaint();
+
+    }
+
+    @Override
+    public void stopSpinner() {
+        cardButtonLayout.show(cardButtonPanel, "button");
+        revalidate();
+        repaint();
     }
 }

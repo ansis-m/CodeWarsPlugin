@@ -6,4 +6,8 @@ public interface KataInputServiceClient {
     void processKataInput(KataInput kataInput);
 
     void processInputNotFound(Exception e);
+
+    void startSpinner();
+
+    void stopSpinner();
 }
