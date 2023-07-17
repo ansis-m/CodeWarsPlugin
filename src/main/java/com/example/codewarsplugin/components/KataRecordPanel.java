@@ -16,9 +16,7 @@ public class KataRecordPanel extends JPanel {
         super();
         this.record = record;
         this.vars = vars;
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout());
 
         var constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.CENTER;
@@ -29,19 +27,19 @@ public class KataRecordPanel extends JPanel {
 
         var label = new JLabel(record == null ? "Selected Kata: " : "Selected Kata: " + record.getName());
         label.setFont(label.getFont().deriveFont(14f));
-        panel.add(label, constraints);
+        add(label, constraints);
 
         constraints.gridx = 0;
         constraints.gridy = 1;
 
         ComboBox<String> languageBox = new ComboBox<>(record == null ? new String[]{} : record.getLanguages());
-        panel.add(languageBox, constraints);
+        add(languageBox, constraints);
 
 
         var button = new JButton("Setup Kata");
         constraints.gridx = 0;
         constraints.gridy = 2;
-        panel.add(button, constraints);
+        add(button, constraints);
     }
 
 

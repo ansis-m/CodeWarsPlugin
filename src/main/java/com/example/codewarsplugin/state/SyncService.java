@@ -28,9 +28,9 @@ public class SyncService {
     public static void login(){
         for(StateParams p : stateParamsList) {
             var vars = p.getVars();
-            vars.getLoginManager().stopSpinner();
-            vars.getLoginView().cleanup();
-            vars.getLogedInView().setup();
+            vars.getCurrentView().cleanup();
+            vars.setCurrentView(vars.getLogedInView());
+            vars.getCurrentView().setup();
         }
     }
 
@@ -40,8 +40,9 @@ public class SyncService {
         WebDriver.logout();
         for(StateParams p : stateParamsList) {
             var vars = p.getVars();
-            vars.getLogedInView().cleanup();
-            vars.getLoginView().setup();
+            vars.getCurrentView().cleanup();
+            vars.setCurrentView(vars.getLoginView());
+            vars.getCurrentView().setup();
         }
 
     }

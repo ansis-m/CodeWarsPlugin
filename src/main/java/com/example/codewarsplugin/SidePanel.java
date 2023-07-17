@@ -21,11 +21,7 @@ public class SidePanel extends JPanel {
     public SidePanel(Project project, ToolWindow toolWindow) {
         setLayout(new BorderLayout());
         initPlugin(project, toolWindow);
-        if (!LoginService.loginSuccess){
-            vars.getLoginView().setup();
-        } else {
-            vars.getLogedInView().setup();
-        }
+        vars.getCurrentView().setup();
         MyProjectManager.init(project, toolWindow);
         ProjectManager.getInstance().addProjectManagerListener(new MyProjectManagerListener()); //kautkaada servisa metode
     }
@@ -41,6 +37,9 @@ public class SidePanel extends JPanel {
         stateParams.setToolWindow(toolWindow);
         stateParams.setSidePanel(this);
         stateParams.setVars(vars);
+        stateParams.setCurrentView(LoginService.loginSuccess? vars.getLogedInView() : vars.getLoginView());
+        vars.setCurrentView(LoginService.loginSuccess? vars.getLogedInView() : vars.getLoginView());
+
         SyncService.addParams(stateParams);
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));

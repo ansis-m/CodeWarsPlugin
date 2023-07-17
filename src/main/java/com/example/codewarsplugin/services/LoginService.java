@@ -39,10 +39,11 @@ public class LoginService {
 
         System.out.println("getCookies");
 
-        if (loginSuccess) {
+        if (loginSuccess) { // likely can be removed entirely but kept for now for safety
             SyncService.stopLoginSpinner();
             vars.getLoginView().cleanup();
             vars.getLogedInView().setup();
+            vars.setCurrentView(vars.getLogedInView());
             return;
         }
 

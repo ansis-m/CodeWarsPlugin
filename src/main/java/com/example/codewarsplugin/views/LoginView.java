@@ -22,6 +22,9 @@ public class LoginView extends JPanel implements View{
     }
 
     public void cleanup() {
+        vars.getLoginManager().stopSpinner();
         vars.getSidePanel().removeAll();
+        revalidate();
+        repaint();
     }
 }
