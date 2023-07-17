@@ -1,30 +1,30 @@
 package com.example.codewarsplugin.views;
 
+import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.state.Vars;
 
-import javax.swing.*;
 import java.awt.*;
 
-public class LoginView extends JPanel implements View{
-
+public class LoginView implements View{
 
     private Vars vars;
+    private SidePanel sidePanel;
 
     public LoginView(Vars vars) {
         this.vars = vars;
+        this.sidePanel = vars.getSidePanel();
     }
 
     public void setup() {
-        vars.getSidePanel().add(vars.getTopImagePanel(), BorderLayout.NORTH);
-        vars.getSidePanel().add(vars.getLoginManager(), BorderLayout.SOUTH);
-        vars.getSidePanel().revalidate();
-        vars.getSidePanel().repaint();
+
+        sidePanel.add(vars.getTopImagePanel(), BorderLayout.NORTH);
+        sidePanel.add(vars.getLoginManager(), BorderLayout.SOUTH);
+        sidePanel.revalidate();
+        sidePanel.repaint();
     }
 
     public void cleanup() {
         vars.getLoginManager().stopSpinner();
-        vars.getSidePanel().removeAll();
-        revalidate();
-        repaint();
+        sidePanel.removeAll();
     }
 }

@@ -1,16 +1,14 @@
 package com.example.codewarsplugin.state;
 
+import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.components.*;
 import com.example.codewarsplugin.views.LogedInView;
 import com.example.codewarsplugin.views.LoginView;
 import com.example.codewarsplugin.views.View;
 
-
-import javax.swing.*;
-
 public class Vars {
 
-    private JPanel sidePanel;
+    private SidePanel sidePanel;
     private LoginManager loginManager;
     private TopImagePanel topImagePanel;
     private KataPrompt kataPrompt;
@@ -18,7 +16,9 @@ public class Vars {
     private LoginView loginView;
     private View currentView;
 
-    public void init(){
+
+    public Vars(SidePanel sidePanel){
+        this.sidePanel = sidePanel;
         loginManager = new LoginManager(this);
         topImagePanel = new TopImagePanel(this);
         kataPrompt = new KataPrompt(this);
@@ -51,10 +51,10 @@ public class Vars {
     public KataPrompt getKataPrompt() {
         return kataPrompt;
     }
-    public JPanel getSidePanel() {
+    public SidePanel getSidePanel() {
         return sidePanel;
     }
-    public void setSidePanel(JPanel sidePanel) {
+    public void setSidePanel(SidePanel sidePanel) {
         this.sidePanel = sidePanel;
     }
 }

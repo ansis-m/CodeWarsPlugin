@@ -27,9 +27,7 @@ public class SidePanel extends JPanel {
     }
 
     private void initPlugin(Project project, ToolWindow toolWindow) {
-        vars = new Vars();
-        vars.init();
-        vars.setSidePanel(this);
+        vars = new Vars(this);
         WebDriver.init();
 
         stateParams = new StateParams();

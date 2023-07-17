@@ -3,14 +3,11 @@ package com.example.codewarsplugin.state;
 import com.example.codewarsplugin.services.LoginService;
 import com.example.codewarsplugin.services.UserService;
 import com.example.codewarsplugin.services.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SyncService {
-
-    private static ChromeDriver driver;
     private static List<StateParams> stateParamsList = new ArrayList();
 
     public static List<StateParams> getStateParamsList() {
@@ -60,7 +57,5 @@ public class SyncService {
             var vars = p.getVars();
             vars.getLoginManager().stopSpinner();
         }
-
     }
-
 }
