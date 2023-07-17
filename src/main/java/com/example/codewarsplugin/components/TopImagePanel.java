@@ -9,11 +9,10 @@ import java.awt.*;
 
 public class TopImagePanel extends JPanel {
 
-    private Icon icon;
+    private Icon icon = IconLoader.getIcon("/icons/logo-square.png", SidePanel.class);
 
     public TopImagePanel(Vars vars){
         super();
-        icon = IconLoader.getIcon("/icons/logo-square.png", SidePanel.class);
         setLayout(new BorderLayout());
         JLabel imageLabel = new JLabel(icon);
         add(imageLabel, BorderLayout.CENTER);

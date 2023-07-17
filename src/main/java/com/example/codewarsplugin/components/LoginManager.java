@@ -15,34 +15,21 @@ import java.awt.event.*;
 @EqualsAndHashCode(callSuper = true)
 public class LoginManager extends JPanel{
 
-    public JPasswordField passwordField;
-    public JTextField textField;
-    public JButton submitButton;
-    public JLabel promptLabel;
-    private GridBagConstraints constraints;
-    private JLabel spinner;
-    private JPanel cardPanel;
-    private CardLayout cardLayout;
+    public JPasswordField passwordField = new JPasswordField(20);
+    public JTextField textField = new JTextField(20);
+    public JButton submitButton = new JButton("SIGN IN");
+    public JLabel promptLabel = new JLabel("Sign in with your Codewars credentials!");
+    private GridBagConstraints constraints = new GridBagConstraints();
+    private JLabel spinner = new JLabel(new AnimatedIcon.Big());
+    private JPanel cardPanel = new JPanel();
+    private CardLayout cardLayout = new CardLayout();
     private Vars vars;
 
 
     public LoginManager(Vars vars){
         super();
         this.vars = vars;
-        constraints = new GridBagConstraints();
-        spinner = new JLabel(new AnimatedIcon.Big());
         setLayout(new GridBagLayout());
-        textField = new JTextField(20);
-        passwordField = new JPasswordField(20);
-        submitButton = new JButton("SIGN IN");
-        promptLabel = new JLabel("Sign in with your Codewars credentials!");
-        textField.setText("email");
-        passwordField.setText("password");
-        passwordField.setEchoChar((char) 0);
-        passwordField.setFont(textField.getFont());
-        cardPanel = new JPanel();
-        cardLayout = new CardLayout();
-        cardPanel.setLayout(cardLayout);
         addListener(textField, "email");
         addListener(passwordField, "password");
         addEnterKeyListener();
@@ -52,7 +39,8 @@ public class LoginManager extends JPanel{
 
     private void addElementsToPanel() {
 
-        promptLabel.setFont(promptLabel.getFont().deriveFont(10f));
+
+        setupTextPasswordPrompt();
 
         constraints.anchor = GridBagConstraints.CENTER;
         constraints.insets = new Insets(5, 5, 5, 5);
@@ -81,7 +69,16 @@ public class LoginManager extends JPanel{
         add(promptLabel, constraints);
     }
 
+    private void setupTextPasswordPrompt() {
+        textField.setText("email");
+        passwordField.setText("password");
+        passwordField.setEchoChar((char) 0);
+        passwordField.setFont(textField.getFont());
+        promptLabel.setFont(promptLabel.getFont().deriveFont(10f));
+    }
+
     private void setupCardPanel() {
+        cardPanel.setLayout(cardLayout);
         cardPanel.add(submitButton, "submitButton");
         cardPanel.add(spinner, "spinner");
     }
@@ -118,7 +115,6 @@ public class LoginManager extends JPanel{
             }
             @Override
             public void focusLost(FocusEvent e) {
-
                 if (textField.getText().isEmpty()) {
                     textField.setText(input);
                     if (textField instanceof JPasswordField) {

@@ -4,7 +4,6 @@ import com.example.codewarsplugin.models.user.User;
 import com.example.codewarsplugin.services.UserService;
 import com.example.codewarsplugin.state.SyncService;
 import com.example.codewarsplugin.state.Vars;
-import com.intellij.openapi.ui.ComboBox;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
