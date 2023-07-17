@@ -15,6 +15,29 @@ public class KataRecord {
     private String category;
     private String[] languages;
     private String path;
+    private String selectedLanguage;
+
+    @Override
+    public String toString() {
+        return "KataRecord{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", slug='" + slug + '\'' +
+                ", url='" + url + '\'' +
+                ", category='" + category + '\'' +
+                ", languages=" + Arrays.toString(languages) +
+                ", path='" + path + '\'' +
+                ", selectedLanguage='" + selectedLanguage + '\'' +
+                '}';
+    }
+
+    public String getSelectedLanguage() {
+        return selectedLanguage;
+    }
+
+    public void setSelectedLanguage(String selectedLanguage) {
+        this.selectedLanguage = selectedLanguage;
+    }
 
     public String getPath() {
         return path;
@@ -30,20 +53,6 @@ public class KataRecord {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-
-
-    @Override
-    public String toString() {
-        return "KataRecord{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", slug='" + slug + '\'' +
-                ", url='" + url + '\'' +
-                ", category='" + category + '\'' +
-                ", languages=" + Arrays.toString(languages) +
-                '}';
     }
 
     public String getName() {

@@ -1,7 +1,8 @@
 package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.models.kata.KataRecord;
-import com.example.codewarsplugin.services.katas.KataIdService;
+import com.example.codewarsplugin.services.katas.KataRecordService;
+import com.example.codewarsplugin.services.katas.KataRecordServiceClient;
 import com.example.codewarsplugin.state.Vars;
 import com.intellij.ui.AnimatedIcon;
 
@@ -10,7 +11,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class KataPrompt extends JPanel {
+public class KataPrompt extends JPanel implements KataRecordServiceClient {
 
     private JTextField textField = new JTextField(30);
     private JButton submitButton = new JButton("Get Kata");
@@ -26,8 +27,6 @@ public class KataPrompt extends JPanel {
     private GridBagConstraints constraints = new GridBagConstraints();
     private KataRecord record;
     private Vars vars;
-    private KataIdService kataIdService = new KataIdService();
-
 
     public KataPrompt(Vars vars){
         super();
@@ -35,13 +34,13 @@ public class KataPrompt extends JPanel {
         filledKataPanel = new KataRecordPanel(null, vars);
         setLayout(new GridBagLayout());
         addElementsToPanel();
-        addKataRecordSearchListeners();
+        addKataRecordSearchListeners(this);
     }
 
-    private void addKataRecordSearchListeners() {
+    private void addKataRecordSearchListeners(KataPrompt kataPrompt) {
         submitButton.addActionListener(e -> {
             startSpinner();
-            kataIdService.getKataRecord(textField.getText(), vars);
+            KataRecordService.getKataRecord(textField.getText(), kataPrompt);
         });
         textField.addKeyListener(new KeyListener() {
             @Override
@@ -50,7 +49,7 @@ public class KataPrompt extends JPanel {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     startSpinner();
-                    kataIdService.getKataRecord(textField.getText(), vars);
+                    KataRecordService.getKataRecord(textField.getText(), kataPrompt);
                 }
             }
             @Override
@@ -58,6 +57,7 @@ public class KataPrompt extends JPanel {
         });
     }
 
+    @Override
     public void completeCallback(KataRecord record){
         System.out.println("completeCallback: " + record);
         this.record = record;

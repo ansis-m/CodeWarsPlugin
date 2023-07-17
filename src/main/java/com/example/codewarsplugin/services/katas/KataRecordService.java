@@ -2,7 +2,6 @@ package com.example.codewarsplugin.services.katas;
 
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.LoginService;
-import com.example.codewarsplugin.state.Vars;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -19,21 +18,21 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-public class KataIdService {
-
-    private final String BASE_URL = "https://www.codewars.com/api/v1/code-challenges/";
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final HttpClient httpClient = HttpClient.newHttpClient();
+public class KataRecordService {
     private static final Pattern NON_LATIN_PATTERN = Pattern.compile("[^\\w-]");
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
     public static boolean success = false;
     private KataRecord record;
 
-    public KataIdService(){
+    public KataRecordService(){
     }
 
-    public void getKataRecord(String name, Vars vars) {
+    public static void getKataRecord(String name, KataRecordServiceClient client) {
         success = false;
+        final String BASE_URL = "https://www.codewars.com/api/v1/code-challenges/";
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final HttpClient httpClient = HttpClient.newHttpClient();
+
         try{
             SwingWorker<KataRecord, Void> worker = new SwingWorker<KataRecord, Void>() {
                 @Override
@@ -47,7 +46,7 @@ public class KataIdService {
 
                     if (response.statusCode() >= 200 && response.statusCode() < 300) {
                         KataRecord record = objectMapper.readValue(response.body(), KataRecord.class);
-                        record.setPath(getKataPath(record.getId()));
+                        record.setPath(getKataPath(record.getId(), httpClient));
                         success = true;
                         return record;
                     }
@@ -56,9 +55,9 @@ public class KataIdService {
                 @Override
                 protected void done() {
                     try{
-                        vars.getKataPrompt().completeCallback(get());
+                        client.completeCallback(get());
                     } catch (Exception e) {
-                        vars.getKataPrompt().completeCallback(null);
+                        client.completeCallback(null);
                     }
                 }
             };
@@ -66,7 +65,7 @@ public class KataIdService {
         } catch (Exception ignored){}
     }
 
-    public String getKataPath(String id) {
+    public static String getKataPath(String id, HttpClient httpClient) {
         String csrfToken = LoginService.getCsrfToken();
         String sessionId = LoginService.getSessionId();
 
