@@ -2,6 +2,8 @@ package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
+import com.example.codewarsplugin.services.files.FileService;
+import com.example.codewarsplugin.services.files.FileServiceClient;
 import com.example.codewarsplugin.services.katas.KataInputService;
 import com.example.codewarsplugin.services.katas.KataInputServiceClient;
 import com.example.codewarsplugin.state.Vars;
@@ -12,7 +14,7 @@ import com.intellij.ui.JBColor;
 import javax.swing.*;
 import java.awt.*;
 
-public class KataInputPanel extends JPanel implements KataInputServiceClient {
+public class KataInputPanel extends JPanel implements KataInputServiceClient, FileServiceClient {
 
     private KataRecord record;
     private Vars vars;
@@ -79,7 +81,10 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient {
 
     @Override
     public void processKataInput(KataInput kataInput) {
+
+
         System.out.println("Kata input received: " + kataInput.toString());
+        FileService.createFile(kataInput, record, this);
     }
 
     @Override
@@ -89,7 +94,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient {
         failMessage.setForeground(JBColor.RED);
         revalidate();
         repaint();
-        Timer timer = new Timer(1500, e -> SwingUtilities.invokeLater(() -> {
+        Timer timer = new Timer(2500, e -> SwingUtilities.invokeLater(() -> {
             failMessage.setText("\u00A0");
             revalidate();
             repaint();
@@ -113,4 +118,29 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient {
         repaint();
     }
 
+    @Override
+    public void notifyFileExists() {
+
+        failMessage.setText("This kata has been configures before in this project.");
+        failMessage.setForeground(JBColor.RED);
+        revalidate();
+        repaint();
+        Timer timer = new Timer(2500, e -> SwingUtilities.invokeLater(() -> {
+            failMessage.setText("\u00A0");
+            revalidate();
+            repaint();
+        }));
+        timer.setRepeats(false);
+        timer.start();
+    }
+
+    @Override
+    public void transitionToWorkView() {
+        System.out.println("\n\nTransition to work view!\n\n");
+    }
+
+    @Override
+    public void notifyFileCreationFailed() {
+
+    }
 }
