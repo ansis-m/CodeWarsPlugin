@@ -7,6 +7,7 @@ import com.example.codewarsplugin.services.katas.KataInputServiceClient;
 import com.example.codewarsplugin.state.Vars;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.AnimatedIcon;
+import com.intellij.ui.JBColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +21,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient {
     private JPanel cardButtonPanel = new JPanel();
     private CardLayout cardButtonLayout = new CardLayout();
     private JLabel spinner = new JLabel(new AnimatedIcon.Big());
+    private JLabel failMessage = new JLabel("\u00A0");
 
     public KataInputPanel(KataRecord record, Vars vars){
         super();
@@ -59,6 +61,10 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient {
         constraints.gridx = 0;
         constraints.gridy = 2;
         add(cardButtonPanel, constraints);
+
+        constraints.gridx = 0;
+        constraints.gridy = 3;
+        add(failMessage, constraints);
     }
 
     private void setupButtonListeners() {
@@ -77,12 +83,19 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient {
     }
 
     @Override
-    public void processInputNotFound(Exception e) {
-        try {
-            throw e;
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+    public void processInputNotFound(Exception exception) {
+
+        failMessage.setText("Setup failed: " + exception.getMessage());
+        failMessage.setForeground(JBColor.RED);
+        revalidate();
+        repaint();
+        Timer timer = new Timer(1500, e -> SwingUtilities.invokeLater(() -> {
+            failMessage.setText("\u00A0");
+            revalidate();
+            repaint();
+        }));
+        timer.setRepeats(false);
+        timer.start();
     }
 
     @Override
@@ -99,4 +112,5 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient {
         revalidate();
         repaint();
     }
+
 }

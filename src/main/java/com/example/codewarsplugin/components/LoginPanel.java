@@ -92,7 +92,7 @@ public class LoginPanel extends JPanel implements LoginServiceClient {
         promptLabel.setForeground(Color.red);
         revalidate();
         repaint();
-        Timer timer = new Timer(1500, e -> SwingUtilities.invokeLater(() -> {
+        Timer timer = new Timer(2500, e -> SwingUtilities.invokeLater(() -> {
             promptLabel.setText(defaultText);
             promptLabel.setForeground(defaultColor);
             revalidate();

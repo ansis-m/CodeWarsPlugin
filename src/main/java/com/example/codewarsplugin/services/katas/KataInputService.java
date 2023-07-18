@@ -51,7 +51,8 @@ public class KataInputService {
             protected void done(){
                 client.stopSpinner();
                 try {
-                    if(get() == null) {
+                    KataInput input = get();
+                    if(input == null || !input.isSuccess()) {
                         client.processInputNotFound(new RuntimeException("KataInputService HttpRequest failed!"));
                     } else {
                         client.processKataInput(get());

@@ -41,9 +41,9 @@ public class KataRecordService {
                             .uri(URI.create(url))
                             .build();
                     try  {
-                        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                        HttpResponse<String> response = LoginService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                         KataRecord record = objectMapper.readValue(response.body(), KataRecord.class);
-                        record.setPath(getKataPath(record.getId(), httpClient));
+                        record.setPath(getKataPath(record.getId()));
                         success = true;
                         return record;
                     } catch (Exception e) {
@@ -70,7 +70,7 @@ public class KataRecordService {
         } catch (Exception ignored){}
     }
 
-    public static String getKataPath(String id, HttpClient httpClient) {
+    public static String getKataPath(String id) {
         String csrfToken = LoginService.getCsrfToken();
         String sessionId = LoginService.getSessionId();
 
@@ -84,7 +84,7 @@ public class KataRecordService {
                 .build();
 
         try {
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = LoginService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
 
             String script = findScriptWithAppSetup(responseBody);
