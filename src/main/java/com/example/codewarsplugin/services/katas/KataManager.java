@@ -5,7 +5,7 @@ import com.example.codewarsplugin.models.*;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataOutput;
 import com.example.codewarsplugin.models.kata.SubmitResponse;
-import com.example.codewarsplugin.services.LoginService;
+import com.example.codewarsplugin.services.login.LoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

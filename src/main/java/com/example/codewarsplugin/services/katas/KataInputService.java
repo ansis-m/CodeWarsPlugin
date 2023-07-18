@@ -2,7 +2,7 @@ package com.example.codewarsplugin.services.katas;
 
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
-import com.example.codewarsplugin.services.LoginService;
+import com.example.codewarsplugin.services.login.LoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.swing.*;
@@ -16,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 
 public class KataInputService {
 
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static void getKata(KataRecord record, KataInputServiceClient client) {
@@ -37,7 +36,7 @@ public class KataInputService {
                         .POST(HttpRequest.BodyPublishers.noBody())
                         .build();
                 try {
-                    HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                    HttpResponse<String> response = LoginService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                     KataInput kata = objectMapper.readValue(response.body(), KataInput.class);
                     kata.setPath(record.getPath());
                     return kata;

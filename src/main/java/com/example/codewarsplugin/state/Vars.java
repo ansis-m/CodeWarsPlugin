@@ -9,9 +9,9 @@ import com.example.codewarsplugin.views.View;
 public class Vars {
 
     private SidePanel sidePanel;
-    private LoginManager loginManager;
+    private LoginPanel loginPanel;
     private TopImagePanel topImagePanel;
-    private KataPrompt kataPrompt;
+    private KataRecordPanel kataRecordPanel;
     private LogedInView logedInView;
     private LoginView loginView;
     private View currentView;
@@ -19,9 +19,9 @@ public class Vars {
 
     public Vars(SidePanel sidePanel){
         this.sidePanel = sidePanel;
-        loginManager = new LoginManager(this);
+        loginPanel = new LoginPanel(this);
         topImagePanel = new TopImagePanel(this);
-        kataPrompt = new KataPrompt(this);
+        kataRecordPanel = new KataRecordPanel(this);
         logedInView = new LogedInView(this);
         loginView = new LoginView(this);
     }
@@ -42,14 +42,14 @@ public class Vars {
         return loginView;
     }
 
-    public LoginManager getLoginManager() {
-        return loginManager;
+    public LoginPanel getLoginManager() {
+        return loginPanel;
     }
     public TopImagePanel getTopImagePanel() {
         return topImagePanel;
     }
-    public KataPrompt getKataPrompt() {
-        return kataPrompt;
+    public KataRecordPanel getKataPrompt() {
+        return kataRecordPanel;
     }
     public SidePanel getSidePanel() {
         return sidePanel;

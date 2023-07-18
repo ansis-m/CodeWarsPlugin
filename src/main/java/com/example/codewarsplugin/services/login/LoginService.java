@@ -1,12 +1,13 @@
-package com.example.codewarsplugin.services;
+package com.example.codewarsplugin.services.login;
 
 import com.example.codewarsplugin.state.SyncService;
-import com.example.codewarsplugin.state.Vars;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 
 import javax.swing.*;
+import java.net.*;
+import java.net.http.HttpClient;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,33 +21,24 @@ public class LoginService {
     private static String currentPassword;
     private static String csrfToken;
     private static String sessionId;
+    private static Cookie csrfCookie;
+    private static Cookie sessionIdCookie;
     public static boolean loginSuccess = false;
+    private static HttpClient httpClient;
+    private static CookieManager cookieManager = new CookieManager();;
 
-    private LoginService(){
-    }
-
-
-    public static void login(String login, String password, Vars vars){
+    public static void login(String login, String password, LoginServiceClient client){
         if(valid(login, password)){
-            getCookies(login, password, vars);
+            getCookies(login, password, client);
         } else {
             SyncService.stopLoginSpinner();
-            vars.getLoginManager().showLoginFailLabel("Enter a valid login and password to sign in!");
+            client.showLoginFailLabel("Enter a valid login and password to sign in!");
         }
     }
 
-    private static void getCookies(String login, String password, Vars vars) {
+    private static void getCookies(String login, String password, LoginServiceClient client) {
 
         System.out.println("getCookies");
-
-        if (loginSuccess) { // likely can be removed entirely but kept for now for safety
-            SyncService.stopLoginSpinner();
-            vars.getLoginView().cleanup();
-            vars.getLogedInView().setup();
-            vars.setCurrentView(vars.getLogedInView());
-            return;
-        }
-
         try{
             SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                 @Override
@@ -71,8 +63,14 @@ public class LoginService {
                     }
                     loginSuccess = true;
                     allCookies = driver.manage().getCookies();
-                    csrfToken = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get().getValue();
-                    sessionId = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get().getValue();
+
+
+                    allCookies.stream().forEach(c -> System.out.println("name: " + c.getName() + "  value: " + c.getValue()));
+
+                    csrfCookie = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get();
+                    sessionIdCookie = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get();
+                    csrfToken = csrfCookie.getValue();
+                    sessionId = sessionIdCookie.getValue();
                     currentPassword = password;
                     currentLogin = login;
                     return null;
@@ -82,17 +80,29 @@ public class LoginService {
                 protected void done() {
                     if (!loginSuccess) {
                         SyncService.stopLoginSpinner();
-                        vars.getLoginManager().showLoginFailLabel("Login failed. Bad email or password!");
+                        client.showLoginFailLabel("Login failed. Bad email or password!");
                     } else {
+                        initHttpClient();
                         SyncService.login();
                     }
                 }
             };
             worker.execute();
         } catch (Exception e){
+            client.showLoginFailLabel("Login failed. Bad email or password!");
             SyncService.stopLoginSpinner();
             System.out.println("Exception trying to login: " + e.getMessage());
         }
+    }
+
+    private static void initHttpClient() {
+        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+        URI uri = URI.create("https://www.codewars.com");
+        cookieManager.getCookieStore().add(uri, new HttpCookie(csrfCookie.getName(), csrfCookie.getValue()));
+        cookieManager.getCookieStore().add(uri, new HttpCookie(sessionIdCookie.getName(), sessionIdCookie.getValue()));
+        httpClient = HttpClient.newBuilder()
+                .cookieHandler(cookieManager)
+                .build();
     }
 
     private static String extractToken(List<String> cookies, String id) {
@@ -122,6 +132,10 @@ public class LoginService {
 
     public static String getCurrentPassword() {
         return currentPassword;
+    }
+
+    public static HttpClient getHttpClient() {
+        return httpClient;
     }
 
     public static void logout() {

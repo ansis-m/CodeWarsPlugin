@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.components;
 
-import com.example.codewarsplugin.services.LoginService;
+import com.example.codewarsplugin.services.login.LoginService;
+import com.example.codewarsplugin.services.login.LoginServiceClient;
 import com.example.codewarsplugin.state.SyncService;
 import com.example.codewarsplugin.state.Vars;
 import com.intellij.ui.AnimatedIcon;
@@ -13,7 +14,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 @EqualsAndHashCode(callSuper = true)
-public class LoginManager extends JPanel{
+public class LoginPanel extends JPanel implements LoginServiceClient {
 
     public JPasswordField passwordField = new JPasswordField(20);
     public JTextField textField = new JTextField(20);
@@ -26,13 +27,13 @@ public class LoginManager extends JPanel{
     private Vars vars;
 
 
-    public LoginManager(Vars vars){
+    public LoginPanel(Vars vars){
         super();
         this.vars = vars;
         setLayout(new GridBagLayout());
         addListener(textField, "email");
         addListener(passwordField, "password");
-        addEnterKeyListener();
+        addEnterKeyListener(this);
         addButtonPushedListener();
         addElementsToPanel();
     }
@@ -127,7 +128,7 @@ public class LoginManager extends JPanel{
         });
     }
 
-    private void addEnterKeyListener(){
+    private void addEnterKeyListener(LoginServiceClient client){
         passwordField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -136,7 +137,7 @@ public class LoginManager extends JPanel{
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     SyncService.startLoginSpinner();
-                    LoginService.login(textField.getText(), new String(passwordField.getPassword()), vars);
+                    LoginService.login(textField.getText(), new String(passwordField.getPassword()), client);
                 }
             }
             @Override
@@ -148,7 +149,7 @@ public class LoginManager extends JPanel{
     private void addButtonPushedListener() {
         submitButton.addActionListener(e -> {
             SyncService.startLoginSpinner();
-            LoginService.login(textField.getText(), new String(passwordField.getPassword()), vars);
+            LoginService.login(textField.getText(), new String(passwordField.getPassword()), this);
         });
     }
 

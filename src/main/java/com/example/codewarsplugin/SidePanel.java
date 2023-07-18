@@ -1,7 +1,7 @@
 package com.example.codewarsplugin;
 
-import com.example.codewarsplugin.services.LoginService;
-import com.example.codewarsplugin.services.WebDriver;
+import com.example.codewarsplugin.services.login.LoginService;
+import com.example.codewarsplugin.services.login.WebDriver;
 import com.example.codewarsplugin.services.project.MyProjectManager;
 import com.example.codewarsplugin.state.StateParams;
 import com.example.codewarsplugin.state.SyncService;

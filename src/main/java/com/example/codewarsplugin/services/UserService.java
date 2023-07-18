@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.services;
 
 import com.example.codewarsplugin.models.user.User;
+import com.example.codewarsplugin.services.login.WebDriver;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.JavascriptExecutor;
@@ -10,12 +11,16 @@ public class UserService {
 
     private static ChromeDriver chromeDriver;
     private static User user;
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     public static User getUser() {
         if(user != null) {
             return user;
         }
         chromeDriver = WebDriver.getChromeDriver();
+        if (!chromeDriver.getCurrentUrl().equals("https://www.codewars.com/dashboard")){
+            chromeDriver.get("https://www.codewars.com/dashboard");
+        }
         JavascriptExecutor jsExecutor = (JavascriptExecutor) chromeDriver;
         String serializedObjects = (String) jsExecutor.executeScript(
                 "function serialize(obj) {" +
@@ -32,8 +37,6 @@ public class UserService {
                         "}" +
                         "return serialize(window);"
         );
-
-        ObjectMapper objectMapper = new ObjectMapper();
 
         try {
             JsonNode rootNode = objectMapper.readTree(serializedObjects);

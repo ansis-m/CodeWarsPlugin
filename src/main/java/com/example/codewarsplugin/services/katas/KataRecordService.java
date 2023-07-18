@@ -1,7 +1,7 @@
 package com.example.codewarsplugin.services.katas;
 
 import com.example.codewarsplugin.models.kata.KataRecord;
-import com.example.codewarsplugin.services.LoginService;
+import com.example.codewarsplugin.services.login.LoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -22,16 +22,14 @@ public class KataRecordService {
     private static final Pattern NON_LATIN_PATTERN = Pattern.compile("[^\\w-]");
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
     public static boolean success = false;
-    private KataRecord record;
-
-    public KataRecordService(){
-    }
+    private static KataRecord record;
 
     public static void getKataRecord(String name, KataRecordServiceClient client) {
         success = false;
         final String BASE_URL = "https://www.codewars.com/api/v1/code-challenges/";
         final ObjectMapper objectMapper = new ObjectMapper();
         final HttpClient httpClient = HttpClient.newHttpClient();
+        final KataRecord[] records = new KataRecord[1];
 
         try{
             SwingWorker<KataRecord, Void> worker = new SwingWorker<KataRecord, Void>() {
@@ -42,26 +40,33 @@ public class KataRecordService {
                     HttpRequest request = HttpRequest.newBuilder()
                             .uri(URI.create(url))
                             .build();
-                    HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-                    if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                    try  {
+                        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
                         KataRecord record = objectMapper.readValue(response.body(), KataRecord.class);
                         record.setPath(getKataPath(record.getId(), httpClient));
                         success = true;
                         return record;
+                    } catch (Exception e) {
+                        return null;
                     }
-                    return null;
                 }
                 @Override
                 protected void done() {
                     try{
-                        client.completeCallback(get());
+                        var result = get();
+                        if (result != null) {
+                            client.processKataRecord(result);
+                            records[0] = result;
+                        } else {
+                            client.processKataRecordNotFound(null);
+                        }
                     } catch (Exception e) {
-                        client.completeCallback(null);
+                        client.processKataRecordNotFound(null);
                     }
                 }
             };
             worker.execute();
+            record = records[0];
         } catch (Exception ignored){}
     }
 
@@ -103,6 +108,10 @@ public class KataRecordService {
             Arrays.stream(e.getStackTrace()).forEach(System.out::println);
             return null;
         }
+    }
+
+    public static KataRecord getRecord() {
+        return record;
     }
 
     private static String findScriptWithAppSetup(String html) {

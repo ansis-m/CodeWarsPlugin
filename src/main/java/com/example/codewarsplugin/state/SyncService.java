@@ -1,8 +1,8 @@
 package com.example.codewarsplugin.state;
 
-import com.example.codewarsplugin.services.LoginService;
+import com.example.codewarsplugin.services.login.LoginService;
 import com.example.codewarsplugin.services.UserService;
-import com.example.codewarsplugin.services.WebDriver;
+import com.example.codewarsplugin.services.login.WebDriver;
 
 import java.util.ArrayList;
 import java.util.List;

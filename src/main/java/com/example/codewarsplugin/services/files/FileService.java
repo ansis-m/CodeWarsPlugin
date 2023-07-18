@@ -56,15 +56,6 @@ public class FileService {
                 document.insertString(document.getTextLength(), input.getSetup());
                 PsiDocumentManager.getInstance(project).commitDocument(document);
             });
-
-
         }
-
-
     }
-
-
-
-
-
 }

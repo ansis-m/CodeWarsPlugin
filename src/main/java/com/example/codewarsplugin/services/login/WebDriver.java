@@ -1,4 +1,4 @@
-package com.example.codewarsplugin.services;
+package com.example.codewarsplugin.services.login;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -14,7 +14,6 @@ public class WebDriver {
     public static void init() {
 
         if (chromeDriver != null) {
-            System.out.println("\n\n\nNOT NULL\n\n\n");
             return;
         }
 
@@ -58,5 +57,4 @@ public class WebDriver {
         };
         worker.execute();
     }
-
 }
