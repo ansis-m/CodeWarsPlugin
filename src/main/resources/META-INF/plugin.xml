@@ -30,5 +30,10 @@
                     factoryClass="com.example.codewarsplugin.CodewarsToolWindowFactory"
                     secondary="false"
                     icon="/icons/cw_logo_13.svg"/>
+        <moduleBuilder
+                builderClass="com.example.codewarsplugin.services.files.MyModuleBuilder"/>
+
     </extensions>
+
+
 </idea-plugin>

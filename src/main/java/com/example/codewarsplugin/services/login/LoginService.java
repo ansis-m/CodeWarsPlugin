@@ -63,10 +63,6 @@ public class LoginService {
                     }
                     loginSuccess = true;
                     allCookies = driver.manage().getCookies();
-
-
-                    allCookies.stream().forEach(c -> System.out.println("name: " + c.getName() + "  value: " + c.getValue()));
-
                     csrfCookie = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get();
                     sessionIdCookie = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get();
                     csrfToken = csrfCookie.getValue();
