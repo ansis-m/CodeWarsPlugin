@@ -2,7 +2,7 @@ package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
-import com.example.codewarsplugin.services.files.FileService;
+import com.example.codewarsplugin.services.files.FileManager;
 import com.example.codewarsplugin.services.files.FileServiceClient;
 import com.example.codewarsplugin.services.katas.KataInputService;
 import com.example.codewarsplugin.services.katas.KataInputServiceClient;
@@ -85,7 +85,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
 
 
         System.out.println("Kata input received: " + kataInput.toString());
-        ApplicationManager.getApplication().invokeLater(() -> new FileService().createFile(kataInput, record, this));
+        ApplicationManager.getApplication().invokeLater(() -> new FileManager().createFile(kataInput, record, this));
     }
 
     @Override
@@ -141,7 +141,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     }
 
     @Override
-    public void notifyFileCreationFailed() {
+    public void notifyFileCreationFailed(boolean isWorkFile) {
 
     }
 }
