@@ -8,21 +8,28 @@ import com.example.codewarsplugin.state.StateParams;
 import com.example.codewarsplugin.state.SyncService;
 import com.example.codewarsplugin.state.Vars;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.EmptyModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
+import org.jdom.JDOMException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 //177, 54, 30
 public class SidePanel extends JPanel {
@@ -53,30 +60,66 @@ public class SidePanel extends JPanel {
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
 
-        ApplicationManager.getApplication().runWriteAction(() -> {
-            // Get the project's base directory (typically the project root)
-            VirtualFile baseDir = LocalFileSystem.getInstance().findFileByPath(project.getBasePath());
+//        ApplicationManager.getApplication().runWriteAction(() -> {
+//            // Get the project's base directory (typically the project root)
+//            VirtualFile baseDir = LocalFileSystem.getInstance().findFileByPath(project.getBasePath()+ "/mymodule");
+//
+//            if (baseDir != null) {
+//                // Create the new sources root directory within the base directory
+//                VirtualFile newSourcesRoot = null;
+//                try {
+//                    newSourcesRoot = baseDir.createChildDirectory(this, "module");
+//                    newSourcesRoot.refresh(true, true);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                    return;
+//                }
+//
+//                System.out.println("modules: " + Arrays.toString(ModuleManager.getInstance(project).getModules()));
+//            }
+//        });
 
-            if (baseDir != null) {
-                // Create the new sources root directory within the base directory
-                VirtualFile newSourcesRoot = null;
-                try {
-                    newSourcesRoot = baseDir.createChildDirectory(this, "name");
-                    newSourcesRoot.refresh(true, true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return;
+        ArrayList<VirtualFile> firstLevelDirectories = new ArrayList<>();
+
+        // Get the base directory of the project
+        VirtualFile baseDir = project.getBaseDir();
+        if (baseDir != null && baseDir.isDirectory()) {
+            // Get the children (directories/files) directly under the base directory
+            VirtualFile[] children = baseDir.getChildren();
+            for (VirtualFile child : children) {
+                if (child.isDirectory()) {
+                    // Check if the directory is a sources root of any module
+                    if (isSourcesRoot(child, project)) {
+                        // Mark this directory as a sources root
+                        System.out.println("Sources Root: " + child.getPath());
+                    }
+
+                    // Add the directory to the list of first-level directories
+                    firstLevelDirectories.add(child);
                 }
-
-                // Mark the new directory as a sources root
-                //ModuleRootModificationUtil.addContentRoot(ModuleRootManager.getInstance(project).getModifiableModel(), newSourcesRoot);
             }
-        });
+        }
 
 
 
 
     }
+
+    private boolean isSourcesRoot(VirtualFile directory, Project project) {
+        Module[] modules = ModuleManager.getInstance(project).getModules();
+        for (Module module : modules) {
+            ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
+            for (VirtualFile sourceRoot : rootManager.getSourceRoots()) {
+                if (VfsUtil.isAncestor(sourceRoot, directory, false)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+
 
     private void cleanup() {
         WebDriver.quit();
