@@ -3,22 +3,17 @@ package com.example.codewarsplugin.services.files;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.project.MyProjectManager;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
 
-import java.io.File;
+
 import java.io.IOException;
 
 public class FileService {
@@ -31,9 +26,11 @@ public class FileService {
         project = MyProjectManager.getProject();
         VirtualFile sourcesRoot = getSourcesRoot();
 
-        StringBuilder filename = new StringBuilder(record.getSlug());
-        filename.setCharAt(0, Character.toUpperCase(filename.charAt(0)));
-        String fileName = filename + getExtension(record);
+
+
+
+        String fileName = getFilename(record);
+        String testFileName = getTestFilename(record);
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
 
@@ -41,22 +38,27 @@ public class FileService {
 
             if (directory != null) {
                 VirtualFile file = null;
+                VirtualFile testFile = null;
                 try {
                     file = directory.createChildData(this, fileName);
+                    testFile = directory.createChildData(this, testFileName);
                     file.refresh(false, true);
+                    testFile.refresh(false, true);
                     VirtualFile finalFile = file;
-                    WriteCommandAction.runWriteCommandAction(project, () -> {
+                    VirtualFile finalTestFile = testFile;
+
                         try {
-                            finalFile.setBinaryContent(input.getSetup().getBytes());
+                            finalFile.setBinaryContent((getPackage(record.getSlug()) + input.getSetup()).getBytes());
+                            finalTestFile.setBinaryContent((getPackage(record.getSlug()) + input.getExampleFixture()).getBytes());
                         } catch (IOException e) {
                             e.printStackTrace();
                             client.notifyFileCreationFailed();
                         }
-                    });
                     OpenFileDescriptor descriptor = new OpenFileDescriptor(project, file);
+                    OpenFileDescriptor testDescriptor = new OpenFileDescriptor(project, testFile);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                    fileEditorManager.openTextEditor(testDescriptor, false);
                     fileEditorManager.openTextEditor(descriptor, true);
-
                     client.transitionToWorkView();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -64,6 +66,22 @@ public class FileService {
                 }
             }
         });
+    }
+
+    private String getPackage(String slug) {
+        return "package " + slug + ";\n\n";
+    }
+
+    private String getTestFilename(KataRecord record) {
+        StringBuilder base = new StringBuilder(record.getSlug());
+        base.setCharAt(0, Character.toUpperCase(base.charAt(0)));
+        return base + "Test" + getExtension(record);
+    }
+
+    private String getFilename(KataRecord record) {
+        StringBuilder base = new StringBuilder(record.getSlug());
+        base.setCharAt(0, Character.toUpperCase(base.charAt(0)));
+        return base + getExtension(record);
     }
 
     private static String getExtension(KataRecord record) {
