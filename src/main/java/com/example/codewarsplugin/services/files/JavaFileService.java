@@ -40,7 +40,8 @@ public class JavaFileService extends AbstractFileService{
                     OpenFileDescriptor descriptor = new OpenFileDescriptor(project, file);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     fileEditorManager.openTextEditor(descriptor, isWorkFile);
-                    client.transitionToWorkView();
+                    if(isWorkFile)
+                        client.transitionToWorkView();
                 } catch (IOException e) {
                     e.printStackTrace();
                     client.notifyFileCreationFailed(isWorkFile);
@@ -54,16 +55,28 @@ public class JavaFileService extends AbstractFileService{
     }
 
     private String getPackage(String slug) {
-        return "package " + slug + ";\n\n";
+        return "package " + "codewars.java." + slug.replaceAll("-", ".") + ";\n\n";
     }
 
     private String getTestFilename() {
         //TODO fix
-        return capitalize(record.getSlug()) + "Test" + ".java";
+        int classIndex = input.getExampleFixture().indexOf("class", 0);
+        int startIndex = classIndex + 5;
+        int endIndex = input.getExampleFixture().indexOf('{');
+
+        return input.getExampleFixture().substring(startIndex, endIndex).strip() + ".java";
     }
 
     private String getFilename() {
-        //TODO fix
-        return capitalize(record.getSlug()) + ".java";
+        int classIndex = input.getSetup().indexOf("class", 0);
+        int startIndex = classIndex + 5;
+        int endIndex = input.getSetup().indexOf('{');
+
+        return input.getSetup().substring(startIndex, endIndex).strip() + ".java";
+    }
+
+    @Override
+    public String getDirectoryName() {
+        return "codewars.java." + record.getSlug().replaceAll("-", ".");
     }
 }

@@ -32,11 +32,11 @@ public abstract class AbstractFileService implements FileService {
     @Override
     public void createDirectory() {
         WriteCommandAction.runWriteCommandAction(project, () -> {
-            if (sourcesRoot != null) {
+            if (sourcesRoot == null) {
                 getSourcesRoot();
             }
             try {
-                VirtualFile newDirectory = sourcesRoot.createChildDirectory(this, record.getSlug());
+                VirtualFile newDirectory = sourcesRoot.createChildDirectory(this, getDirectoryName());
                 newDirectory.refresh(false, true);
                 directory = newDirectory;
             } catch (IOException e) {

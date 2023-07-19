@@ -11,5 +11,8 @@ public interface FileService {
 
     void createTestFile();
 
+    //todo fix this
+    String getDirectoryName();
+
     void getSourcesRoot();
 }
