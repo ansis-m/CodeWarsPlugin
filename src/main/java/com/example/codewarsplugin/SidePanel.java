@@ -59,64 +59,9 @@ public class SidePanel extends JPanel {
         SyncService.addParams(stateParams);
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
-
-//        ApplicationManager.getApplication().runWriteAction(() -> {
-//            // Get the project's base directory (typically the project root)
-//            VirtualFile baseDir = LocalFileSystem.getInstance().findFileByPath(project.getBasePath()+ "/mymodule");
-//
-//            if (baseDir != null) {
-//                // Create the new sources root directory within the base directory
-//                VirtualFile newSourcesRoot = null;
-//                try {
-//                    newSourcesRoot = baseDir.createChildDirectory(this, "module");
-//                    newSourcesRoot.refresh(true, true);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                    return;
-//                }
-//
-//                System.out.println("modules: " + Arrays.toString(ModuleManager.getInstance(project).getModules()));
-//            }
-//        });
-
-        ArrayList<VirtualFile> firstLevelDirectories = new ArrayList<>();
-
-        // Get the base directory of the project
-        VirtualFile baseDir = project.getBaseDir();
-        if (baseDir != null && baseDir.isDirectory()) {
-            // Get the children (directories/files) directly under the base directory
-            VirtualFile[] children = baseDir.getChildren();
-            for (VirtualFile child : children) {
-                if (child.isDirectory()) {
-                    // Check if the directory is a sources root of any module
-                    if (isSourcesRoot(child, project)) {
-                        // Mark this directory as a sources root
-                        System.out.println("Sources Root: " + child.getPath());
-                    }
-
-                    // Add the directory to the list of first-level directories
-                    firstLevelDirectories.add(child);
-                }
-            }
-        }
-
-
-
-
     }
 
-    private boolean isSourcesRoot(VirtualFile directory, Project project) {
-        Module[] modules = ModuleManager.getInstance(project).getModules();
-        for (Module module : modules) {
-            ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-            for (VirtualFile sourceRoot : rootManager.getSourceRoots()) {
-                if (VfsUtil.isAncestor(sourceRoot, directory, false)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+
 
 
 

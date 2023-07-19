@@ -7,6 +7,7 @@ import com.example.codewarsplugin.services.files.FileServiceClient;
 import com.example.codewarsplugin.services.katas.KataInputService;
 import com.example.codewarsplugin.services.katas.KataInputServiceClient;
 import com.example.codewarsplugin.state.Vars;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.AnimatedIcon;
 import com.intellij.ui.JBColor;
@@ -84,7 +85,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
 
 
         System.out.println("Kata input received: " + kataInput.toString());
-        FileService.createFile(kataInput, record, this);
+        ApplicationManager.getApplication().invokeLater(() -> new FileService().createFile(kataInput, record, this));
     }
 
     @Override

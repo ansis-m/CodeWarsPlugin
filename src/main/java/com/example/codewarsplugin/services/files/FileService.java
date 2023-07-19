@@ -9,8 +9,12 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 
@@ -19,51 +23,92 @@ import java.io.IOException;
 
 public class FileService {
 
-    public static void createFile(KataInput input, KataRecord record, FileServiceClient client){
 
-        Project project = MyProjectManager.getProject();
+    private static Project project;
 
-        System.out.println("Base path: " + project.getBasePath());
-        System.out.println("Base name: " + project.getName());
-        System.out.println("Base project file: " + project.getProjectFile().toString());
-        System.out.println("Base project file path: " + project.getProjectFile().getPath());
-        System.out.println("Base project file extension: " + project.getProjectFile().getExtension());
+    public  void createFile(KataInput input, KataRecord record, FileServiceClient client){
 
+        project = MyProjectManager.getProject();
+        VirtualFile sourcesRoot = getSourcesRoot();
 
+        StringBuilder filename = new StringBuilder(record.getSlug());
+        filename.setCharAt(0, Character.toUpperCase(filename.charAt(0)));
+        String fileName = filename + getExtension(record);
 
-        String basePath = project.getBasePath();
-        String filePath = basePath + "/" + record.getSlug() + getExtension(record);
+        WriteCommandAction.runWriteCommandAction(project, () -> {
 
-        File file = new File(filePath);
-        if (!file.exists()) {
-                ApplicationManager.getApplication().invokeLater(() -> {
-                    try {
-                        file.createNewFile();
-                        VirtualFile virtualFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file);
-                        if (virtualFile != null) {
-                            OpenFileDescriptor descriptor = new OpenFileDescriptor(project, virtualFile);
-                            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                            fileEditorManager.openFile(virtualFile, true);
-                            Editor editor = fileEditorManager.openTextEditor(descriptor, true);
+            VirtualFile directory = createDirectory(sourcesRoot, record);
 
-
-                            WriteCommandAction.runWriteCommandAction(project, () -> {
-                                Document document = editor.getDocument();
-                                document.insertString(document.getTextLength(), input.getSetup());
-                                PsiDocumentManager.getInstance(project).commitDocument(document);
-                            });
-                            client.transitionToWorkView();
+            if (directory != null) {
+                VirtualFile file = null;
+                try {
+                    file = directory.createChildData(this, fileName);
+                    file.refresh(false, true);
+                    VirtualFile finalFile = file;
+                    WriteCommandAction.runWriteCommandAction(project, () -> {
+                        try {
+                            finalFile.setBinaryContent(input.getSetup().getBytes());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            client.notifyFileCreationFailed();
                         }
-                    } catch (IOException e) {
-                        client.notifyFileCreationFailed();
-                    }
-                });
-        } else {
-            client.notifyFileExists();
-        }
+                    });
+                    OpenFileDescriptor descriptor = new OpenFileDescriptor(project, file);
+                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                    fileEditorManager.openTextEditor(descriptor, true);
+
+                    client.transitionToWorkView();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    client.notifyFileCreationFailed();
+                }
+            }
+        });
     }
 
     private static String getExtension(KataRecord record) {
         return ".java";
+    }
+
+
+    private VirtualFile createDirectory(VirtualFile baseDir, KataRecord record) {
+        if (baseDir != null) {
+            try {
+                VirtualFile newDirectory = baseDir.createChildDirectory(this, record.getSlug());
+                newDirectory.refresh(false, true);
+                return newDirectory;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    private VirtualFile getSourcesRoot() {
+        VirtualFile baseDir = project.getBaseDir();
+        if (baseDir != null && baseDir.isDirectory()) {
+            VirtualFile[] children = baseDir.getChildren();
+            for (VirtualFile child : children) {
+                if (child.isDirectory()) {
+                    if (isSourcesRoot(child, project)) {
+                        return child;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean isSourcesRoot(VirtualFile directory, Project project) {
+        Module[] modules = ModuleManager.getInstance(project).getModules();
+        for (Module module : modules) {
+            ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
+            for (VirtualFile sourceRoot : rootManager.getSourceRoots()) {
+                if (VfsUtil.isAncestor(sourceRoot, directory, false)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
