@@ -18,6 +18,7 @@ public class UserPanel extends JPanel {
     private JButton logoutButton = new JButton("LOG OUT");
 
     public UserPanel(User user, Vars vars){
+        super();
         if (user == null) {
             return;
         }

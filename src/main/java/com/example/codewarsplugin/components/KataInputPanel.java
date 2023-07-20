@@ -122,7 +122,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     @Override
     public void notifyFileExists() {
 
-        failMessage.setText("This kata has been configures before in this project.");
+        failMessage.setText("This kata has been configured before in this project.");
         failMessage.setForeground(JBColor.RED);
         revalidate();
         repaint();
@@ -138,6 +138,10 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     @Override
     public void transitionToWorkView() {
         System.out.println("\n\nTransition to work view!\n\n");
+        vars.getCurrentView().cleanup();
+        vars.getPreviousViews().add(vars.getCurrentView());
+        vars.getWorkView().setup();
+        vars.setCurrentView(vars.getWorkView());
     }
 
     @Override

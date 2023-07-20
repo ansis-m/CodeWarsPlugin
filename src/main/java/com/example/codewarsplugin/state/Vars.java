@@ -5,6 +5,10 @@ import com.example.codewarsplugin.components.*;
 import com.example.codewarsplugin.views.LogedInView;
 import com.example.codewarsplugin.views.LoginView;
 import com.example.codewarsplugin.views.View;
+import com.example.codewarsplugin.views.WorkView;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class Vars {
 
@@ -14,7 +18,9 @@ public class Vars {
     private KataRecordPanel kataRecordPanel;
     private LogedInView logedInView;
     private LoginView loginView;
+    private WorkView workView;
     private View currentView;
+    private LinkedList<View> previousViews = new LinkedList<>();
 
 
     public Vars(SidePanel sidePanel){
@@ -24,6 +30,7 @@ public class Vars {
         kataRecordPanel = new KataRecordPanel(this);
         logedInView = new LogedInView(this);
         loginView = new LoginView(this);
+        workView = new WorkView(this);
     }
 
     public View getCurrentView() {
@@ -56,5 +63,25 @@ public class Vars {
     }
     public void setSidePanel(SidePanel sidePanel) {
         this.sidePanel = sidePanel;
+    }
+
+    public WorkView getWorkView() {
+        return workView;
+    }
+
+    public void setWorkView(WorkView workView) {
+        this.workView = workView;
+    }
+
+    public View getPreviousView() {
+        return previousViews.getLast();
+    }
+
+    public LinkedList<View> getPreviousViews() {
+        return previousViews;
+    }
+
+    public void setPreviousViews(LinkedList<View> previousViews) {
+        this.previousViews = previousViews;
     }
 }

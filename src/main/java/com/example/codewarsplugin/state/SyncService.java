@@ -26,6 +26,7 @@ public class SyncService {
         for(StateParams p : stateParamsList) {
             var vars = p.getVars();
             vars.getCurrentView().cleanup();
+            vars.getPreviousViews().add(vars.getCurrentView());
             vars.setCurrentView(vars.getLogedInView());
             vars.getCurrentView().setup();
         }
@@ -38,6 +39,7 @@ public class SyncService {
         for(StateParams p : stateParamsList) {
             var vars = p.getVars();
             vars.getCurrentView().cleanup();
+            vars.getPreviousViews().add(vars.getCurrentView());
             vars.setCurrentView(vars.getLoginView());
             vars.getCurrentView().setup();
         }
