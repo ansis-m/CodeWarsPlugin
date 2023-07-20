@@ -9,7 +9,7 @@ public class StateParams {
 
     private Project project;
     private ToolWindow toolWindow;
-    private Vars vars;
+    private Store store;
     private SidePanel sidePanel;
     private View currentView;
 
@@ -29,12 +29,12 @@ public class StateParams {
         this.toolWindow = toolWindow;
     }
 
-    public Vars getVars() {
-        return vars;
+    public Store getVars() {
+        return store;
     }
 
-    public void setVars(Vars vars) {
-        this.vars = vars;
+    public void setVars(Store store) {
+        this.store = store;
     }
 
     public SidePanel getSidePanel() {

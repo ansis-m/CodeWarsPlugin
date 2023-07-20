@@ -12,5 +12,7 @@ public class FileManager {
         service.createDirectory();
         service.createTestFile();
         service.createWorkFile();
+        service.createRecordFile();
+        service.createInputFile();
     }
 }

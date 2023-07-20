@@ -9,6 +9,21 @@ public class PythonFileService extends AbstractFileService{
     }
 
     @Override
+    protected String getFileName() {
+        return null;
+    }
+
+    @Override
+    protected String getRecordFileName() {
+        return null;
+    }
+
+    @Override
+    protected String getInputFileName() {
+        return null;
+    }
+
+    @Override
     public void createWorkFile() {
         throw new RuntimeException("not implemented!");
     }
@@ -22,5 +37,15 @@ public class PythonFileService extends AbstractFileService{
     @Override
     public String getDirectoryName() {
         return null;
+    }
+
+    @Override
+    public void createRecordFile() {
+
+    }
+
+    @Override
+    public void createInputFile() {
+
     }
 }

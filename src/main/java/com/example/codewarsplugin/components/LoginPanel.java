@@ -2,8 +2,8 @@ package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.services.login.LoginService;
 import com.example.codewarsplugin.services.login.LoginServiceClient;
+import com.example.codewarsplugin.state.Store;
 import com.example.codewarsplugin.state.SyncService;
-import com.example.codewarsplugin.state.Vars;
 import com.intellij.ui.AnimatedIcon;
 import groovy.transform.EqualsAndHashCode;
 
@@ -24,12 +24,12 @@ public class LoginPanel extends JPanel implements LoginServiceClient {
     private JLabel spinner = new JLabel(new AnimatedIcon.Big());
     private JPanel cardPanel = new JPanel();
     private CardLayout cardLayout = new CardLayout();
-    private Vars vars;
+    private Store store;
 
 
-    public LoginPanel(Vars vars){
+    public LoginPanel(Store store){
         super();
-        this.vars = vars;
+        this.store = store;
         setLayout(new GridBagLayout());
         addListener(textField, "email");
         addListener(passwordField, "password");

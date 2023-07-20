@@ -22,6 +22,7 @@ public abstract class AbstractFileService implements FileService {
     VirtualFile baseDir;
     VirtualFile directory;
     VirtualFile sourcesRoot;
+    VirtualFile metaData;
 
     public AbstractFileService(KataInput input, KataRecord record, FileServiceClient client){
         this.input = input;
@@ -38,7 +39,10 @@ public abstract class AbstractFileService implements FileService {
             try {
                 VirtualFile newDirectory = sourcesRoot.createChildDirectory(this, getDirectoryName());
                 newDirectory.refresh(false, true);
+                VirtualFile metaData = newDirectory.createChildDirectory(this, "metadata");
+                metaData.refresh(false, true);
                 directory = newDirectory;
+                this.metaData = metaData;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -73,4 +77,10 @@ public abstract class AbstractFileService implements FileService {
         }
         return false;
     }
+
+    protected abstract String getFileName();
+
+    protected abstract String getRecordFileName();
+
+    protected abstract String getInputFileName();
 }

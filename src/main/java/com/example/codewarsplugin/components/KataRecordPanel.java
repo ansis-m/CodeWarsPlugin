@@ -3,7 +3,7 @@ package com.example.codewarsplugin.components;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.katas.KataRecordService;
 import com.example.codewarsplugin.services.katas.KataRecordServiceClient;
-import com.example.codewarsplugin.state.Vars;
+import com.example.codewarsplugin.state.Store;
 import com.intellij.ui.AnimatedIcon;
 
 import javax.swing.*;
@@ -26,13 +26,13 @@ public class KataRecordPanel extends JPanel implements KataRecordServiceClient {
     private JPanel filledKataInputPanel;
     private JLabel spinner = new JLabel(new AnimatedIcon.Big());
     private GridBagConstraints constraints = new GridBagConstraints();
-    private Vars vars;
+    private Store store;
 
-    public KataRecordPanel(Vars vars){
+    public KataRecordPanel(Store store){
         super();
-        this.vars = vars;
-        filledKataInputPanel = new KataInputPanel(null, vars);
-        dummyKataInputPanel = new KataInputPanel(null, vars);
+        this.store = store;
+        filledKataInputPanel = new KataInputPanel(null, store);
+        dummyKataInputPanel = new KataInputPanel(null, store);
         setLayout(new GridBagLayout());
         addElementsToPanel();
         addKataRecordSearchListeners(this);
@@ -104,7 +104,7 @@ public class KataRecordPanel extends JPanel implements KataRecordServiceClient {
         System.out.println("processKataRecord: " + record);
         stopSpinner();
         cardKataPanel.remove(filledKataInputPanel);
-        filledKataInputPanel = new KataInputPanel(record, vars);
+        filledKataInputPanel = new KataInputPanel(record, store);
         cardKataPanel.add(filledKataInputPanel, "kata");
         cardKataLayout.show(cardKataPanel, "kata");
         cardKataPanel.revalidate();
@@ -115,12 +115,12 @@ public class KataRecordPanel extends JPanel implements KataRecordServiceClient {
     public void processKataRecordNotFound(Exception exception) {
         stopSpinner();
         cardKataLayout.show(cardKataPanel, "invalid");
-        vars.getSidePanel().revalidate();
-        vars.getSidePanel().repaint();
+        store.getSidePanel().revalidate();
+        store.getSidePanel().repaint();
         Timer timer = new Timer(2000, e -> SwingUtilities.invokeLater(() -> {
             cardKataLayout.show(cardKataPanel, "empty");
-            vars.getSidePanel().revalidate();
-            vars.getSidePanel().repaint();
+            store.getSidePanel().revalidate();
+            store.getSidePanel().repaint();
         }));
         timer.setRepeats(false);
         timer.start();

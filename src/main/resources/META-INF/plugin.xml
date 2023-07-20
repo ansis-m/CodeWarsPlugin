@@ -33,7 +33,16 @@
         <moduleBuilder
                 builderClass="com.example.codewarsplugin.services.files.MyModuleBuilder"/>
 
+        <applicationService serviceImplementation="com.example.codewarsplugin.persistence.DataStore"/>
+
     </extensions>
+
+    <application-components>
+        <component>
+            <implementation-class>com.example.codewarsplugin.persistence.DataStore</implementation-class>
+            <interface-class>com.example.codewarsplugin.persistence.DataStore</interface-class>
+        </component>
+    </application-components>
 
 
 </idea-plugin>

@@ -6,7 +6,7 @@ import com.example.codewarsplugin.services.files.FileManager;
 import com.example.codewarsplugin.services.files.FileServiceClient;
 import com.example.codewarsplugin.services.katas.KataInputService;
 import com.example.codewarsplugin.services.katas.KataInputServiceClient;
-import com.example.codewarsplugin.state.Vars;
+import com.example.codewarsplugin.state.Store;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.AnimatedIcon;
@@ -18,7 +18,7 @@ import java.awt.*;
 public class KataInputPanel extends JPanel implements KataInputServiceClient, FileServiceClient {
 
     private KataRecord record;
-    private Vars vars;
+    private Store store;
     private JButton button = new JButton("Setup Kata");
     private ComboBox<String> languageBox;
     private JPanel cardButtonPanel = new JPanel();
@@ -26,10 +26,10 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     private JLabel spinner = new JLabel(new AnimatedIcon.Big());
     private JLabel failMessage = new JLabel("\u00A0");
 
-    public KataInputPanel(KataRecord record, Vars vars){
+    public KataInputPanel(KataRecord record, Store store){
         super();
         this.record = record;
-        this.vars = vars;
+        this.store = store;
         setLayout(new GridBagLayout());
         setupButtonListeners();
         setupCardPanel();
@@ -138,10 +138,10 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     @Override
     public void transitionToWorkView() {
         System.out.println("\n\nTransition to work view!\n\n");
-        vars.getCurrentView().cleanup();
-        vars.getPreviousViews().add(vars.getCurrentView());
-        vars.getWorkView().setup();
-        vars.setCurrentView(vars.getWorkView());
+        store.getCurrentView().cleanup();
+        store.getPreviousViews().add(store.getCurrentView());
+        store.getWorkView().setup();
+        store.setCurrentView(store.getWorkView());
     }
 
     @Override

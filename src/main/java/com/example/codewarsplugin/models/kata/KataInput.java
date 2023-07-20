@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class KataInput {
+public class KataInput implements JsonSource{
 
     private boolean success;
     private String languageName;

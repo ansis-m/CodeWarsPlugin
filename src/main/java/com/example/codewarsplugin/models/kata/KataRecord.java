@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
-public class KataRecord {
+public class KataRecord implements JsonSource{
 
     private String id;
     private String name;

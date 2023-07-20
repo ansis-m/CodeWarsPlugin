@@ -3,26 +3,26 @@ package com.example.codewarsplugin.views;
 import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.components.UserPanel;
 import com.example.codewarsplugin.services.UserService;
-import com.example.codewarsplugin.state.Vars;
+import com.example.codewarsplugin.state.Store;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class LogedInView implements View{
     private JPanel userPanel;
-    private Vars vars;
+    private Store store;
     private SidePanel sidePanel;
 
-    public LogedInView(Vars vars) {
+    public LogedInView(Store store) {
         super();
-        this.vars = vars;
-        this.sidePanel = vars.getSidePanel();
+        this.store = store;
+        this.sidePanel = store.getSidePanel();
     }
 
     public void setup() {
-        userPanel = new UserPanel(UserService.getUser(), vars);
+        userPanel = new UserPanel(UserService.getUser(), store);
         sidePanel.add(userPanel, BorderLayout.NORTH);
-        sidePanel.add(vars.getKataPrompt(), BorderLayout.CENTER);
+        sidePanel.add(store.getKataPrompt(), BorderLayout.CENTER);
         sidePanel.revalidate();
         sidePanel.repaint();
     }

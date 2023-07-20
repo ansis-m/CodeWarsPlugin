@@ -8,9 +8,8 @@ import com.example.codewarsplugin.views.View;
 import com.example.codewarsplugin.views.WorkView;
 
 import java.util.LinkedList;
-import java.util.List;
 
-public class Vars {
+public class Store {
 
     private SidePanel sidePanel;
     private LoginPanel loginPanel;
@@ -23,7 +22,8 @@ public class Vars {
     private LinkedList<View> previousViews = new LinkedList<>();
 
 
-    public Vars(SidePanel sidePanel){
+
+    public Store(SidePanel sidePanel){
         this.sidePanel = sidePanel;
         loginPanel = new LoginPanel(this);
         topImagePanel = new TopImagePanel(this);

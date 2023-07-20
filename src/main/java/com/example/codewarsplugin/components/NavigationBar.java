@@ -1,39 +1,35 @@
 package com.example.codewarsplugin.components;
 
-import com.example.codewarsplugin.state.Vars;
+import com.example.codewarsplugin.state.Store;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class NavigationBar extends JPanel {
 
-
-    private Vars vars;
+    private Store store;
     private JButton backButton = new JButton("BACK");
 
-    public NavigationBar(Vars vars) {
+    public NavigationBar(Store store) {
         super();
-        this.vars = vars;
-        setLayout(new FlowLayout(FlowLayout.RIGHT, 20, 20));
+        this.store = store;
+        setLayout(new FlowLayout(FlowLayout.LEFT, 20, 20));
         addListener();
         add(backButton);
     }
 
     private void addListener() {
         backButton.addActionListener((e) -> {
-            var previousView = vars.getPreviousView();
+            var previousView = store.getPreviousView();
 
-
-            vars.getCurrentView().cleanup();
-            vars.getPreviousViews().add(vars.getCurrentView());
+            store.getCurrentView().cleanup();
+            store.getPreviousViews().add(store.getCurrentView());
 
             previousView.setup();
-            vars.setCurrentView(previousView);
+            store.setCurrentView(previousView);
 
-            vars.getSidePanel().revalidate();
-            vars.getSidePanel().repaint();
+            store.getSidePanel().revalidate();
+            store.getSidePanel().repaint();
         });
-
-
     }
 }

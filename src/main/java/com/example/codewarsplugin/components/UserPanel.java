@@ -2,7 +2,7 @@ package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.models.user.User;
 import com.example.codewarsplugin.state.SyncService;
-import com.example.codewarsplugin.state.Vars;
+import com.example.codewarsplugin.state.Store;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -17,7 +17,7 @@ public class UserPanel extends JPanel {
 
     private JButton logoutButton = new JButton("LOG OUT");
 
-    public UserPanel(User user, Vars vars){
+    public UserPanel(User user, Store store){
         super();
         if (user == null) {
             return;

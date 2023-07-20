@@ -10,9 +10,12 @@ public interface FileService {
     void createWorkFile();
 
     void createTestFile();
-
-    //todo fix this
+    
     String getDirectoryName();
 
     void getSourcesRoot();
+
+    void createRecordFile();
+
+    void createInputFile();
 }
