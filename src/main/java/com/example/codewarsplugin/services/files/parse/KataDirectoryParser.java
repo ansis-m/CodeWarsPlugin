@@ -8,8 +8,16 @@ import com.example.codewarsplugin.services.files.create.FileServiceClient;
 import com.example.codewarsplugin.services.files.create.FileServiceFactory;
 import com.example.codewarsplugin.services.project.MyProjectManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ContentEntry;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.Consumer;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,5 +130,9 @@ public class KataDirectoryParser implements FileServiceClient {
     @Override
     public void notifyFileCreationFailed(boolean isWorkFile) {
         throw new RuntimeException("Exception at KataDirectoryParser.notifyFileCreationFailed : parser not supposed to create files!");
+    }
+
+    public void add(KataDirectory directory) {
+        directoryList.add(directory);
     }
 }

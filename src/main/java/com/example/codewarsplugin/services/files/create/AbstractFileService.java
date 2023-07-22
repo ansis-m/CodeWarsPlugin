@@ -1,5 +1,6 @@
 package com.example.codewarsplugin.services.files.create;
 
+import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.project.MyProjectManager;
@@ -23,6 +24,9 @@ public abstract class AbstractFileService implements FileService {
     VirtualFile directory;
     VirtualFile sourcesRoot;
     VirtualFile metaData;
+
+    VirtualFile testFile;
+    VirtualFile workFile;
 
     public AbstractFileService(KataInput input, KataRecord record, FileServiceClient client){
         this.input = input;
@@ -76,6 +80,20 @@ public abstract class AbstractFileService implements FileService {
             }
         }
         return false;
+    }
+
+    @Override
+    public KataDirectory createKataDirectory() {
+
+        KataDirectory kataDirectory = new KataDirectory();
+        kataDirectory.setWorkFile(workFile);
+        kataDirectory.setTestFile(testFile);
+        kataDirectory.setInput(input);
+        kataDirectory.setRecord(record);
+        kataDirectory.setDirectory(directory);
+        kataDirectory.setMetaDataDirectory(metaData);
+
+        return kataDirectory;
     }
 
     protected abstract String getRecordFileName();

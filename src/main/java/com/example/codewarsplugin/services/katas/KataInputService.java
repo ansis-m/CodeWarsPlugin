@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.swing.*;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;

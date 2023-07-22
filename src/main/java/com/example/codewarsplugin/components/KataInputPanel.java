@@ -85,7 +85,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
 
 
         System.out.println("Kata input received: " + kataInput.toString());
-        ApplicationManager.getApplication().invokeLater(() -> new FileManager().createFile(kataInput, record, this));
+        ApplicationManager.getApplication().invokeLater(() -> new FileManager().createFile(kataInput, record, store, this));
     }
 
     @Override

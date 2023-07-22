@@ -1,7 +1,6 @@
 package com.example.codewarsplugin.services.files.create;
 
-import com.example.codewarsplugin.models.kata.KataInput;
-import com.example.codewarsplugin.models.kata.KataRecord;
+import com.example.codewarsplugin.models.kata.KataDirectory;
 
 public interface FileService {
 
@@ -24,4 +23,6 @@ public interface FileService {
     String getFileName();
 
     String getTestFileName();
+
+    KataDirectory createKataDirectory();
 }

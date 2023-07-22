@@ -1,12 +1,15 @@
 package com.example.codewarsplugin.services.files.create;
 
 import com.example.codewarsplugin.models.kata.JsonSource;
+import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
+import com.example.codewarsplugin.services.project.MyProjectManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.IOException;
@@ -35,13 +38,17 @@ public class JavaFileService extends AbstractFileService{
                 try {
                     file = directory.createChildData(this, isWorkFile? getFileName() : getTestFileName());
                     file.refresh(false, true);
-                    VirtualFile finalFile = file;
-                    finalFile.setBinaryContent(getFileContent(isWorkFile));
+                    file.setBinaryContent(getFileContent(isWorkFile));
                     OpenFileDescriptor descriptor = new OpenFileDescriptor(project, file);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     fileEditorManager.openTextEditor(descriptor, isWorkFile);
-                    if(isWorkFile)
+                    if(isWorkFile) {
+                        workFile = file;
                         client.transitionToWorkView();
+                    } else {
+                        testFile = file;
+                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     client.notifyFileCreationFailed(isWorkFile);

@@ -1,5 +1,6 @@
 package com.example.codewarsplugin.services.files.create;
 
+import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 
@@ -58,4 +59,11 @@ public class PythonFileService extends AbstractFileService{
     public String getTestFileName() {
         return null;
     }
+
+    @Override
+    public KataDirectory createKataDirectory() {
+
+        return null;
+    }
+
 }
