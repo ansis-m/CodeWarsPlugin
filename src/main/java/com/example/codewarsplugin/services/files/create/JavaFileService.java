@@ -36,9 +36,7 @@ public class JavaFileService extends AbstractFileService{
                     file = directory.createChildData(this, isWorkFile? getFileName() : getTestFileName());
                     file.refresh(false, true);
                     file.setBinaryContent(getFileContent(isWorkFile));
-                    OpenFileDescriptor descriptor = new OpenFileDescriptor(project, file);
-                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                    fileEditorManager.openTextEditor(descriptor, isWorkFile);
+
                     if(isWorkFile) {
                         workFile = file;
                     } else {
