@@ -11,16 +11,21 @@ public class KataDirectory {
     private KataRecord record;
     private KataInput input;
 
+//    @Override
+//    public String toString() {
+//        return "KataDirectory{" +
+//                "directory=" + directory.getName() +
+//                ", metaDataDirectory=" + metaDataDirectory.getName() +
+//                ", workFile=" + workFile.getName() +
+//                ", testFile=" + testFile.getName() +
+//                ", record=" + record.getName() +
+//                ", input=" + input.getActiveVersion() +
+//                "}\n";
+//    }
+
     @Override
     public String toString() {
-        return "KataDirectory{" +
-                "directory=" + directory.getName() +
-                ", metaDataDirectory=" + metaDataDirectory.getName() +
-                ", workFile=" + workFile.getName() +
-                ", testFile=" + testFile.getName() +
-                ", record=" + record.getName() +
-                ", input=" + input.getActiveVersion() +
-                "}\n";
+        return record.getName() + " in " + record.getSelectedLanguage();
     }
 
     public VirtualFile getDirectory() {

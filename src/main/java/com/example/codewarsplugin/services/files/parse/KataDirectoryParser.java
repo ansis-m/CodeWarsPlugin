@@ -4,20 +4,12 @@ import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.files.create.FileService;
-import com.example.codewarsplugin.services.files.create.FileServiceClient;
 import com.example.codewarsplugin.services.files.create.FileServiceFactory;
 import com.example.codewarsplugin.services.project.MyProjectManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Consumer;
-import org.jetbrains.annotations.Nullable;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,20 +18,18 @@ import static com.example.codewarsplugin.services.files.create.AbstractFileServi
 
 public class KataDirectoryParser {
 
-    private Project project;
-    private final List<VirtualFile> sourcesRoots = new ArrayList<>();
-    private final List<KataDirectory> directoryList = new ArrayList<>();
+    private static Project project;
+    private static List<VirtualFile> sourcesRoots;
+    private static ArrayList<KataDirectory> directoryList;
 
-    public KataDirectoryParser() {
-        this.project = MyProjectManager.getProject();
+    public static void parseSourceDirectories() {
+        project = MyProjectManager.getProject();
+        sourcesRoots = new ArrayList<>();
+        directoryList = new ArrayList<>();
+        getSourcesRoots().forEach(KataDirectoryParser::processSourcesRoot);
     }
 
-    public void parseSourceDirectories() {
-        getSourcesRoots().forEach(this::processSourcesRoot);
-
-    }
-
-    private void processSourcesRoot(VirtualFile directory) {
+    private static void processSourcesRoot(VirtualFile directory) {
 
         if (directory != null && directory.isDirectory()) {
             for (VirtualFile child : directory.getChildren()) {
@@ -62,7 +52,7 @@ public class KataDirectoryParser {
         }
     }
 
-    private void fillDirectoryWithFiles(KataDirectory kataDirectory) {
+    private static void fillDirectoryWithFiles(KataDirectory kataDirectory) {
 
         KataRecord record = null;
         KataInput input = null;
@@ -98,7 +88,7 @@ public class KataDirectoryParser {
         }
     }
 
-    public List<VirtualFile> getSourcesRoots() {
+    public static List<VirtualFile> getSourcesRoots() {
         VirtualFile baseDir = project.getBaseDir();
         if (baseDir != null && baseDir.isDirectory()) {
             VirtualFile[] children = baseDir.getChildren();
@@ -113,11 +103,12 @@ public class KataDirectoryParser {
         return sourcesRoots;
     }
 
-    public List<KataDirectory> getDirectoryList() {
+    public static ArrayList<KataDirectory> getDirectoryList() {
+        KataDirectoryParser.parseSourceDirectories();
         return directoryList;
     }
 
-    public void add(KataDirectory directory) {
+    public static void add(KataDirectory directory) {
         directoryList.add(directory);
     }
 }

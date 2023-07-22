@@ -1,5 +1,6 @@
 package com.example.codewarsplugin.components;
 
+import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.files.create.FileManager;
@@ -136,7 +137,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     }
 
     @Override
-    public void transitionToWorkView() {
+    public void transitionToWorkView(KataDirectory directory) {
         System.out.println("\n\nTransition to work view!\n\n");
         store.getCurrentView().cleanup();
         store.getPreviousViews().add(store.getCurrentView());
@@ -145,7 +146,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     }
 
     @Override
-    public void notifyFileCreationFailed() {
+    public void notifyKataDirectoryCreationFailed() {
 
     }
 }

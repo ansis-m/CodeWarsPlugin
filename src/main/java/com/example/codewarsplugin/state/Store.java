@@ -2,13 +2,11 @@ package com.example.codewarsplugin.state;
 
 import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.components.*;
-import com.example.codewarsplugin.services.files.parse.KataDirectoryParser;
+import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.views.LogedInView;
 import com.example.codewarsplugin.views.LoginView;
 import com.example.codewarsplugin.views.View;
 import com.example.codewarsplugin.views.WorkView;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.ToolWindow;
 
 import java.util.LinkedList;
 
@@ -23,10 +21,7 @@ public class Store {
     private WorkView workView;
     private View currentView;
     private LinkedList<View> previousViews = new LinkedList<>();
-
-    private KataDirectoryParser directoryParser;
-
-
+    private KataDirectory directory;
 
     public Store(SidePanel sidePanel){
         this.sidePanel = sidePanel;
@@ -60,7 +55,7 @@ public class Store {
     public TopImagePanel getTopImagePanel() {
         return topImagePanel;
     }
-    public KataRecordPanel getKataPrompt() {
+    public KataRecordPanel getKataRecordPanel() {
         return kataRecordPanel;
     }
     public SidePanel getSidePanel() {
@@ -90,12 +85,11 @@ public class Store {
         this.previousViews = previousViews;
     }
 
-    public void parseKataDirectories() {
-        directoryParser = new KataDirectoryParser();
-        directoryParser.parseSourceDirectories();
+    public void setCurrentKataDirectory(KataDirectory directory) {
+        this.directory = directory;
     }
 
-    public KataDirectoryParser getDirectoryParser() {
-        return directoryParser;
+    public KataDirectory getDirectory() {
+        return directory;
     }
 }

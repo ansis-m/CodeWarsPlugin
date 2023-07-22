@@ -36,10 +36,6 @@ public class SidePanel extends JPanel {
         stateParams.setSidePanel(this);
         stateParams.setStore(store);
         store.setCurrentView(LoginService.loginSuccess? store.getLogedInView() : store.getLoginView());
-        store.parseKataDirectories();
-
-        store.getDirectoryParser().getDirectoryList().forEach(System.out::println);
-
         SyncService.addParams(stateParams);
         Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
     }
