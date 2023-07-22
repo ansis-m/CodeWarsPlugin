@@ -20,7 +20,7 @@ public class FileServiceFactory {
         } catch (Exception e) {
             System.out.println("class name: " + capitalize(input.getLanguageName()) + "FileService");
             System.out.println("full name: " + PACKAGE + ".");
-            Arrays.stream(e.getStackTrace()).forEach(System.out::println);
+            e.printStackTrace();
         }
         return (FileService) new JavaFileService(input, record);
     }

@@ -27,6 +27,8 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     private JLabel spinner = new JLabel(new AnimatedIcon.Big());
     private JLabel failMessage = new JLabel("\u00A0");
 
+    private JPanel setupPanel = new JPanel();
+
     public KataInputPanel(KataRecord record, Store store){
         super();
         this.record = record;
@@ -46,28 +48,30 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     private void addComponents() {
         var constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.CENTER;
-        constraints.insets = new Insets(5, 5, 5, 5);
+        constraints.insets = new Insets(0, 0, 5, 0);
 
         constraints.gridx = 0;
         constraints.gridy = 0;
 
-        var label = new JLabel(record == null ? "Selected Kata: " : "Selected Kata: " + record.getName());
+
+        setupPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
+
+        var label = new JLabel(record == null ? "" : record.getName());
         label.setFont(label.getFont().deriveFont(14f));
-        add(label, constraints);
+        setupPanel.add(label, constraints);
+
+        languageBox = new ComboBox<>(record == null ? new String[]{} : record.getLanguages());
+        setupPanel.add(languageBox, constraints);
+
+        setupPanel.add(cardButtonPanel, constraints);
+
 
         constraints.gridx = 0;
         constraints.gridy = 1;
-
-        languageBox = new ComboBox<>(record == null ? new String[]{} : record.getLanguages());
-        add(languageBox, constraints);
-
+        add(setupPanel, constraints);
 
         constraints.gridx = 0;
         constraints.gridy = 2;
-        add(cardButtonPanel, constraints);
-
-        constraints.gridx = 0;
-        constraints.gridy = 3;
         add(failMessage, constraints);
     }
 
@@ -139,6 +143,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     @Override
     public void transitionToWorkView(KataDirectory directory) {
         System.out.println("\n\nTransition to work view!\n\n");
+        store.setCurrentKataDirectory(directory);
         store.getCurrentView().cleanup();
         store.getPreviousViews().add(store.getCurrentView());
         store.getWorkView().setup();

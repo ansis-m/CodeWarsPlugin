@@ -13,9 +13,9 @@ import java.awt.event.KeyListener;
 
 public class KataRecordPanel extends JPanel implements KataRecordServiceClient {
 
-    private JTextField textField = new JTextField(30);
-    private JButton submitButton = new JButton("Get Kata");
-    private JLabel promptLabel = new JLabel("Paste kata title!");
+    private JTextField textField = new JTextField(20);
+    private JButton submitButton = new JButton("Fetch Kata");
+    private JLabel promptLabel = new JLabel("Paste kata title and fetch from codewars.com!");
     private JLabel kataNotFoundLabel = new JLabel("Kata not found!");
     private JPanel cardButtonPanel = new JPanel();
     private CardLayout cardButtonLayout = new CardLayout();
@@ -26,6 +26,7 @@ public class KataRecordPanel extends JPanel implements KataRecordServiceClient {
     private JPanel filledKataInputPanel;
     private JLabel spinner = new JLabel(new AnimatedIcon.Big());
     private GridBagConstraints constraints = new GridBagConstraints();
+    private JPanel fetchPanel = new JPanel();
     private Store store;
 
     public KataRecordPanel(Store store){
@@ -43,26 +44,24 @@ public class KataRecordPanel extends JPanel implements KataRecordServiceClient {
         promptLabel.setFont(promptLabel.getFont().deriveFont(14f));
 
         constraints.anchor = GridBagConstraints.CENTER;
-        constraints.insets = new Insets(5, 5, 5, 5);
+        constraints.insets = new Insets(0, 0, 5, 0);
 
         constraints.gridx = 0;
         constraints.gridy = 0;
-        add(textField, constraints);
-
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-
-        constraints.insets = new Insets(0, 5, 5, 5);
         add(promptLabel, constraints);
+
+        fetchPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));;
+        fetchPanel.add(textField);
 
         cardButtonPanel.setLayout(cardButtonLayout);
         cardButtonPanel.add(submitButton, "submitButton");
         cardButtonPanel.add(spinner, "spinner");
+        fetchPanel.add(cardButtonPanel);
 
         constraints.gridx = 0;
-        constraints.gridy = 2;
-        constraints.insets = new Insets(5, 5, 50, 5);
-        add(cardButtonPanel, constraints);
+        constraints.gridy = 1;
+        add(fetchPanel, constraints);
+
 
         kataNotFoundLabel.setForeground(Color.red);
         kataNotFoundLabel.setFont(promptLabel.getFont().deriveFont(15f));
@@ -74,8 +73,7 @@ public class KataRecordPanel extends JPanel implements KataRecordServiceClient {
         cardKataPanel.add(dummyKataInputPanel, "dummy");
 
         constraints.gridx = 0;
-        constraints.gridy = 3;
-        constraints.insets = new Insets(5, 5, 5, 5);
+        constraints.gridy = 2;
         add(cardKataPanel, constraints);
     }
 

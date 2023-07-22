@@ -14,6 +14,8 @@ public class KataSelectorPanel extends JPanel {
     private Store store;
     private ArrayList<KataDirectory> kataDirectoryList;
     private ComboBox<Object> directoryBox;
+    private JPanel selectorPanel = new JPanel();
+    private JButton selectorButton = new JButton("Setup Kata");
     public KataSelectorPanel(Store store) {
         super();
         this.store = store;
@@ -24,28 +26,46 @@ public class KataSelectorPanel extends JPanel {
     }
 
     private void addSelectorListeners() {
+
+        selectorButton.addActionListener((event) -> {
+            store.setCurrentKataDirectory((KataDirectory) directoryBox.getSelectedItem());
+            store.getCurrentView().cleanup();
+            store.getPreviousViews().add(store.getCurrentView());
+            store.getWorkView().setup();
+            store.setCurrentView(store.getWorkView());
+
+        });
+
+
     }
 
     private void addElementsToPanel() {
 
         var constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.CENTER;
-        constraints.insets = new Insets(5, 5, 5, 5);
+        constraints.insets = new Insets(0, 5, 5, 5);
 
         constraints.gridx = 0;
         constraints.gridy = 0;
 
-        var label = new JLabel("");
+        var label = new JLabel("Select Kata from the current project");
         label.setFont(label.getFont().deriveFont(14f));
         add(label, constraints);
 
         constraints.gridx = 0;
         constraints.gridy = 1;
 
+        selectorPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
         directoryBox = new ComboBox<>(kataDirectoryList.toArray());
-        add(directoryBox, constraints);
+        selectorPanel.add(directoryBox);
+        selectorPanel.add(selectorButton);
+        add(selectorPanel, constraints);
 
+        constraints.gridx = 0;
+        constraints.gridy = 2;
 
-
+        var label2 = new JLabel("OR");
+        label2.setFont(label.getFont().deriveFont(14f));
+        add(label2, constraints);
     }
 }
