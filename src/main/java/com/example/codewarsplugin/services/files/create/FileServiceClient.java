@@ -5,5 +5,5 @@ public interface FileServiceClient {
 
     void transitionToWorkView();
 
-    void notifyFileCreationFailed(boolean isWorkFile);
+    void notifyFileCreationFailed();
 }

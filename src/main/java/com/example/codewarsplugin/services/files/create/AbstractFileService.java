@@ -18,20 +18,17 @@ public abstract class AbstractFileService implements FileService {
 
     KataInput input;
     KataRecord record;
-    FileServiceClient client;
     Project project = MyProjectManager.getProject();
     VirtualFile baseDir;
     VirtualFile directory;
     VirtualFile sourcesRoot;
     VirtualFile metaData;
-
     VirtualFile testFile;
     VirtualFile workFile;
 
-    public AbstractFileService(KataInput input, KataRecord record, FileServiceClient client){
+    public AbstractFileService(KataInput input, KataRecord record){
         this.input = input;
         this.record = record;
-        this.client = client;
     }
 
     @Override

@@ -5,8 +5,8 @@ import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 
 public class PythonFileService extends AbstractFileService{
-    public PythonFileService(KataInput input, KataRecord record, FileServiceClient client) {
-        super(input, record, client);
+    public PythonFileService(KataInput input, KataRecord record) {
+        super(input, record);
     }
 
     @Override

@@ -24,7 +24,7 @@ import java.util.List;
 
 import static com.example.codewarsplugin.services.files.create.AbstractFileService.isSourcesRoot;
 
-public class KataDirectoryParser implements FileServiceClient {
+public class KataDirectoryParser {
 
     private Project project;
     private final List<VirtualFile> sourcesRoots = new ArrayList<>();
@@ -85,7 +85,7 @@ public class KataDirectoryParser implements FileServiceClient {
             return;
         }
 
-        FileService fileService = FileServiceFactory.createFileService(input, record, this);
+        FileService fileService = FileServiceFactory.createFileService(input, record);
         String testFileName = fileService.getTestFileName();
         String workFileName = fileService.getFileName();
 
@@ -115,21 +115,6 @@ public class KataDirectoryParser implements FileServiceClient {
 
     public List<KataDirectory> getDirectoryList() {
         return directoryList;
-    }
-
-    @Override
-    public void notifyFileExists() {
-        throw new RuntimeException("Exception at KataDirectoryParser.notifyFileExists : parser not supposed to create files!");
-    }
-
-    @Override
-    public void transitionToWorkView() {
-        throw new RuntimeException("Exception at KataDirectoryParser.transitionToWorkView : parser not supposed to transition views!");
-    }
-
-    @Override
-    public void notifyFileCreationFailed(boolean isWorkFile) {
-        throw new RuntimeException("Exception at KataDirectoryParser.notifyFileCreationFailed : parser not supposed to create files!");
     }
 
     public void add(KataDirectory directory) {

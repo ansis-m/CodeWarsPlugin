@@ -145,7 +145,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     }
 
     @Override
-    public void notifyFileCreationFailed(boolean isWorkFile) {
+    public void notifyFileCreationFailed() {
 
     }
 }
