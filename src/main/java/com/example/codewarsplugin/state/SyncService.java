@@ -24,7 +24,7 @@ public class SyncService {
 
     public static void login(){
         for(StateParams p : stateParamsList) {
-            var vars = p.getVars();
+            var vars = p.getStore();
             vars.getCurrentView().cleanup();
             vars.getPreviousViews().add(vars.getCurrentView());
             vars.setCurrentView(vars.getLogedInView());
@@ -37,7 +37,7 @@ public class SyncService {
         UserService.clearUser();
         WebDriver.logout();
         for(StateParams p : stateParamsList) {
-            var vars = p.getVars();
+            var vars = p.getStore();
             vars.getCurrentView().cleanup();
             vars.getPreviousViews().add(vars.getCurrentView());
             vars.setCurrentView(vars.getLoginView());
@@ -48,7 +48,7 @@ public class SyncService {
 
     public static void startLoginSpinner(){
         for(StateParams p : stateParamsList) {
-            var vars = p.getVars();
+            var vars = p.getStore();
             vars.getLoginManager().startSpinner();
         }
 
@@ -56,7 +56,7 @@ public class SyncService {
 
     public static void stopLoginSpinner(){
         for(StateParams p : stateParamsList) {
-            var vars = p.getVars();
+            var vars = p.getStore();
             vars.getLoginManager().stopSpinner();
         }
     }

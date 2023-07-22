@@ -2,8 +2,8 @@ package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
-import com.example.codewarsplugin.services.files.FileManager;
-import com.example.codewarsplugin.services.files.FileServiceClient;
+import com.example.codewarsplugin.services.files.create.FileManager;
+import com.example.codewarsplugin.services.files.create.FileServiceClient;
 import com.example.codewarsplugin.services.katas.KataInputService;
 import com.example.codewarsplugin.services.katas.KataInputServiceClient;
 import com.example.codewarsplugin.state.Store;

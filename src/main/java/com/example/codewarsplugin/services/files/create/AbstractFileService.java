@@ -1,4 +1,4 @@
-package com.example.codewarsplugin.services.files;
+package com.example.codewarsplugin.services.files.create;
 
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
@@ -65,7 +65,7 @@ public abstract class AbstractFileService implements FileService {
         }
     }
 
-    private boolean isSourcesRoot(VirtualFile directory, Project project) {
+    public static boolean isSourcesRoot(VirtualFile directory, Project project) {
         Module[] modules = ModuleManager.getInstance(project).getModules();
         for (Module module : modules) {
             ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
@@ -77,8 +77,6 @@ public abstract class AbstractFileService implements FileService {
         }
         return false;
     }
-
-    protected abstract String getFileName();
 
     protected abstract String getRecordFileName();
 

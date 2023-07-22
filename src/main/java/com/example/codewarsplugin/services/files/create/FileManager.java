@@ -1,4 +1,4 @@
-package com.example.codewarsplugin.services.files;
+package com.example.codewarsplugin.services.files.create;
 
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;

@@ -1,4 +1,4 @@
-package com.example.codewarsplugin.services.files;
+package com.example.codewarsplugin.services.files.create;
 
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
@@ -9,7 +9,7 @@ public class PythonFileService extends AbstractFileService{
     }
 
     @Override
-    protected String getFileName() {
+    public String getFileName() {
         return null;
     }
 
@@ -47,5 +47,15 @@ public class PythonFileService extends AbstractFileService{
     @Override
     public void createInputFile() {
 
+    }
+
+    @Override
+    public String getFileBaseName() {
+        return null;
+    }
+
+    @Override
+    public String getTestFileName() {
+        return null;
     }
 }

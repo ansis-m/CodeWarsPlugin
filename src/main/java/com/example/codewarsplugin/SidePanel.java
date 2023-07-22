@@ -20,9 +20,9 @@ public class SidePanel extends JPanel {
 
     public SidePanel(Project project, ToolWindow toolWindow) {
         setLayout(new BorderLayout());
+        MyProjectManager.init(project, toolWindow);
         initPlugin(project, toolWindow);
         store.getCurrentView().setup();
-        MyProjectManager.init(project, toolWindow);
         ProjectManager.getInstance().addProjectManagerListener(new MyProjectManagerListener()); //kautkaada servisa metode
     }
 
@@ -34,19 +34,15 @@ public class SidePanel extends JPanel {
         stateParams.setProject(project);
         stateParams.setToolWindow(toolWindow);
         stateParams.setSidePanel(this);
-        stateParams.setVars(store);
-        stateParams.setCurrentView(LoginService.loginSuccess? store.getLogedInView() : store.getLoginView());
+        stateParams.setStore(store);
         store.setCurrentView(LoginService.loginSuccess? store.getLogedInView() : store.getLoginView());
+        store.parseKataDirectories();
+
+        store.getDirectoryParser().getDirectoryList().forEach(System.out::println);
 
         SyncService.addParams(stateParams);
-
         Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
     }
-
-
-
-
-
 
     private void cleanup() {
         WebDriver.quit();

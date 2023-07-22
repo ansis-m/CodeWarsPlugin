@@ -1,4 +1,4 @@
-package com.example.codewarsplugin.services.files;
+package com.example.codewarsplugin.services.files.create;
 
 import com.example.codewarsplugin.models.kata.JsonSource;
 import com.example.codewarsplugin.models.kata.KataInput;
@@ -10,8 +10,6 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.IOException;
-
-import static org.apache.commons.lang.WordUtils.capitalize;
 
 public class JavaFileService extends AbstractFileService{
 
@@ -60,8 +58,8 @@ public class JavaFileService extends AbstractFileService{
         return "package " + "codewars.java." + slug.replaceAll("-", ".") + ";\n\n";
     }
 
-    private String getTestFileName() {
-        //TODO fix
+    @Override
+    public String getTestFileName() {
         int classIndex = input.getExampleFixture().indexOf("class", 0);
         int startIndex = classIndex + 5;
         int endIndex = input.getExampleFixture().indexOf('{');
@@ -70,11 +68,12 @@ public class JavaFileService extends AbstractFileService{
     }
 
     @Override
-    protected String getFileName() {
+    public String getFileName() {
         return getFileBaseName() + ".java";
     }
 
-    private String getFileBaseName(){
+    @Override
+    public String getFileBaseName(){
         int classIndex = input.getSetup().indexOf("class", 0);
         int startIndex = classIndex + 5;
         int endIndex = input.getSetup().indexOf('{');

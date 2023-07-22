@@ -1,4 +1,4 @@
-package com.example.codewarsplugin.services.files;
+package com.example.codewarsplugin.services.files.create;
 
 public interface FileServiceClient {
     void notifyFileExists();

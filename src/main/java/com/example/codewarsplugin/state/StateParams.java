@@ -1,7 +1,6 @@
 package com.example.codewarsplugin.state;
 
 import com.example.codewarsplugin.SidePanel;
-import com.example.codewarsplugin.views.View;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 
@@ -11,7 +10,6 @@ public class StateParams {
     private ToolWindow toolWindow;
     private Store store;
     private SidePanel sidePanel;
-    private View currentView;
 
     public Project getProject() {
         return project;
@@ -29,11 +27,11 @@ public class StateParams {
         this.toolWindow = toolWindow;
     }
 
-    public Store getVars() {
+    public Store getStore() {
         return store;
     }
 
-    public void setVars(Store store) {
+    public void setStore(Store store) {
         this.store = store;
     }
 
@@ -45,12 +43,4 @@ public class StateParams {
         this.sidePanel = sidePanel;
     }
 
-
-    public View getCurrentView() {
-        return currentView;
-    }
-
-    public void setCurrentView(View currentView) {
-        this.currentView = currentView;
-    }
 }
