@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.CapabilityType;
 
 import javax.swing.*;
+import java.util.concurrent.ExecutionException;
 
 public class WebDriver {
 
@@ -17,18 +18,28 @@ public class WebDriver {
             return;
         }
 
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+        SwingWorker<ChromeDriver, Void> worker = new SwingWorker<ChromeDriver, Void>() {
             @Override
-            protected Void doInBackground() {
+            protected ChromeDriver doInBackground() {
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions options = new ChromeOptions();
                 options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
                 options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
 //                    //options.addArguments("--headless");
                 options.addArguments("--disable-notifications");
-                chromeDriver = new ChromeDriver(options);
-                chromeDriver.get("https://www.codewars.com/users/sign_in");
-                return null;
+                var driver = new ChromeDriver(options);
+                driver.get("https://www.codewars.com/users/sign_in");
+                return driver;
+            }
+            @Override
+            protected void done(){
+                try {
+                    chromeDriver = get();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
         worker.execute();

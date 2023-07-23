@@ -2,13 +2,18 @@ package com.example.codewarsplugin.services.katas;
 
 
 import com.example.codewarsplugin.models.*;
+import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataOutput;
 import com.example.codewarsplugin.models.kata.SubmitResponse;
 import com.example.codewarsplugin.services.login.LoginService;
+import com.example.codewarsplugin.state.Store;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 
 import java.net.URI;
 import java.net.URLDecoder;
@@ -20,17 +25,20 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class KataManager {
+public class KataSubmitService {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private final static HttpClient httpClient = HttpClient.newHttpClient();
-
     private SubmitResponse submitResponse;
     private KataInput input;
+    private KataDirectory directory;
+    private KataSubmitServiceClient client;
     private Token token;
 
-    public KataManager(KataInput input) {
-        this.input = input;
+    public KataSubmitService(Store store, KataDirectory directory, KataSubmitServiceClient client) {
+        this.input = directory.getInput();
+        this.directory = directory;
+        this.client = client;
     }
 
 
@@ -64,7 +72,7 @@ public class KataManager {
         }
     }
 
-    public String run(){
+    public void run(){
 
         getToken();
 
@@ -84,22 +92,22 @@ public class KataManager {
 
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            String responseBody = response.body();
 
-            System.out.println("submit response as string: " + response.body());
-            submitResponse = new Gson().fromJson(response.body(), SubmitResponse.class);
-
-
-            System.out.println("submit response: " + submitResponse.toString());
-
-
-            notifyServer(output);
-            return responseBody;
+            if(response.statusCode() >= 200 && response.statusCode() < 300) {
+                String responseBody = response.body();
+                System.out.println("submit response as string: " + response.body());
+                submitResponse = new Gson().fromJson(response.body(), SubmitResponse.class);
+                System.out.println("submit response: " + submitResponse.toString());
+                notifyServer(output);
+                client.notifyRunSuccess(submitResponse);
+            } else {
+                client.notifyBadStatusCode(response);
+            }
 
         } catch (Exception e) {
             System.out.println("An error occurred in run: " + e.getMessage() );
             Arrays.stream(e.getStackTrace()).forEach(System.out::println);
-            return null;
+            client.notifyRunFailed(e);
         }
     }
 
@@ -148,7 +156,7 @@ public class KataManager {
     }
 
 
-    public void writeSolution(String solution) {
+    private void writeSolution(String solution) {
         this.input.setSetup(solution);
     }
 
@@ -156,26 +164,41 @@ public class KataManager {
 
         KataOutput output = new KataOutput();
         output.setLanguage(input.getLanguageName());
-        //output.setCode(input.getSetup());
+        String code = readWorkFile();
 
-        output.setCode("public class Ship {\n" +
-                "  private final double d;\n" +
-                "  private final int c;\n" +
-                "    \n" +
-                "  public Ship(double d, int c) {\n" +
-                "    this.d = d;\n" +
-                "    this.c = c;\n" +
-                "  }\n" +
-                "\n" +
-                "  public boolean isWorthIt(){\n" +
-                "    return d - c * 1.5 > 20;\n" +
-                "  }\n" +
-                "} ");
+        System.out.println("code from the file: \n\n" + code + "\n\n");
+
+        output.setCode(code);
         output.setFixture(input.getFixture());
         output.setTestFramework(input.getTestFramework());
         output.setLanguageVersion(input.getActiveVersion());
         output.setRelayId(input.getSolutionId());
         return output;
+    }
+
+    private String readWorkFile() {
+        ApplicationManager.getApplication().invokeAndWait(() -> {
+            FileDocumentManager.getInstance().getDocument(directory.getWorkFile());
+        });
+
+        FileDocumentManager documentManager = FileDocumentManager.getInstance();
+        Document document = documentManager.getDocument(directory.getWorkFile());
+
+        if (document != null) {
+            return stripPackage(document.getText());
+        }
+
+        return "";
+    }
+
+    private String stripPackage(String text) {
+        int begin = text.indexOf("package");
+        int semicolon = text.indexOf(';');
+
+        if(begin != -1 && semicolon != -1 && semicolon > begin && text.length() > semicolon + 1) {
+            return text.substring(semicolon + 1);
+        }
+        return text;
     }
 
     public String commit() {

@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.views;
 
 import com.example.codewarsplugin.SidePanel;
+import com.example.codewarsplugin.components.KataSubmitPanel;
 import com.example.codewarsplugin.components.NavigationBar;
 import com.example.codewarsplugin.components.UserPanel;
 import com.example.codewarsplugin.models.kata.KataInput;
@@ -20,6 +21,7 @@ public class WorkView implements View{
     private SidePanel sidePanel;
     private UserPanel userPanel;
     private NavigationBar navigationBar;
+    private KataSubmitPanel submitPanel;
 
     private KataInput input;
     private KataRecord record;
@@ -44,6 +46,10 @@ public class WorkView implements View{
 
         userPanel = new UserPanel(UserService.getUser(), store);
         navigationBar = new NavigationBar(store);
+        submitPanel = new KataSubmitPanel(store);
+
+
+        sidePanel.add(submitPanel, BorderLayout.CENTER);
         sidePanel.add(userPanel, BorderLayout.NORTH);
         sidePanel.add(navigationBar, BorderLayout.SOUTH);
         sidePanel.revalidate();
