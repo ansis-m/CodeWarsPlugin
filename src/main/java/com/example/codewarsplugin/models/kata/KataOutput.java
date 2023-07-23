@@ -34,8 +34,9 @@ public class KataOutput {
         return fixture;
     }
 
-    public void setFixture(String fixture) {
+    public KataOutput setFixture(String fixture) {
         this.fixture = fixture;
+        return this;
     }
 
     public String getSetup() {
@@ -74,8 +75,9 @@ public class KataOutput {
         return ciphered;
     }
 
-    public void setCiphered(String[] ciphered) {
+    public KataOutput setCiphered(String[] ciphered) {
         this.ciphered = ciphered;
+        return this;
     }
 
     public String getChannel() {

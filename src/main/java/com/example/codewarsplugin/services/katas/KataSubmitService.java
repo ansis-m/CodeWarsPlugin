@@ -2,19 +2,22 @@ package com.example.codewarsplugin.services.katas;
 
 
 import com.example.codewarsplugin.models.*;
-import com.example.codewarsplugin.models.kata.KataDirectory;
-import com.example.codewarsplugin.models.kata.KataInput;
-import com.example.codewarsplugin.models.kata.KataOutput;
-import com.example.codewarsplugin.models.kata.SubmitResponse;
+import com.example.codewarsplugin.models.kata.*;
 import com.example.codewarsplugin.services.login.LoginService;
+import com.example.codewarsplugin.services.project.MyProjectManager;
 import com.example.codewarsplugin.state.Store;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.vfs.VirtualFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.http.HttpClient;
@@ -34,6 +37,8 @@ public class KataSubmitService {
     private KataDirectory directory;
     private KataSubmitServiceClient client;
     private Token token;
+    private Gson gson = new Gson();
+    final String FILENAME = "test.json";
 
     public KataSubmitService(Store store, KataDirectory directory, KataSubmitServiceClient client) {
         this.input = directory.getInput();
@@ -72,16 +77,43 @@ public class KataSubmitService {
         }
     }
 
-    public void run(){
+    public void attempt(){
 
+        KataOutput output = mapOutput();
+        try {
+            HttpResponse<String> response = run(output);
+
+            if(response.statusCode() >= 200 && response.statusCode() < 300) {
+                mapSubmitResponse(response.body());
+                notifyServer(output);
+                client.notifyAttemptSuccess(submitResponse);
+            } else {
+                client.notifyBadStatusCode(response);
+            }
+        } catch (Exception e) {
+            client.notifyRunFailed(e);
+        }
+    }
+
+    public void test() {
+        KataOutput output = mapTestOutput();
+
+        try {
+            HttpResponse<String> response = run(output);
+            if(response.statusCode() >= 200 && response.statusCode() < 300) {
+                mapSubmitResponse(response.body());
+                notifyServer(output);
+                client.notifyTestSuccess(submitResponse);
+            } else {
+                client.notifyBadStatusCode(response);
+            }
+        } catch (Exception e) {
+            client.notifyRunFailed(e);
+        }
+    }
+
+    private HttpResponse<String> run(KataOutput output) throws IOException, InterruptedException {
         getToken();
-
-        KataOutput output = mapOutput(input);
-
-
-        System.out.println("Output: \n" + new GsonBuilder().create().toJson(output));
-
-        assert token != null;
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://runner.codewars.com/run"))
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
@@ -90,25 +122,7 @@ public class KataSubmitService {
                 .POST(HttpRequest.BodyPublishers.ofString(new GsonBuilder().create().toJson(output)))
                 .build();
 
-        try {
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if(response.statusCode() >= 200 && response.statusCode() < 300) {
-                String responseBody = response.body();
-                System.out.println("submit response as string: " + response.body());
-                submitResponse = new Gson().fromJson(response.body(), SubmitResponse.class);
-                System.out.println("submit response: " + submitResponse.toString());
-                notifyServer(output);
-                client.notifyRunSuccess(submitResponse);
-            } else {
-                client.notifyBadStatusCode(response);
-            }
-
-        } catch (Exception e) {
-            System.out.println("An error occurred in run: " + e.getMessage() );
-            Arrays.stream(e.getStackTrace()).forEach(System.out::println);
-            client.notifyRunFailed(e);
-        }
+        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     private void notifyServer(KataOutput output) {
@@ -146,9 +160,7 @@ public class KataSubmitService {
 
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
             System.out.println("Notify status code: " + response.statusCode() + ": " + response.body());
-
 
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
@@ -160,20 +172,20 @@ public class KataSubmitService {
         this.input.setSetup(solution);
     }
 
-    private KataOutput mapOutput(KataInput input) {
+    private KataOutput mapOutput() {
 
         KataOutput output = new KataOutput();
         output.setLanguage(input.getLanguageName());
         String code = readWorkFile();
-
-        System.out.println("code from the file: \n\n" + code + "\n\n");
-
         output.setCode(code);
         output.setFixture(input.getFixture());
         output.setTestFramework(input.getTestFramework());
         output.setLanguageVersion(input.getActiveVersion());
         output.setRelayId(input.getSolutionId());
         return output;
+    }
+    private KataOutput mapTestOutput() {
+        return mapOutput().setCiphered(new String[] {"setup"}).setFixture(input.getExampleFixture());
     }
 
     private String readWorkFile() {
@@ -229,5 +241,35 @@ public class KataSubmitService {
             System.out.println("An error occurred: " + e.getMessage());
             return null;
         }
+    }
+
+    private void mapSubmitResponse(String body) {
+        submitResponse = gson.fromJson(body, SubmitResponse.class);
+
+        Map<String, Object> dataMap = gson.fromJson(body, Map.class);
+        Map<String, Object> result = (Map<String, Object>) dataMap.get("result");
+        createTestResultFile(result);
+    }
+
+
+    public void createTestResultFile(Map<String, Object> source){
+        WriteCommandAction.runWriteCommandAction(MyProjectManager.getProject(), () -> {
+            if (directory.getDirectory() != null) {
+                try {
+                    VirtualFile testFile = Arrays.stream(directory.getDirectory().getChildren()).filter(child -> !child.isDirectory() && child.getName().equals(FILENAME)).findFirst().orElse(null);
+                    if (testFile == null) {
+                        testFile = directory.getDirectory().createChildData(this, FILENAME);
+                        testFile.refresh(false, true);
+                    }
+                    testFile.setBinaryContent(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(source).getBytes());
+                    OpenFileDescriptor descriptor = new OpenFileDescriptor(MyProjectManager.getProject(), testFile);
+                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(MyProjectManager.getProject());
+                    fileEditorManager.openTextEditor(descriptor, true);
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

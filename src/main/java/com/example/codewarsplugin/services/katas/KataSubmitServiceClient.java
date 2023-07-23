@@ -7,7 +7,9 @@ import java.net.http.HttpResponse;
 public interface KataSubmitServiceClient {
     void notifyRunFailed(Exception e);
 
-    void notifyRunSuccess(SubmitResponse submitResponse);
+    void notifyAttemptSuccess(SubmitResponse submitResponse);
 
     void notifyBadStatusCode(HttpResponse<String> response);
+
+    void notifyTestSuccess(SubmitResponse submitResponse);
 }

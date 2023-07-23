@@ -15,7 +15,8 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
     private Store store;
     private KataDirectory directory;
-    private JButton submitButton = new JButton("Submit");
+    private JButton attemptButton = new JButton("Attempt");
+    private JButton testButton = new JButton("Test");
     private KataSubmitService submitService;
 
     public KataSubmitPanel(Store store) {
@@ -29,8 +30,12 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     }
 
     private void addSelectorListeners() {
-        submitButton.addActionListener((e) -> {
-            this.submitService.run();
+        attemptButton.addActionListener((e) -> {
+            this.submitService.attempt();
+        });
+
+        testButton.addActionListener((e) -> {
+            this.submitService.test();
         });
     }
 
@@ -42,23 +47,34 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         constraints.gridx = 0;
         constraints.gridy = 0;
 
-        add(submitButton, constraints);
+        add(testButton, constraints);
+
+
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+
+        add(attemptButton, constraints);
     }
 
 
     @Override
     public void notifyRunFailed(Exception e) {
-        System.out.println("code run failed with exception: " + e.getMessage() + "\n");
+        System.out.println("code attempt failed with exception: " + e.getMessage() + "\n");
         e.printStackTrace();
     }
 
     @Override
-    public void notifyRunSuccess(SubmitResponse submitResponse) {
-        System.out.println("run success: " + submitResponse.toString());
+    public void notifyAttemptSuccess(SubmitResponse submitResponse) {
+        System.out.println("attempt success: " + submitResponse.toString());
     }
 
     @Override
     public void notifyBadStatusCode(HttpResponse<String> response) {
         System.out.println("Run code bad status code: " + response.statusCode());
+    }
+
+    @Override
+    public void notifyTestSuccess(SubmitResponse submitResponse) {
+
     }
 }
