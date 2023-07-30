@@ -1,6 +1,8 @@
 package com.example.codewarsplugin.services.login;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.CapabilityType;
@@ -58,14 +60,13 @@ public class WebDriver {
     }
 
     public static void logout(){
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                chromeDriver.manage().deleteAllCookies();
-                chromeDriver.get("https://www.codewars.com/users/sign_in");
-                return null;
-            }
-        };
-        worker.execute();
+        if (!chromeDriver.getCurrentUrl().equals("")) {
+            chromeDriver.get("https://www.codewars.com/dashboard");
+        }
+        WebElement anchorElement = chromeDriver.findElement(By.className("js-sign-out"));
+        System.out.println("\n\n\n\nElement text: " + anchorElement.getText());
+        chromeDriver.executeScript("arguments[0].click();", anchorElement);
+        chromeDriver.manage().deleteAllCookies();
+        chromeDriver.get("https://www.codewars.com/users/sign_in");
     }
 }
