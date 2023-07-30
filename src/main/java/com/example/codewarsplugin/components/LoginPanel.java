@@ -5,6 +5,7 @@ import com.example.codewarsplugin.services.login.LoginServiceClient;
 import com.example.codewarsplugin.state.Store;
 import com.example.codewarsplugin.state.SyncService;
 import com.intellij.ui.AnimatedIcon;
+import com.intellij.ui.JBColor;
 import groovy.transform.EqualsAndHashCode;
 
 
@@ -89,7 +90,7 @@ public class LoginPanel extends JPanel implements LoginServiceClient {
         var defaultColor = promptLabel.getForeground();
         var defaultText = promptLabel.getText();
         promptLabel.setText(message);
-        promptLabel.setForeground(Color.red);
+        promptLabel.setForeground(new JBColor(new Color(177, 54, 30), new Color(177, 54, 30)));
         revalidate();
         repaint();
         Timer timer = new Timer(2500, e -> SwingUtilities.invokeLater(() -> {

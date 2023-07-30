@@ -128,7 +128,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     public void notifyFileExists() {
 
         failMessage.setText("This kata has been configured before in this project.");
-        failMessage.setForeground(JBColor.RED);
+        failMessage.setForeground(new JBColor(new Color(177, 54, 30), new Color(177, 54, 30)));
         revalidate();
         repaint();
         Timer timer = new Timer(2500, e -> SwingUtilities.invokeLater(() -> {

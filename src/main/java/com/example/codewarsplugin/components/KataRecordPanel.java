@@ -5,6 +5,7 @@ import com.example.codewarsplugin.services.katas.KataRecordService;
 import com.example.codewarsplugin.services.katas.KataRecordServiceClient;
 import com.example.codewarsplugin.state.Store;
 import com.intellij.ui.AnimatedIcon;
+import com.intellij.ui.JBColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -63,7 +64,7 @@ public class KataRecordPanel extends JPanel implements KataRecordServiceClient {
         add(fetchPanel, constraints);
 
 
-        kataNotFoundLabel.setForeground(Color.red);
+        kataNotFoundLabel.setForeground(new JBColor(new Color(177, 54, 30), new Color(177, 54, 30)));
         kataNotFoundLabel.setFont(promptLabel.getFont().deriveFont(15f));
         cardKataPanel.setLayout(cardKataLayout);
 

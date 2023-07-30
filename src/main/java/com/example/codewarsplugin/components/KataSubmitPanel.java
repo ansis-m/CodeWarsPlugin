@@ -32,29 +32,13 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     private JPanel commitCardPanel = new JPanel();
     private CardLayout commitCardLayout = new CardLayout();
     private JLabel infoLabel;
+    private JTextPane textPane = new JTextPane();
     private ArrayList<JButton> buttonList = new ArrayList<>();
 
     private boolean attempSuccessful = false;
     private KataSubmitService submitService;
     private KataInput input;
     private KataRecord record;
-
-
-
-    private JLabel blankExitStatusLabel = new JLabel("blank"){
-        @Override
-        public Dimension getPreferredSize() {
-            return new Dimension(300, 50);
-        }
-    };
-    private JLabel exitStatusLabel = new JLabel("status"){
-        @Override
-        public Dimension getPreferredSize() {
-            return new Dimension(300, 50);
-        }
-    };
-    private JPanel exitStatusCardPanel = new JPanel();
-    private CardLayout exitStatusCardLayout = new CardLayout();
 
     public KataSubmitPanel(Store store) {
         super();
@@ -86,10 +70,8 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         setupAttemptCardPanel();
         setupTestCardPanel();
         setupCommitCardPanel();
-        setupExitStatusCardPanel();
-
-
-
+        setupTextPane();
+        
         var constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.CENTER;
         constraints.insets = new Insets(0, 0, 10, 0);
@@ -101,58 +83,59 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         constraints.gridy = 0;
         add(infoLabel, constraints);
 
-
         constraints.gridx = 0;
         constraints.gridy = 1;
 
         add(testCardPanel, constraints);
-
 
         constraints.gridx = 0;
         constraints.gridy = 2;
 
         add(attemptCardPanel, constraints);
 
-
         commitButton.setEnabled(false);
         constraints.gridx = 0;
         constraints.gridy = 3;
         add(commitCardPanel, constraints);
 
-
-        JPanel centeredPanel = new JPanel(new FlowLayout());
-        centeredPanel.add(exitStatusCardPanel);
-
-
         constraints.gridx = 0;
         constraints.gridy = 5;
-        add(centeredPanel, constraints);
+        add(textPane, constraints);
+    }
+
+    private void setupTextPane() {
+        textPane.setContentType("text/html");
+        textPane.setEditable(false);
+        textPane.setPreferredSize(new Dimension(370, 200));
     }
 
     @Override
     public void notifyAttemptRunFailed(Exception e) {
         System.out.println("code attempt failed with exception: " + e.getMessage() + "\n");
-        e.printStackTrace();
         attempSuccessful = false;
         stopSpinner(attemptCardLayout, attemptCardPanel);
+        setTextPaneText("#B1361E", "Ups, attempt failed with exception...", e.getMessage());
+        resetExitStatusPanel(4000);
     }
 
     @Override
     public void notifyAttemptSuccess(SubmitResponse submitResponse) {
-        System.out.println("attempt success: " + submitResponse.toString());
+        stopSpinner(attemptCardLayout, attemptCardPanel);
         if (submitResponse.getExitCode() == 0){
             attempSuccessful = true;
+            setTextPaneText("green", "Congrats, you passed all the test cases!", "You may now commit the solution!");
         } else {
-
+            setTextPaneText("#B1361E","One or several test cases failed.", "See the test log in test.json");
+            resetExitStatusPanel(4000);
         }
-        stopSpinner(attemptCardLayout, attemptCardPanel);
     }
 
     @Override
     public void notifyBadAttemptStatusCode(HttpResponse<String> response) {
-        System.out.println("Run code bad status code: " + response.statusCode());
         attempSuccessful = false;
         stopSpinner(attemptCardLayout, attemptCardPanel);
+        setTextPaneText("#B1361E", "Ups, attempt failed with bad status code: " + response.statusCode(), "Perhaps log out, and log in would help?!");
+        resetExitStatusPanel(4000);
     }
 
     @Override
@@ -160,30 +143,24 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         attempSuccessful = false;
         stopSpinner(testCardLayout, testCardPanel);
         if (submitResponse.getExitCode() == 0) {
-            exitStatusLabel.setText("All test cases passed!");
-            exitStatusLabel.setForeground(Color.green);
-            exitStatusCardLayout.show(exitStatusCardPanel, "exitStatus");
+            setTextPaneText("green","All test cases passed!");
         } else {
-            exitStatusLabel.setText("One or several test cases failed.\nSee the test log in test.json");
-            exitStatusLabel.setForeground(Color.red);
-            exitStatusCardLayout.show(exitStatusCardPanel, "exitStatus");
+            setTextPaneText("#B1361E","One or several test cases failed.", "See the test log in test.json");
         }
-        resetExitStatusPanel(3000);
+        resetExitStatusPanel(3600);
     }
 
     @Override
     public void notifyBadTestStatusCode(HttpResponse<String> response) {
-        attempSuccessful = false;
         stopSpinner(testCardLayout, testCardPanel);
+        setTextPaneText("#B1361E", "Ups, attempt failed with bad status code " + response.statusCode(), "Perhaps log out, and log in would help?!");
+        resetExitStatusPanel(4000);
     }
 
     @Override
     public void notifyTestRunFailed(Exception e) {
-        attempSuccessful = false;
         stopSpinner(testCardLayout, testCardPanel);
-        exitStatusLabel.setText("Test run failed with exception: " + e.getMessage());
-        exitStatusLabel.setForeground(Color.red);
-        exitStatusCardLayout.show(exitStatusCardPanel, "exitStatus");
+        setTextPaneText("#B1361E","Ups, test run failed with exception: ", e.getMessage());
         resetExitStatusPanel(3000);
     }
 
@@ -233,20 +210,25 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         buttonList.add(commitButton);
     }
 
-    private void setupExitStatusCardPanel() {
-        exitStatusCardPanel.setLayout(exitStatusCardLayout);
-        exitStatusCardPanel.add(blankExitStatusLabel, "blank");
-        exitStatusCardPanel.add(exitStatusLabel, "exitStatus");
-    }
-
     private void resetExitStatusPanel(int time){
         Timer timer = new Timer(time, e -> SwingUtilities.invokeLater(() -> {
-            exitStatusCardLayout.show(exitStatusCardPanel, "blank");
+            setTextPaneText("white","");
             revalidate();
             repaint();
         }));
         timer.setRepeats(false);
         timer.start();
+    }
 
+
+    private void setTextPaneText(String color, String... args){
+
+        StringBuilder builder = new StringBuilder("<html><body style='font-family: " + UIManager.getFont("Label.font").getFamily()+ "; font-size: 13px; color: " + color + ";'><div style='text-align: center;'>");
+        for(var arg : args) {
+            builder.append(arg);
+            builder.append("<br>");
+        }
+        builder.append("</div></body></html>");
+        textPane.setText(builder.toString());
     }
 }
