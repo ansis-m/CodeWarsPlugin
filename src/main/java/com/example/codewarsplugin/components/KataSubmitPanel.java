@@ -171,12 +171,12 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     public void notifyCommitSuccess(HttpResponse<String> response) {
         stopSpinner(commitCardLayout, commitCardPanel);
 
-        User user = UserService.getUser();
+        int honor = UserService.getUser().getHonor();
         UserService.clearUser();
         User newUser = UserService.getUser();
 
         store.getCurrentView().refreshUserPanel();
-        setTextPaneText("green", "Commit success!!!", "Your honor increased from " + user.getHonor() + " to " + newUser.getHonor() + "!");
+        setTextPaneText("green", "Commit success!!!", "Your honor increased from " + honor + " to " + newUser.getHonor() + "!");
 
         resetExitStatusPanel(5000);
     }
