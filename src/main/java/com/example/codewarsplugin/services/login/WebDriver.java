@@ -10,8 +10,8 @@ import org.openqa.selenium.remote.CapabilityType;
 import javax.swing.*;
 import java.util.concurrent.ExecutionException;
 
-import static com.example.codewarsplugin.StringConstants.DASHBOARD_URL;
-import static com.example.codewarsplugin.StringConstants.SIGN_IN_URL;
+import static com.example.codewarsplugin.config.StringConstants.DASHBOARD_URL;
+import static com.example.codewarsplugin.config.StringConstants.SIGN_IN_URL;
 
 public class WebDriver {
 

@@ -17,6 +17,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.vfs.VirtualFile;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -28,8 +29,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.codewarsplugin.StringConstants.AUTHORIZE_URL;
-import static com.example.codewarsplugin.StringConstants.RECORD_URL;
+import static com.example.codewarsplugin.config.StringConstants.AUTHORIZE_URL;
+import static com.example.codewarsplugin.config.StringConstants.RECORD_URL;
 
 public class KataSubmitService {
 
@@ -81,41 +82,54 @@ public class KataSubmitService {
     }
 
     public void attempt(){
-
         KataOutput output = mapOutput();
-        try {
-            HttpResponse<String> response = run(output);
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                try {
+                    HttpResponse<String> response = call(output);
 
-            if(response.statusCode() >= 200 && response.statusCode() < 300) {
-                mapSubmitResponse(response.body());
-                notifyServer(output);
-                client.notifyAttemptSuccess(submitResponse);
-            } else {
-                client.notifyBadStatusCode(response);
+                    if(response.statusCode() >= 200 && response.statusCode() < 300) {
+                        mapSubmitResponse(response.body());
+                        notifyServer(output);
+                        client.notifyAttemptSuccess(submitResponse);
+                    } else {
+                        client.notifyBadAttemptStatusCode(response);
+                    }
+                } catch (Exception e) {
+                    client.notifyAttemptRunFailed(e);
+                }
+                return null;
             }
-        } catch (Exception e) {
-            client.notifyRunFailed(e);
-        }
+        };
+        worker.execute();
+
     }
 
     public void test() {
         KataOutput output = mapTestOutput();
-
-        try {
-            HttpResponse<String> response = run(output);
-            if(response.statusCode() >= 200 && response.statusCode() < 300) {
-                mapSubmitResponse(response.body());
-                notifyServer(output);
-                client.notifyTestSuccess(submitResponse);
-            } else {
-                client.notifyBadStatusCode(response);
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                try {
+                    HttpResponse<String> response = call(output);
+                    if(response.statusCode() >= 200 && response.statusCode() < 300) {
+                        mapSubmitResponse(response.body());
+                        notifyServer(output);
+                        client.notifyTestSuccess(submitResponse);
+                    } else {
+                        client.notifyBadTestStatusCode(response);
+                    }
+                } catch (Exception e) {
+                    client.notifyTestRunFailed(e);
+                }
+                return null;
             }
-        } catch (Exception e) {
-            client.notifyRunFailed(e);
-        }
+        };
+        worker.execute();
     }
 
-    private HttpResponse<String> run(KataOutput output) throws IOException, InterruptedException {
+    private HttpResponse<String> call(KataOutput output) throws IOException, InterruptedException {
         getToken();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://runner.codewars.com/run"))

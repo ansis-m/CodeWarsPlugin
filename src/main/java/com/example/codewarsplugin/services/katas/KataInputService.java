@@ -12,7 +12,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
-import static com.example.codewarsplugin.StringConstants.KATA_URL;
+import static com.example.codewarsplugin.config.StringConstants.KATA_URL;
 
 
 public class KataInputService {

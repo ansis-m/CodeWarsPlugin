@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import static com.example.codewarsplugin.StringConstants.DASHBOARD_URL;
+import static com.example.codewarsplugin.config.StringConstants.DASHBOARD_URL;
 
 public class UserService {
 

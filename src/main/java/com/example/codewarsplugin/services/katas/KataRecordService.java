@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-import static com.example.codewarsplugin.StringConstants.KATA_URL;
-import static com.example.codewarsplugin.StringConstants.RECORD_URL;
+import static com.example.codewarsplugin.config.StringConstants.KATA_URL;
+import static com.example.codewarsplugin.config.StringConstants.RECORD_URL;
 
 public class KataRecordService {
     private static final Pattern NON_LATIN_PATTERN = Pattern.compile("[^\\w-]");

@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.example.codewarsplugin.StringConstants.SIGN_IN_URL;
+import static com.example.codewarsplugin.config.StringConstants.SIGN_IN_URL;
 
 
 public class LoginService {

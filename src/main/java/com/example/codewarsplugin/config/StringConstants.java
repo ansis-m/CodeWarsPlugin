@@ -1,4 +1,4 @@
-package com.example.codewarsplugin;
+package com.example.codewarsplugin.config;
 
 public class StringConstants {
     public static final String RECORD_URL = "https://www.codewars.com/api/v1/code-challenges";
