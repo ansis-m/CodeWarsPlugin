@@ -83,23 +83,19 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         constraints.gridy = 0;
         add(infoLabel, constraints);
 
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(testCardPanel);
+        buttonPanel.add(attemptCardPanel);
+        buttonPanel.add(commitCardPanel);
+
         constraints.gridx = 0;
         constraints.gridy = 1;
 
-        add(testCardPanel, constraints);
+        add(buttonPanel, constraints);
 
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-
-        add(attemptCardPanel, constraints);
-
-        commitButton.setEnabled(false);
         constraints.gridx = 0;
         constraints.gridy = 3;
-        add(commitCardPanel, constraints);
-
-        constraints.gridx = 0;
-        constraints.gridy = 5;
         add(textPane, constraints);
     }
 
@@ -165,6 +161,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     }
 
     private void setupCommitCardPanel() {
+        commitButton.setEnabled(false);
         commitCardPanel.setLayout(commitCardLayout);
         commitCardPanel.add(commitButton, "button");
         commitCardPanel.add(commitSpinner, "spinner");

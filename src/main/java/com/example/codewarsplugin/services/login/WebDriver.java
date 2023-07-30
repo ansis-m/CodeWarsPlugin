@@ -30,7 +30,7 @@ public class WebDriver {
                 ChromeOptions options = new ChromeOptions();
                 options.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
                 options.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
-//                    //options.addArguments("--headless");
+                options.addArguments("--headless");
                 options.addArguments("--disable-notifications");
                 var driver = new ChromeDriver(options);
                 driver.get(SIGN_IN_URL);

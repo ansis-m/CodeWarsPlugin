@@ -1,9 +1,11 @@
 package com.example.codewarsplugin.state;
 
+import com.example.codewarsplugin.components.UserPanel;
 import com.example.codewarsplugin.services.login.LoginService;
 import com.example.codewarsplugin.services.UserService;
 import com.example.codewarsplugin.services.login.WebDriver;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,17 +35,26 @@ public class SyncService {
     }
 
     public static void logout() {
-        LoginService.logout();
-        UserService.clearUser();
-        WebDriver.logout();
-        for(StateParams p : stateParamsList) {
-            var vars = p.getStore();
-            vars.getCurrentView().cleanup();
-            vars.getPreviousViews().add(vars.getCurrentView());
-            vars.setCurrentView(vars.getLoginView());
-            vars.getCurrentView().setup();
-        }
-
+        SwingWorker<Void, Void> worker = new SwingWorker<>(){
+            @Override
+            protected Void doInBackground() {
+                LoginService.logout();
+                UserService.clearUser();
+                WebDriver.logout();
+                return null;
+            }
+            @Override
+            protected void done(){
+                for(StateParams p : stateParamsList) {
+                    var vars = p.getStore();
+                    vars.getCurrentView().cleanup();
+                    vars.getPreviousViews().add(vars.getCurrentView());
+                    vars.setCurrentView(vars.getLoginView());
+                    vars.getCurrentView().setup();
+                }
+            }
+        };
+        worker.execute();
     }
 
     public static void startLoginSpinner(){
@@ -51,7 +62,6 @@ public class SyncService {
             var vars = p.getStore();
             vars.getLoginManager().startSpinner();
         }
-
     }
 
     public static void stopLoginSpinner(){

@@ -3,6 +3,7 @@ package com.example.codewarsplugin.components;
 import com.example.codewarsplugin.models.user.User;
 import com.example.codewarsplugin.state.SyncService;
 import com.example.codewarsplugin.state.Store;
+import com.intellij.ui.AnimatedIcon;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,6 +17,9 @@ import java.util.regex.Pattern;
 public class UserPanel extends JPanel {
 
     private JButton logoutButton = new JButton("LOG OUT");
+    private JLabel spinner = new JLabel(new AnimatedIcon.Big());
+    private JPanel cardPanel = new JPanel();
+    private CardLayout cardLayout = new CardLayout();
 
     public UserPanel(User user, Store store){
         super();
@@ -44,10 +48,21 @@ public class UserPanel extends JPanel {
         honorLabel.setFont(newFont);
         add(honorLabel);
         logoutButton.addActionListener((e) -> {
+            startSpinner();
             SyncService.logout();
         });
         logoutButton.setVisible(true);
-        add(logoutButton);
+
+        cardPanel.setLayout(cardLayout);
+        cardPanel.add(logoutButton, "button");
+        cardPanel.add(spinner, "spinner");
+        add(cardPanel);
+    }
+
+    private void startSpinner() {
+        cardLayout.show(cardPanel, "spinner");
+        revalidate();
+        repaint();
     }
 
     private static String extractImageUrl(String html) {
