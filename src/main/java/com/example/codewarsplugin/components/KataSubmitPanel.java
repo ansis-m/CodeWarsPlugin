@@ -39,6 +39,23 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     private KataInput input;
     private KataRecord record;
 
+
+
+    private JLabel blankExitStatusLabel = new JLabel("blank"){
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(300, 50);
+        }
+    };
+    private JLabel exitStatusLabel = new JLabel("status"){
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(300, 50);
+        }
+    };
+    private JPanel exitStatusCardPanel = new JPanel();
+    private CardLayout exitStatusCardLayout = new CardLayout();
+
     public KataSubmitPanel(Store store) {
         super();
         this.store = store;
@@ -69,6 +86,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         setupAttemptCardPanel();
         setupTestCardPanel();
         setupCommitCardPanel();
+        setupExitStatusCardPanel();
 
 
 
@@ -100,6 +118,15 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         constraints.gridx = 0;
         constraints.gridy = 3;
         add(commitCardPanel, constraints);
+
+
+        JPanel centeredPanel = new JPanel(new FlowLayout());
+        centeredPanel.add(exitStatusCardPanel);
+
+
+        constraints.gridx = 0;
+        constraints.gridy = 5;
+        add(centeredPanel, constraints);
     }
 
     @Override
@@ -113,7 +140,11 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     @Override
     public void notifyAttemptSuccess(SubmitResponse submitResponse) {
         System.out.println("attempt success: " + submitResponse.toString());
-        attempSuccessful = true;
+        if (submitResponse.getExitCode() == 0){
+            attempSuccessful = true;
+        } else {
+
+        }
         stopSpinner(attemptCardLayout, attemptCardPanel);
     }
 
@@ -128,6 +159,16 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     public void notifyTestSuccess(SubmitResponse submitResponse) {
         attempSuccessful = false;
         stopSpinner(testCardLayout, testCardPanel);
+        if (submitResponse.getExitCode() == 0) {
+            exitStatusLabel.setText("All test cases passed!");
+            exitStatusLabel.setForeground(Color.green);
+            exitStatusCardLayout.show(exitStatusCardPanel, "exitStatus");
+        } else {
+            exitStatusLabel.setText("One or several test cases failed.\nSee the test log in test.json");
+            exitStatusLabel.setForeground(Color.red);
+            exitStatusCardLayout.show(exitStatusCardPanel, "exitStatus");
+        }
+        resetExitStatusPanel(3000);
     }
 
     @Override
@@ -140,6 +181,10 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     public void notifyTestRunFailed(Exception e) {
         attempSuccessful = false;
         stopSpinner(testCardLayout, testCardPanel);
+        exitStatusLabel.setText("Test run failed with exception: " + e.getMessage());
+        exitStatusLabel.setForeground(Color.red);
+        exitStatusCardLayout.show(exitStatusCardPanel, "exitStatus");
+        resetExitStatusPanel(3000);
     }
 
     private void setupCommitCardPanel() {
@@ -186,5 +231,22 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         buttonList.add(testButton);
         buttonList.add(attemptButton);
         buttonList.add(commitButton);
+    }
+
+    private void setupExitStatusCardPanel() {
+        exitStatusCardPanel.setLayout(exitStatusCardLayout);
+        exitStatusCardPanel.add(blankExitStatusLabel, "blank");
+        exitStatusCardPanel.add(exitStatusLabel, "exitStatus");
+    }
+
+    private void resetExitStatusPanel(int time){
+        Timer timer = new Timer(time, e -> SwingUtilities.invokeLater(() -> {
+            exitStatusCardLayout.show(exitStatusCardPanel, "blank");
+            revalidate();
+            repaint();
+        }));
+        timer.setRepeats(false);
+        timer.start();
+
     }
 }
