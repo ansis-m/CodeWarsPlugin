@@ -68,4 +68,13 @@ public class WorkView implements View{
         sidePanel.repaint();
 
     }
+
+    @Override
+    public void refreshUserPanel() {
+        sidePanel.remove(userPanel);
+        userPanel = new UserPanel(UserService.getUser(), store);
+        sidePanel.add(userPanel, BorderLayout.NORTH);
+        sidePanel.revalidate();
+        sidePanel.repaint();
+    }
 }

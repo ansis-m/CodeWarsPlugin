@@ -5,7 +5,7 @@ import com.example.codewarsplugin.models.kata.SubmitResponse;
 import java.net.http.HttpResponse;
 
 public interface KataSubmitServiceClient {
-    void notifyAttemptRunFailed(Exception e);
+    void notifyAttemptRunException(Exception e);
 
     void notifyAttemptSuccess(SubmitResponse submitResponse);
 
@@ -14,6 +14,11 @@ public interface KataSubmitServiceClient {
     void notifyTestSuccess(SubmitResponse submitResponse);
 
     void notifyBadTestStatusCode(HttpResponse<String> response);
-    void notifyTestRunFailed(Exception e);
+    void notifyTestRunException(Exception e);
 
+    void notifyCommitSuccess(HttpResponse<String> response);
+
+    void notifyCommitFailed(HttpResponse<String> response);
+
+    void notifyCommitException(Exception e);
 }

@@ -27,4 +27,9 @@ public class LoginView implements View{
         store.getLoginManager().stopSpinner();
         sidePanel.removeAll();
     }
+
+    @Override
+    public void refreshUserPanel() {
+
+    }
 }

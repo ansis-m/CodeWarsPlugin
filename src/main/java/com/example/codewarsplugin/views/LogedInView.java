@@ -38,4 +38,11 @@ public class LogedInView implements View{
         sidePanel.removeAll();
         userPanel = null;
     }
+
+    @Override
+    public void refreshUserPanel() {
+        sidePanel.remove(userPanel);
+        userPanel = new UserPanel(UserService.getUser(), store);
+        sidePanel.add(userPanel, BorderLayout.NORTH);
+    }
 }

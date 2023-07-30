@@ -70,5 +70,8 @@ public class UserService {
 
     public static void clearUser() {
         user = null;
+        if (chromeDriver.getCurrentUrl().equals(DASHBOARD_URL)){
+            chromeDriver.navigate().refresh();
+        }
     }
 }

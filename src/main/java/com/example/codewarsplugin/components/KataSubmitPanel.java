@@ -4,9 +4,12 @@ import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.models.kata.SubmitResponse;
+import com.example.codewarsplugin.models.user.User;
+import com.example.codewarsplugin.services.UserService;
 import com.example.codewarsplugin.services.katas.KataSubmitService;
 import com.example.codewarsplugin.services.katas.KataSubmitServiceClient;
 import com.example.codewarsplugin.state.Store;
+import com.example.codewarsplugin.state.SyncService;
 import com.intellij.ui.AnimatedIcon;
 
 import javax.swing.*;
@@ -34,8 +37,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     private JLabel infoLabel;
     private JTextPane textPane = new JTextPane();
     private ArrayList<JButton> buttonList = new ArrayList<>();
-
-    private boolean attempSuccessful = false;
+    private boolean attemptSuccessful = false;
     private KataSubmitService submitService;
     private KataInput input;
     private KataRecord record;
@@ -50,10 +52,10 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         addButtonsToList();
         setLayout(new GridBagLayout());
         addElementsToPanel();
-        addSelectorListeners();
+        addButtonListeners();
     }
 
-    private void addSelectorListeners() {
+    private void addButtonListeners() {
         attemptButton.addActionListener((e) -> {
             startSpinner(attemptCardLayout, attemptCardPanel);
             this.submitService.attempt();
@@ -62,6 +64,11 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         testButton.addActionListener((e) -> {
             startSpinner(testCardLayout, testCardPanel);
             this.submitService.test();
+        });
+
+        commitButton.addActionListener((e) -> {
+            startSpinner(commitCardLayout, commitCardPanel);
+            this.submitService.commit();
         });
     }
 
@@ -106,9 +113,9 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     }
 
     @Override
-    public void notifyAttemptRunFailed(Exception e) {
+    public void notifyAttemptRunException(Exception e) {
         System.out.println("code attempt failed with exception: " + e.getMessage() + "\n");
-        attempSuccessful = false;
+        attemptSuccessful = false;
         stopSpinner(attemptCardLayout, attemptCardPanel);
         setTextPaneText("#B1361E", "Ups, attempt failed with exception...", e.getMessage());
         resetExitStatusPanel(4000);
@@ -118,7 +125,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     public void notifyAttemptSuccess(SubmitResponse submitResponse) {
         stopSpinner(attemptCardLayout, attemptCardPanel);
         if (submitResponse.getExitCode() == 0){
-            attempSuccessful = true;
+            attemptSuccessful = true;
             setTextPaneText("green", "Congrats, you passed all the test cases!", "You may now commit the solution!");
         } else {
             setTextPaneText("#B1361E","One or several test cases failed.", "See the test log in test.json");
@@ -128,7 +135,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
     @Override
     public void notifyBadAttemptStatusCode(HttpResponse<String> response) {
-        attempSuccessful = false;
+        attemptSuccessful = false;
         stopSpinner(attemptCardLayout, attemptCardPanel);
         setTextPaneText("#B1361E", "Ups, attempt failed with bad status code: " + response.statusCode(), "Perhaps log out, and log in would help?!");
         resetExitStatusPanel(4000);
@@ -136,7 +143,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
     @Override
     public void notifyTestSuccess(SubmitResponse submitResponse) {
-        attempSuccessful = false;
+        attemptSuccessful = false;
         stopSpinner(testCardLayout, testCardPanel);
         if (submitResponse.getExitCode() == 0) {
             setTextPaneText("green","All test cases passed!");
@@ -154,10 +161,41 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     }
 
     @Override
-    public void notifyTestRunFailed(Exception e) {
+    public void notifyTestRunException(Exception e) {
         stopSpinner(testCardLayout, testCardPanel);
         setTextPaneText("#B1361E","Ups, test run failed with exception: ", e.getMessage());
         resetExitStatusPanel(3000);
+    }
+
+    @Override
+    public void notifyCommitSuccess(HttpResponse<String> response) {
+        stopSpinner(commitCardLayout, commitCardPanel);
+
+        User user = UserService.getUser();
+        UserService.clearUser();
+        User newUser = UserService.getUser();
+
+        store.getCurrentView().refreshUserPanel();
+        setTextPaneText("green", "Commit success!!!", "Your honor increased from " + user.getHonor() + " to " + newUser.getHonor() + "!");
+
+        resetExitStatusPanel(5000);
+    }
+
+    @Override
+    public void notifyCommitFailed(HttpResponse<String> response) {
+        System.out.println("failed body: " + response.body());
+        stopSpinner(commitCardLayout, commitCardPanel);
+        setTextPaneText("#B1361E", "Ups, attempt failed with bad status code " + response.statusCode(), "Perhaps log out, and log in would help?!");
+        resetExitStatusPanel(4000);
+    }
+
+    @Override
+    public void notifyCommitException(Exception e) {
+        stopSpinner(commitCardLayout, commitCardPanel);
+        setTextPaneText("#B1361E", "Ups, commit failed with exception...", e.getMessage());
+        resetExitStatusPanel(4000);
+        System.out.println("commit exception: ");
+        e.printStackTrace();
     }
 
     private void setupCommitCardPanel() {
@@ -181,7 +219,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
     public void startSpinner(CardLayout layout, JPanel panel) {
         SwingUtilities.invokeLater(() -> {
-            attempSuccessful = false;
+            attemptSuccessful = false;
             buttonList.forEach(button -> button.setEnabled(false));
             layout.show(panel, "spinner");
             revalidate();
@@ -192,7 +230,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     public void stopSpinner(CardLayout layout, JPanel panel) {
         SwingUtilities.invokeLater(() -> {
             buttonList.forEach(button -> button.setEnabled(true));
-            if (!attempSuccessful) {
+            if (!attemptSuccessful) {
                 commitButton.setEnabled(false);
             }
             layout.show(panel, "button");
@@ -227,5 +265,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         }
         builder.append("</div></body></html>");
         textPane.setText(builder.toString());
+        revalidate();
+        repaint();
     }
 }

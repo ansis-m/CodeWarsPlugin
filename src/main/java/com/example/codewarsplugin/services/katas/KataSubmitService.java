@@ -29,20 +29,18 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.codewarsplugin.config.StringConstants.AUTHORIZE_URL;
-import static com.example.codewarsplugin.config.StringConstants.RECORD_URL;
+import static com.example.codewarsplugin.config.StringConstants.*;
 
 public class KataSubmitService {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private final static HttpClient httpClient = HttpClient.newHttpClient();
     private SubmitResponse submitResponse;
-    private KataInput input;
-    private KataDirectory directory;
-    private KataSubmitServiceClient client;
+    private final KataInput input;
+    private final KataDirectory directory;
+    private final KataSubmitServiceClient client;
     private Token token;
-    private Gson gson = new Gson();
-    final String FILENAME = "test.json";
+    private final Gson gson = new Gson();
 
     public KataSubmitService(Store store, KataDirectory directory, KataSubmitServiceClient client) {
         this.input = directory.getInput();
@@ -71,10 +69,7 @@ public class KataSubmitService {
 
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            String responseBody = response.body();
-
             token = objectMapper.readValue(response.body(), Token.class);
-            System.out.println("Submit service: Response Body: " + token);
 
         } catch (Exception e) {
             System.out.println("An error occurred: " + e.getMessage());
@@ -97,7 +92,7 @@ public class KataSubmitService {
                         client.notifyBadAttemptStatusCode(response);
                     }
                 } catch (Exception e) {
-                    client.notifyAttemptRunFailed(e);
+                    client.notifyAttemptRunException(e);
                 }
                 return null;
             }
@@ -121,7 +116,7 @@ public class KataSubmitService {
                         client.notifyBadTestStatusCode(response);
                     }
                 } catch (Exception e) {
-                    client.notifyTestRunFailed(e);
+                    client.notifyTestRunException(e);
                 }
                 return null;
             }
@@ -142,18 +137,15 @@ public class KataSubmitService {
         return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    private void notifyServer(KataOutput output) {
-
+    private void notifyServer(KataOutput output) throws IOException, InterruptedException {
 
         if (submitResponse == null) {
             return;
         }
 
-
         getToken();
         String csrfToken = LoginService.getCsrfToken();
         String sessionId = LoginService.getSessionId();
-
 
         Map<String, String> code = new HashMap<>();
         code.put("code", output.getCode());
@@ -162,9 +154,6 @@ public class KataSubmitService {
         code.put("testFramework", output.getTestFramework());
         code.put("token", submitResponse.getToken());
 
-        System.out.println("Notify body: " + new GsonBuilder().create().toJson(code));
-
-        assert token != null;
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(RECORD_URL + input.getPath() + "solutions/" + input.getSolutionId() + "/notify"))
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
@@ -175,13 +164,7 @@ public class KataSubmitService {
                 .POST(HttpRequest.BodyPublishers.ofString(new GsonBuilder().create().toJson(code)))
                 .build();
 
-        try {
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("Notify status code: " + response.statusCode() + ": " + response.body());
-
-        } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
-        }
+        httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
 
@@ -230,32 +213,45 @@ public class KataSubmitService {
         return text;
     }
 
-    public String commit() {
+    public void commit() {
         getToken();
         String csrfToken = LoginService.getCsrfToken();
         String sessionId = LoginService.getSessionId();
 
-        assert token != null;
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(RECORD_URL + input.getPath() + "solutions/" + input.getSolutionId() + "/finalize"))
-                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
-                .header("Content-Type", "application/json")
-                .header("Authorization", token.getToken())
-                .header("X-Csrf-Token", URLDecoder.decode(csrfToken, StandardCharsets.UTF_8))
-                .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
-                .POST(HttpRequest.BodyPublishers.noBody())
-                .build();
-
-        try {
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            System.out.println("Commit result status code: " + response.statusCode());
-            return response.body();
-
-        } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
-            return null;
-        }
+        SwingWorker<HttpResponse<String>, Void> worker  = new SwingWorker<HttpResponse<String>, Void>() {
+            @Override
+            protected HttpResponse<String> doInBackground() {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(RECORD_URL + input.getPath() + "solutions/" + input.getSolutionId() + "/finalize"))
+                        .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
+                        .header("Content-Type", "application/json")
+                        .header("Authorization", token.getToken())
+                        .header("X-Csrf-Token", URLDecoder.decode(csrfToken, StandardCharsets.UTF_8))
+                        .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
+                        .POST(HttpRequest.BodyPublishers.noBody())
+                        .build();
+                try {
+                    return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                } catch (Exception e) {
+                    client.notifyCommitException(e);
+                    return null;
+                }
+            }
+            @Override
+            protected void done(){
+                try{
+                    var response = get();
+                    if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                        client.notifyCommitSuccess(response);
+                    } else {
+                        client.notifyCommitFailed(response);
+                    }
+                } catch (Exception e) {
+                    client.notifyCommitException(e);
+                }
+            }
+        };
+        worker.execute();
     }
 
     private void mapSubmitResponse(String body) {

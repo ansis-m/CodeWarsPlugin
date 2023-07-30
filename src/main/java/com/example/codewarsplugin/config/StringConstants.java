@@ -8,4 +8,8 @@ public class StringConstants {
     public static final String KATA_URL = "https://www.codewars.com/kata";
 
 
+
+    public static final String FILENAME = "test.json";
+
+
 }

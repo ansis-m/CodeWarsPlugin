@@ -1,6 +1,5 @@
 package com.example.codewarsplugin.state;
 
-import com.example.codewarsplugin.components.UserPanel;
 import com.example.codewarsplugin.services.login.LoginService;
 import com.example.codewarsplugin.services.UserService;
 import com.example.codewarsplugin.services.login.WebDriver;
@@ -26,11 +25,11 @@ public class SyncService {
 
     public static void login(){
         for(StateParams p : stateParamsList) {
-            var vars = p.getStore();
-            vars.getCurrentView().cleanup();
-            vars.getPreviousViews().add(vars.getCurrentView());
-            vars.setCurrentView(vars.getLogedInView());
-            vars.getCurrentView().setup();
+            var store = p.getStore();
+            store.getCurrentView().cleanup();
+            store.getPreviousViews().add(store.getCurrentView());
+            store.setCurrentView(store.getLogedInView());
+            store.getCurrentView().setup();
         }
     }
 
@@ -46,11 +45,11 @@ public class SyncService {
             @Override
             protected void done(){
                 for(StateParams p : stateParamsList) {
-                    var vars = p.getStore();
-                    vars.getCurrentView().cleanup();
-                    vars.getPreviousViews().add(vars.getCurrentView());
-                    vars.setCurrentView(vars.getLoginView());
-                    vars.getCurrentView().setup();
+                    var store = p.getStore();
+                    store.getCurrentView().cleanup();
+                    store.getPreviousViews().add(store.getCurrentView());
+                    store.setCurrentView(store.getLoginView());
+                    store.getCurrentView().setup();
                 }
             }
         };
@@ -59,15 +58,15 @@ public class SyncService {
 
     public static void startLoginSpinner(){
         for(StateParams p : stateParamsList) {
-            var vars = p.getStore();
-            vars.getLoginManager().startSpinner();
+            var store = p.getStore();
+            store.getLoginManager().startSpinner();
         }
     }
 
     public static void stopLoginSpinner(){
         for(StateParams p : stateParamsList) {
-            var vars = p.getStore();
-            vars.getLoginManager().stopSpinner();
+            var store = p.getStore();
+            store.getLoginManager().stopSpinner();
         }
     }
 }
