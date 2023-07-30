@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import javax.swing.*;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.http.HttpClient;
@@ -18,6 +17,9 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+import static com.example.codewarsplugin.StringConstants.KATA_URL;
+import static com.example.codewarsplugin.StringConstants.RECORD_URL;
+
 public class KataRecordService {
     private static final Pattern NON_LATIN_PATTERN = Pattern.compile("[^\\w-]");
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
@@ -26,7 +28,6 @@ public class KataRecordService {
 
     public static void getKataRecord(String name, KataRecordServiceClient client) {
         success = false;
-        final String BASE_URL = "https://www.codewars.com/api/v1/code-challenges/";
         final ObjectMapper objectMapper = new ObjectMapper();
         final HttpClient httpClient = HttpClient.newHttpClient();
         final KataRecord[] records = new KataRecord[1];
@@ -34,9 +35,9 @@ public class KataRecordService {
         try{
             SwingWorker<KataRecord, Void> worker = new SwingWorker<KataRecord, Void>() {
                 @Override
-                protected KataRecord doInBackground() throws InterruptedException, IOException {
+                protected KataRecord doInBackground() {
                     var slug = generateSlug(name);
-                    String url = BASE_URL + slug;
+                    String url = RECORD_URL + "/" + slug;
                     HttpRequest request = HttpRequest.newBuilder()
                             .uri(URI.create(url))
                             .build();
@@ -75,7 +76,7 @@ public class KataRecordService {
         String sessionId = LoginService.getSessionId();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format("https://www.codewars.com/kata/%s/train/java", id)))
+                .uri(URI.create(String.format(KATA_URL + "/%s/train/java", id)))
                 .header("X-Csrf-Token", URLDecoder.decode(csrfToken, StandardCharsets.UTF_8))
                 .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")

@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import static com.example.codewarsplugin.StringConstants.DASHBOARD_URL;
+
 public class UserService {
 
     private static ChromeDriver chromeDriver;
@@ -18,8 +20,8 @@ public class UserService {
             return user;
         }
         chromeDriver = WebDriver.getChromeDriver();
-        if (!chromeDriver.getCurrentUrl().equals("https://www.codewars.com/dashboard")){
-            chromeDriver.get("https://www.codewars.com/dashboard");
+        if (!chromeDriver.getCurrentUrl().equals(DASHBOARD_URL)){
+            chromeDriver.get(DASHBOARD_URL);
         }
         JavascriptExecutor jsExecutor = (JavascriptExecutor) chromeDriver;
         String serializedObjects = (String) jsExecutor.executeScript(

@@ -10,6 +10,9 @@ import org.openqa.selenium.remote.CapabilityType;
 import javax.swing.*;
 import java.util.concurrent.ExecutionException;
 
+import static com.example.codewarsplugin.StringConstants.DASHBOARD_URL;
+import static com.example.codewarsplugin.StringConstants.SIGN_IN_URL;
+
 public class WebDriver {
 
     public static ChromeDriver chromeDriver;
@@ -30,7 +33,7 @@ public class WebDriver {
 //                    //options.addArguments("--headless");
                 options.addArguments("--disable-notifications");
                 var driver = new ChromeDriver(options);
-                driver.get("https://www.codewars.com/users/sign_in");
+                driver.get(SIGN_IN_URL);
                 return driver;
             }
             @Override
@@ -61,12 +64,11 @@ public class WebDriver {
 
     public static void logout(){
         if (!chromeDriver.getCurrentUrl().equals("")) {
-            chromeDriver.get("https://www.codewars.com/dashboard");
+            chromeDriver.get(DASHBOARD_URL);
         }
         WebElement anchorElement = chromeDriver.findElement(By.className("js-sign-out"));
-        System.out.println("\n\n\n\nElement text: " + anchorElement.getText());
         chromeDriver.executeScript("arguments[0].click();", anchorElement);
         chromeDriver.manage().deleteAllCookies();
-        chromeDriver.get("https://www.codewars.com/users/sign_in");
+        chromeDriver.get(SIGN_IN_URL);
     }
 }

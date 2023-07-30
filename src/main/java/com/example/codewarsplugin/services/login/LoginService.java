@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.example.codewarsplugin.StringConstants.SIGN_IN_URL;
+
 
 public class LoginService {
 
@@ -45,8 +47,8 @@ public class LoginService {
                 protected Void doInBackground() throws InterruptedException {
 
                     driver = WebDriver.getChromeDriver();
-                    if (!driver.getCurrentUrl().equals("https://www.codewars.com/users/sign_in")){
-                        driver.get("https://www.codewars.com/users/sign_in");
+                    if (!driver.getCurrentUrl().equals(SIGN_IN_URL)){
+                        driver.get(SIGN_IN_URL);
                     }
                     WebElement inputElement = driver.findElement(By.id("user_email"));
                     inputElement.clear();

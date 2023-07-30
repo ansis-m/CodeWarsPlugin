@@ -12,6 +12,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
+import static com.example.codewarsplugin.StringConstants.KATA_URL;
+
 
 public class KataInputService {
 
@@ -27,7 +29,7 @@ public class KataInputService {
             @Override
             protected KataInput doInBackground() {
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create("https://www.codewars.com/kata" + record.getPath() + record.getSelectedLanguage() + "/session"))
+                        .uri(URI.create(KATA_URL + record.getPath() + record.getSelectedLanguage() + "/session"))
                         .header("X-Csrf-Token", URLDecoder.decode(csrfToken, StandardCharsets.UTF_8))
                         .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
                         .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")

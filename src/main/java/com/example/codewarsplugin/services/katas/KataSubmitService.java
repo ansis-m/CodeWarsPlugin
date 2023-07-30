@@ -28,6 +28,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.codewarsplugin.StringConstants.AUTHORIZE_URL;
+import static com.example.codewarsplugin.StringConstants.RECORD_URL;
+
 public class KataSubmitService {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -57,7 +60,7 @@ public class KataSubmitService {
         String sessionId = LoginService.getSessionId();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://www.codewars.com/api/v1/runner/authorize"))
+                .uri(URI.create(AUTHORIZE_URL))
                 .header("X-Csrf-Token", URLDecoder.decode(csrfToken, StandardCharsets.UTF_8))
                 .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
@@ -149,7 +152,7 @@ public class KataSubmitService {
 
         assert token != null;
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://www.codewars.com/api/v1/code-challenges" + input.getPath() + "solutions/" + input.getSolutionId() + "/notify"))
+                .uri(URI.create(RECORD_URL + input.getPath() + "solutions/" + input.getSolutionId() + "/notify"))
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
                 .header("Content-Type", "application/json")
                 .header("Authorization", token.getToken())
@@ -218,11 +221,9 @@ public class KataSubmitService {
         String csrfToken = LoginService.getCsrfToken();
         String sessionId = LoginService.getSessionId();
 
-        System.out.println("Path: " + "https://www.codewars.com/api/v1/code-challenges" + input.getPath() + "solutions/" + input.getSolutionId() + "/finalize");
-
         assert token != null;
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://www.codewars.com/api/v1/code-challenges" + input.getPath() + "solutions/" + input.getSolutionId() + "/finalize"))
+                .uri(URI.create(RECORD_URL + input.getPath() + "solutions/" + input.getSolutionId() + "/finalize"))
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
                 .header("Content-Type", "application/json")
                 .header("Authorization", token.getToken())
