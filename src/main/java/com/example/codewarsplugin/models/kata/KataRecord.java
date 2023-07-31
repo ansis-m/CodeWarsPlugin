@@ -17,7 +17,8 @@ public class KataRecord implements JsonSource{
     private String path;
     private String selectedLanguage;
     private String description;
-
+    private Rank rank;
+    private String[] tags;
 
     @Override
     public String toString() {
@@ -31,7 +32,25 @@ public class KataRecord implements JsonSource{
                 ", path='" + path + '\'' +
                 ", selectedLanguage='" + selectedLanguage + '\'' +
                 ", description='" + description + '\'' +
+                ", rank=" + rank +
+                ", tags=" + Arrays.toString(tags) +
                 '}';
+    }
+
+    public Rank getRank() {
+        return rank;
+    }
+
+    public void setRank(Rank rank) {
+        this.rank = rank;
+    }
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
     }
 
     public String getDescription() {
@@ -106,4 +125,41 @@ public class KataRecord implements JsonSource{
         this.languages = languages;
     }
 
+    public class Rank {
+        int id;
+        String name;
+        String color;
+
+        @Override
+        public String toString() {
+            return "Rank{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    ", color='" + color + '\'' +
+                    '}';
+        }
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        public void setColor(String color) {
+            this.color = color;
+        }
+    }
 }

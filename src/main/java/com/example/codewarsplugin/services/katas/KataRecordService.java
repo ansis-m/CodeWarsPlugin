@@ -43,11 +43,13 @@ public class KataRecordService {
                             .build();
                     try  {
                         HttpResponse<String> response = LoginService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+                        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(response.body()));
+
+
                         KataRecord record = objectMapper.readValue(response.body(), KataRecord.class);
                         record.setPath(getKataPath(record.getId()));
                         success = true;
-                        KataDescriptionService.getDescription(record);
-                        System.out.println("record: " + record.toString());
                         return record;
                     } catch (Exception e) {
                         return null;
