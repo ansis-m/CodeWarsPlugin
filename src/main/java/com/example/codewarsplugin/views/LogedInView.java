@@ -1,8 +1,7 @@
 package com.example.codewarsplugin.views;
 
 import com.example.codewarsplugin.SidePanel;
-import com.example.codewarsplugin.components.KataRecordPanel;
-import com.example.codewarsplugin.components.KataSelectorPanel;
+import com.example.codewarsplugin.components.KataSetupPanel;
 import com.example.codewarsplugin.components.UserPanel;
 import com.example.codewarsplugin.services.UserService;
 import com.example.codewarsplugin.services.files.parse.KataDirectoryParser;
@@ -27,10 +26,9 @@ public class LogedInView implements View{
         sidePanel.add(userPanel, BorderLayout.NORTH);
 
         if ( KataDirectoryParser.getDirectoryList().size() > 0) {
-            sidePanel.add(new KataSelectorPanel(store), BorderLayout.CENTER);
+            sidePanel.add(new KataSetupPanel(store), BorderLayout.CENTER);
         }
 
-        sidePanel.add(new KataRecordPanel(store), BorderLayout.SOUTH);
         sidePanel.revalidate();
         sidePanel.repaint();
     }

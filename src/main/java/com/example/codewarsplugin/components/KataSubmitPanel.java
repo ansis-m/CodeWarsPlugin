@@ -36,7 +36,6 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     private JLabel commitSpinner = new JLabel(new AnimatedIcon.Big());
     private JPanel commitCardPanel = new JPanel();
     private CardLayout commitCardLayout = new CardLayout();
-    private JLabel infoLabel;
     private JTextPane textPane = new JTextPane();
     private ArrayList<JButton> buttonList = new ArrayList<>();
     private boolean attemptSuccessful = false;
@@ -85,14 +84,20 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         constraints.anchor = GridBagConstraints.CENTER;
         constraints.insets = new Insets(0, 0, 10, 0);
 
-        infoLabel = new JLabel(record.getName() + " in " +record.getSelectedLanguage() + " " + input.getActiveVersion());
-        infoLabel.setFont(infoLabel.getFont().deriveFont(20f));
-        infoLabel.setForeground(getColor(record.getRank().getColor()));
+        JLabel titleLabel = new JLabel(record.getName());
+        titleLabel.setFont(titleLabel.getFont().deriveFont(20f));
 
         constraints.gridx = 0;
         constraints.gridy = 0;
-        add(infoLabel, constraints);
+        add(titleLabel, constraints);
 
+        JLabel infoLabel = new JLabel(record.getRank().getName() + " kata in " +record.getSelectedLanguage() + " " + input.getActiveVersion());
+        infoLabel.setFont(titleLabel.getFont().deriveFont(15f));
+        infoLabel.setForeground(getColor(record.getRank().getColor()));
+
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        add(infoLabel, constraints);
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(testCardPanel);
@@ -100,7 +105,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         buttonPanel.add(commitCardPanel);
 
         constraints.gridx = 0;
-        constraints.gridy = 1;
+        constraints.gridy = 2;
 
         add(buttonPanel, constraints);
 
