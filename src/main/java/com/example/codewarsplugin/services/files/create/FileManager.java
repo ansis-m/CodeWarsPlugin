@@ -18,8 +18,6 @@ public class FileManager {
         service.createInputFile();
         var directory = service.createKataDirectory();
         if (directory.isComplete()) {
-            System.out.println("Directory add to the list!");
-            KataDirectoryParser.getDirectoryList().forEach(System.out::println);
             store.setCurrentKataDirectory(directory);
             client.transitionToWorkView(directory);
         } else {

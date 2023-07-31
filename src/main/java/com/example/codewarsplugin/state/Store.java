@@ -14,8 +14,6 @@ public class Store {
 
     private SidePanel sidePanel;
     private LoginPanel loginPanel;
-    private TopImagePanel topImagePanel;
-    private KataRecordPanel kataRecordPanel;
     private LogedInView logedInView;
     private LoginView loginView;
     private WorkView workView;
@@ -25,9 +23,6 @@ public class Store {
 
     public Store(SidePanel sidePanel){
         this.sidePanel = sidePanel;
-        loginPanel = new LoginPanel(this);
-        topImagePanel = new TopImagePanel(this);
-        kataRecordPanel = new KataRecordPanel(this);
         logedInView = new LogedInView(this);
         loginView = new LoginView(this);
         workView = new WorkView(this);
@@ -49,14 +44,8 @@ public class Store {
         return loginView;
     }
 
-    public LoginPanel getLoginManager() {
+    public LoginPanel getLoginPanel() {
         return loginPanel;
-    }
-    public TopImagePanel getTopImagePanel() {
-        return topImagePanel;
-    }
-    public KataRecordPanel getKataRecordPanel() {
-        return kataRecordPanel;
     }
     public SidePanel getSidePanel() {
         return sidePanel;
@@ -68,7 +57,6 @@ public class Store {
     public WorkView getWorkView() {
         return workView;
     }
-
     public void setWorkView(WorkView workView) {
         this.workView = workView;
     }
@@ -91,5 +79,9 @@ public class Store {
 
     public KataDirectory getDirectory() {
         return directory;
+    }
+
+    public void setLoginPanel(LoginPanel loginPanel) {
+        this.loginPanel = loginPanel;
     }
 }

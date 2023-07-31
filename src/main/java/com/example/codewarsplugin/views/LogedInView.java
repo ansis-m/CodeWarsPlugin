@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.views;
 
 import com.example.codewarsplugin.SidePanel;
+import com.example.codewarsplugin.components.KataRecordPanel;
 import com.example.codewarsplugin.components.KataSelectorPanel;
 import com.example.codewarsplugin.components.UserPanel;
 import com.example.codewarsplugin.services.UserService;
@@ -12,8 +13,8 @@ import java.awt.*;
 
 public class LogedInView implements View{
     private JPanel userPanel;
-    private Store store;
-    private SidePanel sidePanel;
+    private final Store store;
+    private final SidePanel sidePanel;
 
     public LogedInView(Store store) {
         super();
@@ -29,7 +30,7 @@ public class LogedInView implements View{
             sidePanel.add(new KataSelectorPanel(store), BorderLayout.CENTER);
         }
 
-        sidePanel.add(store.getKataRecordPanel(), BorderLayout.SOUTH);
+        sidePanel.add(new KataRecordPanel(store), BorderLayout.SOUTH);
         sidePanel.revalidate();
         sidePanel.repaint();
     }

@@ -39,8 +39,6 @@ public class LoginService {
     }
 
     private static void getCookies(String login, String password, LoginServiceClient client) {
-
-        System.out.println("getCookies");
         try{
             SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                 @Override
@@ -89,7 +87,6 @@ public class LoginService {
         } catch (Exception e){
             client.showLoginFailLabel("Login failed. Bad email or password!");
             SyncService.stopLoginSpinner();
-            System.out.println("Exception trying to login: " + e.getMessage());
         }
     }
 

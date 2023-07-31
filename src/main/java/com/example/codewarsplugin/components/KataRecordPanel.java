@@ -100,7 +100,6 @@ public class KataRecordPanel extends JPanel implements KataRecordServiceClient {
 
     @Override
     public void processKataRecord(KataRecord record){
-        System.out.println("processKataRecord: " + record);
         stopSpinner();
         cardKataPanel.remove(filledKataInputPanel);
         filledKataInputPanel = new KataInputPanel(record, store);

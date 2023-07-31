@@ -25,12 +25,10 @@ public class LoginPanel extends JPanel implements LoginServiceClient {
     private JLabel spinner = new JLabel(new AnimatedIcon.Big());
     private JPanel cardPanel = new JPanel();
     private CardLayout cardLayout = new CardLayout();
-    private Store store;
 
 
-    public LoginPanel(Store store){
+    public LoginPanel(){
         super();
-        this.store = store;
         setLayout(new GridBagLayout());
         addListener(textField, "email");
         addListener(passwordField, "password");

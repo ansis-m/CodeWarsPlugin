@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.models.user.User;
+import com.example.codewarsplugin.services.utils.Colors;
 import com.example.codewarsplugin.state.SyncService;
 import com.example.codewarsplugin.state.Store;
 import com.intellij.ui.AnimatedIcon;
@@ -28,7 +29,9 @@ public class UserPanel extends JPanel {
         }
         setLayout(new FlowLayout(FlowLayout.RIGHT, 20, 20));
         JLabel nameLabel = new JLabel(user.getUsername());
-        Font newFont = nameLabel.getFont().deriveFont(15f);
+        Font oldFont = nameLabel.getFont();
+        Font newFont = oldFont.deriveFont(15f);
+        Font boldFont = new Font(oldFont.getFontName(), Font.BOLD, 15);
         nameLabel.setFont(newFont);
         add(nameLabel);
         try{
@@ -41,8 +44,9 @@ public class UserPanel extends JPanel {
             add(imageLabel, BorderLayout.NORTH);
         } catch (Exception ignored) {}
 
-        JLabel rankLabel = new JLabel(String.valueOf(Math.abs(user.getRank())) + " kyu");
-        rankLabel.setFont(newFont);
+        JLabel rankLabel = new JLabel(Math.abs(user.getRank()) + " kyu");
+        rankLabel.setFont(boldFont);
+        rankLabel.setForeground(Colors.getColor(Math.abs(user.getRank())));
         add(rankLabel);
         JLabel honorLabel = new JLabel(String.valueOf(user.getHonor()));
         honorLabel.setFont(newFont);

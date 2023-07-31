@@ -18,8 +18,6 @@ public class FileServiceFactory {
             Constructor<?> constructor = serviceClass.getDeclaredConstructor(KataInput.class, KataRecord.class);
             return (FileService) constructor.newInstance(input, record);
         } catch (Exception e) {
-            System.out.println("class name: " + capitalize(input.getLanguageName()) + "FileService");
-            System.out.println("full name: " + PACKAGE + ".");
             e.printStackTrace();
         }
         return (FileService) new JavaFileService(input, record);

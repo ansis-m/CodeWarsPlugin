@@ -1,6 +1,8 @@
 package com.example.codewarsplugin.views;
 
 import com.example.codewarsplugin.SidePanel;
+import com.example.codewarsplugin.components.LoginPanel;
+import com.example.codewarsplugin.components.TopImagePanel;
 import com.example.codewarsplugin.state.Store;
 
 import java.awt.*;
@@ -9,6 +11,8 @@ public class LoginView implements View{
 
     private Store store;
     private SidePanel sidePanel;
+    private LoginPanel loginPanel;
+
 
     public LoginView(Store store) {
         this.store = store;
@@ -16,15 +20,16 @@ public class LoginView implements View{
     }
 
     public void setup() {
-
-        sidePanel.add(store.getTopImagePanel(), BorderLayout.NORTH);
-        sidePanel.add(store.getLoginManager(), BorderLayout.SOUTH);
+        loginPanel = new LoginPanel();
+        store.setLoginPanel(loginPanel);
+        sidePanel.add(new TopImagePanel(), BorderLayout.NORTH);
+        sidePanel.add(loginPanel, BorderLayout.SOUTH);
         sidePanel.revalidate();
         sidePanel.repaint();
     }
 
     public void cleanup() {
-        store.getLoginManager().stopSpinner();
+        loginPanel.stopSpinner();
         sidePanel.removeAll();
     }
 

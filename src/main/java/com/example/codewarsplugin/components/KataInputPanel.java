@@ -87,9 +87,6 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
 
     @Override
     public void processKataInput(KataInput kataInput) {
-
-
-        System.out.println("Kata input received: " + kataInput.toString());
         ApplicationManager.getApplication().invokeLater(() -> new FileManager().createFile(kataInput, record, store, this));
     }
 
@@ -142,7 +139,6 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
 
     @Override
     public void transitionToWorkView(KataDirectory directory) {
-        System.out.println("\n\nTransition to work view!\n\n");
         store.setCurrentKataDirectory(directory);
         store.getCurrentView().cleanup();
         store.getPreviousViews().add(store.getCurrentView());

@@ -72,7 +72,6 @@ public class KataSubmitService {
             token = objectMapper.readValue(response.body(), Token.class);
 
         } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
         }
     }
 
@@ -277,7 +276,6 @@ public class KataSubmitService {
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(MyProjectManager.getProject());
                     fileEditorManager.openTextEditor(descriptor, true);
                 } catch (IOException e) {
-                    System.out.println(e.getMessage());
                     e.printStackTrace();
                 }
             }

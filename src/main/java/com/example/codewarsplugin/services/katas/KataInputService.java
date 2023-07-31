@@ -28,7 +28,6 @@ public class KataInputService {
         SwingWorker<KataInput, Void> worker = new SwingWorker<KataInput, Void>() {
             @Override
             protected KataInput doInBackground() {
-                System.out.println("record: " + record.toString());
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(KATA_URL + record.getPath() + record.getSelectedLanguage() + "/session"))
                         .header("X-Csrf-Token", URLDecoder.decode(csrfToken, StandardCharsets.UTF_8))
@@ -44,7 +43,6 @@ public class KataInputService {
                     return kata;
 
                 } catch (Exception e) {
-                    System.out.println("An error occurred: " + e.getMessage());
                     return null;
                 }
             }

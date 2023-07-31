@@ -54,9 +54,6 @@ public class WorkView implements View{
         sidePanel.add(navigationBar, BorderLayout.SOUTH);
         sidePanel.revalidate();
         sidePanel.repaint();
-
-
-        System.out.println("Selected directory: " + store.getDirectory());
     }
 
     @Override

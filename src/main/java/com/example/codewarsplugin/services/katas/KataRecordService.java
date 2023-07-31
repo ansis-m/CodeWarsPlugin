@@ -43,10 +43,6 @@ public class KataRecordService {
                             .build();
                     try  {
                         HttpResponse<String> response = LoginService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-
-                        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(response.body()));
-
-
                         KataRecord record = objectMapper.readValue(response.body(), KataRecord.class);
                         record.setPath(getKataPath(record.getId()));
                         success = true;
@@ -101,16 +97,12 @@ public class KataRecordService {
                 String substring = script.substring(startIndex, endIndex + "session".length());
                 startIndex = substring.indexOf("/projects/");
                 endIndex = substring.lastIndexOf("%7Blanguage%7D");
-
-                System.out.println("Substring: " + substring);
                 return substring.substring(startIndex, endIndex);
             } else {
-                System.out.println("Substring not found.");
                 return "";
             }
         } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
-            Arrays.stream(e.getStackTrace()).forEach(System.out::println);
+            e.printStackTrace();
             return null;
         }
     }

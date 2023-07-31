@@ -11,7 +11,7 @@ public class TopImagePanel extends JPanel {
 
     private Icon icon = IconLoader.getIcon("/icons/logo-square.png", SidePanel.class);
 
-    public TopImagePanel(Store store){
+    public TopImagePanel(){
         super();
         setLayout(new BorderLayout());
         JLabel imageLabel = new JLabel(icon);

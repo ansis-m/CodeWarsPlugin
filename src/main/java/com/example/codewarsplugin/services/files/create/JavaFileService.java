@@ -118,7 +118,6 @@ public class JavaFileService extends AbstractFileService{
                     VirtualFile finalFile = file;
                     finalFile.setBinaryContent(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(source).getBytes(StandardCharsets.UTF_8));
                 } catch (IOException e) {
-                    System.out.println(e.getMessage());
                     e.printStackTrace();
                 }
             }

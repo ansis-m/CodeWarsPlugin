@@ -10,6 +10,7 @@ import com.example.codewarsplugin.services.katas.KataSubmitService;
 import com.example.codewarsplugin.services.katas.KataSubmitServiceClient;
 import com.example.codewarsplugin.state.Store;
 import com.intellij.ui.AnimatedIcon;
+import com.intellij.ui.JBColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -116,7 +117,6 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
     @Override
     public void notifyAttemptRunException(Exception e) {
-        System.out.println("code attempt failed with exception: " + e.getMessage() + "\n");
         attemptSuccessful = false;
         stopSpinner(attemptCardLayout, attemptCardPanel);
         setTextPaneText("#B1361E", "Ups, attempt failed with exception...", e.getMessage());
@@ -185,7 +185,6 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
     @Override
     public void notifyCommitFailed(HttpResponse<String> response) {
-        System.out.println("failed body: " + response.body());
         stopSpinner(commitCardLayout, commitCardPanel);
         setTextPaneText("#B1361E", "Ups, attempt failed with bad status code " + response.statusCode(), "Perhaps log out, and log in would help?!");
         resetExitStatusPanel(4000);
@@ -196,7 +195,6 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         stopSpinner(commitCardLayout, commitCardPanel);
         setTextPaneText("#B1361E", "Ups, commit failed with exception...", e.getMessage());
         resetExitStatusPanel(4000);
-        System.out.println("commit exception: ");
         e.printStackTrace();
     }
 

@@ -31,9 +31,6 @@ public class KataDirectoryParser {
 
     private static void processSourcesRoot(VirtualFile directory) {
 
-
-        System.out.println("process directory: " + directory.getName());
-
         if (directory != null && directory.isDirectory()) {
             for (VirtualFile child : directory.getChildren()) {
                 if (child.isDirectory()) {

@@ -59,14 +59,14 @@ public class SyncService {
     public static void startLoginSpinner(){
         for(StateParams p : stateParamsList) {
             var store = p.getStore();
-            store.getLoginManager().startSpinner();
+            store.getLoginPanel().startSpinner();
         }
     }
 
     public static void stopLoginSpinner(){
         for(StateParams p : stateParamsList) {
             var store = p.getStore();
-            store.getLoginManager().stopSpinner();
+            store.getLoginPanel().stopSpinner();
         }
     }
 }

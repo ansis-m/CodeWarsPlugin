@@ -26,7 +26,6 @@ public class CodewarsToolWindowFactory implements ToolWindowFactory {
         SwingUtilities.getWindowAncestor(panel).addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                System.out.println("closing");
                 SyncService.remove(panel.getStateParams());
             }
         });
