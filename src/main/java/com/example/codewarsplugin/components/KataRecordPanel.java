@@ -12,6 +12,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import static com.example.codewarsplugin.services.utils.Colors.getColor;
+
 public class KataRecordPanel extends JPanel implements KataRecordServiceClient {
 
     private JTextField textField = new JTextField(20);
@@ -64,7 +66,7 @@ public class KataRecordPanel extends JPanel implements KataRecordServiceClient {
         add(fetchPanel, constraints);
 
 
-        kataNotFoundLabel.setForeground(new JBColor(new Color(177, 54, 30), new Color(177, 54, 30)));
+        kataNotFoundLabel.setForeground(getColor("red"));
         kataNotFoundLabel.setFont(promptLabel.getFont().deriveFont(15f));
         cardKataPanel.setLayout(cardKataLayout);
 

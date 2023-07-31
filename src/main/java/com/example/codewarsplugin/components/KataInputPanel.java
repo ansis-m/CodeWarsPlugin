@@ -16,6 +16,8 @@ import com.intellij.ui.JBColor;
 import javax.swing.*;
 import java.awt.*;
 
+import static com.example.codewarsplugin.services.utils.Colors.getColor;
+
 public class KataInputPanel extends JPanel implements KataInputServiceClient, FileServiceClient {
 
     private KataRecord record;
@@ -94,7 +96,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     public void processInputNotFound(Exception exception) {
 
         failMessage.setText("Setup failed: " + exception.getMessage());
-        failMessage.setForeground(JBColor.RED);
+        failMessage.setForeground(getColor("red"));
         revalidate();
         repaint();
         Timer timer = new Timer(2500, e -> SwingUtilities.invokeLater(() -> {
@@ -125,7 +127,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     public void notifyFileExists() {
 
         failMessage.setText("This kata has been configured before in this project.");
-        failMessage.setForeground(new JBColor(new Color(177, 54, 30), new Color(177, 54, 30)));
+        failMessage.setForeground(getColor("red"));
         revalidate();
         repaint();
         Timer timer = new Timer(2500, e -> SwingUtilities.invokeLater(() -> {

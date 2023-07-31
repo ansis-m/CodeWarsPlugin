@@ -14,6 +14,8 @@ import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
 
+import static com.example.codewarsplugin.services.utils.Colors.getColor;
+
 @EqualsAndHashCode(callSuper = true)
 public class LoginPanel extends JPanel implements LoginServiceClient {
 
@@ -88,7 +90,7 @@ public class LoginPanel extends JPanel implements LoginServiceClient {
         var defaultColor = promptLabel.getForeground();
         var defaultText = promptLabel.getText();
         promptLabel.setText(message);
-        promptLabel.setForeground(new JBColor(new Color(177, 54, 30), new Color(177, 54, 30)));
+        promptLabel.setForeground(getColor("red"));
         revalidate();
         repaint();
         Timer timer = new Timer(2500, e -> SwingUtilities.invokeLater(() -> {

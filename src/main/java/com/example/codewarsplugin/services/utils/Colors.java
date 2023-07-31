@@ -9,6 +9,8 @@ public class Colors {
     public static JBColor getColor(String color){
 
         switch (color) {
+            case ("red"):
+                return new JBColor(new Color(177, 54, 30), new Color(177, 54, 30));
             case ("yellow"):
                 return new JBColor(Color.decode("#ecb613"), Color.decode("#ecb613"));
             case ("purple"):
