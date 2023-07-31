@@ -16,7 +16,7 @@ public class Colors {
             case ("blue"):
                 return new JBColor(Color.decode("#1f87e7"), Color.decode("#1f87e7"));
             default:
-                return new JBColor(Color.decode("#363535"), Color.decode("#e6e6e6"));
+                return new JBColor(Color.decode("#363535"), Color.decode("#bbbbbb"));
         }
     }
 
