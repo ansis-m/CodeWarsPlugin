@@ -3,10 +3,7 @@ package com.example.codewarsplugin.state;
 import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.components.*;
 import com.example.codewarsplugin.models.kata.KataDirectory;
-import com.example.codewarsplugin.views.LogedInView;
-import com.example.codewarsplugin.views.LoginView;
-import com.example.codewarsplugin.views.View;
-import com.example.codewarsplugin.views.WorkView;
+import com.example.codewarsplugin.views.*;
 
 import java.util.LinkedList;
 
@@ -17,6 +14,7 @@ public class Store {
     private LogedInView logedInView;
     private LoginView loginView;
     private WorkView workView;
+    private DescriptionView descriptionView;
     private View currentView;
     private LinkedList<View> previousViews = new LinkedList<>();
     private KataDirectory directory;
@@ -26,6 +24,7 @@ public class Store {
         logedInView = new LogedInView(this);
         loginView = new LoginView(this);
         workView = new WorkView(this);
+        descriptionView = new DescriptionView(this);
     }
 
     public View getCurrentView() {
@@ -62,7 +61,7 @@ public class Store {
     }
 
     public View getPreviousView() {
-        return previousViews.getLast();
+        return previousViews.pollLast();
     }
 
     public LinkedList<View> getPreviousViews() {
@@ -84,4 +83,8 @@ public class Store {
     public void setLoginPanel(LoginPanel loginPanel) {
         this.loginPanel = loginPanel;
     }
+    public DescriptionView getDescriptionView() {
+        return descriptionView;
+    }
+
 }

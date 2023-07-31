@@ -21,9 +21,7 @@ public class NavigationBar extends JPanel {
     private void addListener() {
         backButton.addActionListener((e) -> {
             var previousView = store.getPreviousView();
-
             store.getCurrentView().cleanup();
-            store.getPreviousViews().add(store.getCurrentView());
 
             previousView.setup();
             store.setCurrentView(previousView);

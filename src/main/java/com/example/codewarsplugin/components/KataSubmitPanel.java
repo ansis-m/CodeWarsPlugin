@@ -10,7 +10,6 @@ import com.example.codewarsplugin.services.katas.KataSubmitService;
 import com.example.codewarsplugin.services.katas.KataSubmitServiceClient;
 import com.example.codewarsplugin.state.Store;
 import com.intellij.ui.AnimatedIcon;
-import com.intellij.ui.JBColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,6 +36,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     private JPanel commitCardPanel = new JPanel();
     private CardLayout commitCardLayout = new CardLayout();
     private JTextPane textPane = new JTextPane();
+    private JButton descriptionButton = new JButton("Description");
     private ArrayList<JButton> buttonList = new ArrayList<>();
     private boolean attemptSuccessful = false;
     private KataSubmitService submitService;
@@ -71,6 +71,13 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
             startSpinner(commitCardLayout, commitCardPanel);
             this.submitService.commit();
         });
+
+        descriptionButton.addActionListener((e) -> {
+            store.getCurrentView().cleanup();
+            store.getPreviousViews().add(store.getCurrentView());
+            store.getDescriptionView().setup();
+            store.setCurrentView(store.getDescriptionView());
+        });
     }
 
     private void addElementsToPanel() {
@@ -91,13 +98,17 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         constraints.gridy = 0;
         add(titleLabel, constraints);
 
-        JLabel infoLabel = new JLabel(record.getRank().getName() + " kata in " +record.getSelectedLanguage() + " " + input.getActiveVersion());
+        JLabel infoLabel = new JLabel(record.getRank().getName() + " kata in " + record.getSelectedLanguage() + " " + input.getActiveVersion());
         infoLabel.setFont(titleLabel.getFont().deriveFont(15f));
         infoLabel.setForeground(getColor(record.getRank().getColor()));
 
+        JPanel infoPanel = new JPanel(new FlowLayout());
+        infoPanel.add(infoLabel);
+        infoPanel.add(descriptionButton);
+
         constraints.gridx = 0;
         constraints.gridy = 1;
-        add(infoLabel, constraints);
+        add(infoPanel, constraints);
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(testCardPanel);
