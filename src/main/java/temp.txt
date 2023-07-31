@@ -1,0 +1,4 @@
+    --color-rank-white: #e6e6e6;
+    --color-rank-yellow: #ecb613;
+    --color-rank-purple: #866cc7;
+    --color-rank-blue: #1f87e7;

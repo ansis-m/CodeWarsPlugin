@@ -5,11 +5,10 @@ import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class JavaFileService extends AbstractFileService{
 
@@ -117,7 +116,7 @@ public class JavaFileService extends AbstractFileService{
                     file = metaData.createChildData(this, filename);
                     file.refresh(false, true);
                     VirtualFile finalFile = file;
-                    finalFile.setBinaryContent(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(source).getBytes());
+                    finalFile.setBinaryContent(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(source).getBytes(StandardCharsets.UTF_8));
                 } catch (IOException e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();

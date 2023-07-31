@@ -9,13 +9,14 @@ import com.example.codewarsplugin.services.UserService;
 import com.example.codewarsplugin.services.katas.KataSubmitService;
 import com.example.codewarsplugin.services.katas.KataSubmitServiceClient;
 import com.example.codewarsplugin.state.Store;
-import com.example.codewarsplugin.state.SyncService;
 import com.intellij.ui.AnimatedIcon;
 
 import javax.swing.*;
 import java.awt.*;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+
+import static com.example.codewarsplugin.services.utils.Colors.getColor;
 
 public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
@@ -85,6 +86,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
         infoLabel = new JLabel(record.getName() + " in " +record.getSelectedLanguage() + " " + input.getActiveVersion());
         infoLabel.setFont(infoLabel.getFont().deriveFont(20f));
+        infoLabel.setForeground(getColor(record.getRank().getColor()));
 
         constraints.gridx = 0;
         constraints.gridy = 0;

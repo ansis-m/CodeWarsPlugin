@@ -31,6 +31,9 @@ public class KataDirectoryParser {
 
     private static void processSourcesRoot(VirtualFile directory) {
 
+
+        System.out.println("process directory: " + directory.getName());
+
         if (directory != null && directory.isDirectory()) {
             for (VirtualFile child : directory.getChildren()) {
                 if (child.isDirectory()) {
@@ -63,12 +66,12 @@ public class KataDirectoryParser {
                 try {
                     record = mapper.readValue(metafile.contentsToByteArray(), KataRecord.class);
                     kataDirectory.setRecord(record);
-                } catch (Exception ignored){}
+                } catch (Exception e){ System.out.println("exception record parsing failed"); e.printStackTrace();}
             } else if (!metafile.isDirectory() && metafile.getName().contains("Input.json")){
                 try {
                     input = mapper.readValue(metafile.contentsToByteArray(), KataInput.class);
                     kataDirectory.setInput(input);
-                } catch (Exception ignored){}
+                } catch (Exception e){System.out.println("exception input parsing failed"); e.printStackTrace();}
             }
         }
         if(record == null || input == null) {
