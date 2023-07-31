@@ -46,6 +46,8 @@ public class KataRecordService {
                         KataRecord record = objectMapper.readValue(response.body(), KataRecord.class);
                         record.setPath(getKataPath(record.getId()));
                         success = true;
+                        KataDescriptionService.getDescription(record);
+                        System.out.println("record: " + record.toString());
                         return record;
                     } catch (Exception e) {
                         return null;

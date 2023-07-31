@@ -52,7 +52,7 @@ public class UserService {
     }
 
 
-    private static JsonNode findObjectWithField(JsonNode rootNode, String field) {
+    public static JsonNode findObjectWithField(JsonNode rootNode, String field) {
         if (rootNode == null || rootNode.isMissingNode()) {
             return null;
         }

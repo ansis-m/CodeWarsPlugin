@@ -16,6 +16,8 @@ public class KataRecord implements JsonSource{
     private String[] languages;
     private String path;
     private String selectedLanguage;
+    private String description;
+
 
     @Override
     public String toString() {
@@ -28,7 +30,16 @@ public class KataRecord implements JsonSource{
                 ", languages=" + Arrays.toString(languages) +
                 ", path='" + path + '\'' +
                 ", selectedLanguage='" + selectedLanguage + '\'' +
+                ", description='" + description + '\'' +
                 '}';
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getSelectedLanguage() {
