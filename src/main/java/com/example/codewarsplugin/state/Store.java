@@ -4,6 +4,7 @@ import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.components.*;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.views.*;
+import com.intellij.ui.jcef.JBCefBrowser;
 
 import java.util.LinkedList;
 
@@ -18,6 +19,7 @@ public class Store {
     private View currentView;
     private LinkedList<View> previousViews = new LinkedList<>();
     private KataDirectory directory;
+    public static final JBCefBrowser borwser = new JBCefBrowser();
 
     public Store(SidePanel sidePanel){
         this.sidePanel = sidePanel;

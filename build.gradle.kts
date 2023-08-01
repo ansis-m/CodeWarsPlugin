@@ -9,6 +9,9 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
 }
+
+
+
 dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-logging:2.5.4") {
