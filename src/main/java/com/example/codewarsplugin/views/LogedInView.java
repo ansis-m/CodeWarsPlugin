@@ -22,8 +22,8 @@ public class LogedInView implements View{
     }
 
     public void setup() {
-        userPanel = new UserPanel(UserService.getUser(), store);
-        sidePanel.add(userPanel, BorderLayout.NORTH);
+        //userPanel = new UserPanel(UserService.getUser(), store);
+        //sidePanel.add(userPanel, BorderLayout.NORTH);
 
         if ( KataDirectoryParser.getDirectoryList().size() > 0) {
             sidePanel.add(new KataSetupPanel(store), BorderLayout.CENTER);

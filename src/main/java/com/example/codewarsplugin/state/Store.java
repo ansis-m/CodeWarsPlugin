@@ -19,7 +19,6 @@ public class Store {
     private View currentView;
     private LinkedList<View> previousViews = new LinkedList<>();
     private KataDirectory directory;
-    public static final JBCefBrowser borwser = new JBCefBrowser();
 
     public Store(SidePanel sidePanel){
         this.sidePanel = sidePanel;

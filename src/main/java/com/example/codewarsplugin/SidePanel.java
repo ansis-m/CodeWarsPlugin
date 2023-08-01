@@ -7,13 +7,13 @@ import com.example.codewarsplugin.state.StateParams;
 import com.example.codewarsplugin.state.SyncService;
 import com.example.codewarsplugin.state.Store;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.ui.jcef.JBCefBrowser;
+import org.cef.network.CefCookieManager;
 
 import javax.swing.*;
 import java.awt.*;
 
-//177, 54, 30
 public class SidePanel extends JPanel {
     private Store store;
     private StateParams stateParams;
@@ -23,13 +23,10 @@ public class SidePanel extends JPanel {
         MyProjectManager.init(project, toolWindow);
         initPlugin(project, toolWindow);
         store.getCurrentView().setup();
-        ProjectManager.getInstance().addProjectManagerListener(new MyProjectManagerListener()); //kautkaada servisa metode
     }
 
     private void initPlugin(Project project, ToolWindow toolWindow) {
         store = new Store(this);
-        WebDriver.init();
-
         stateParams = new StateParams();
         stateParams.setProject(project);
         stateParams.setToolWindow(toolWindow);
@@ -41,7 +38,8 @@ public class SidePanel extends JPanel {
     }
 
     private void cleanup() {
-        WebDriver.quit();
+        CefCookieManager.getGlobalManager().deleteCookies(null, null);
+        //WebDriver.quit();
     }
 
     public StateParams getStateParams() {

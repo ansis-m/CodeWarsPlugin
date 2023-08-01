@@ -11,7 +11,9 @@ import java.net.http.HttpClient;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
+import static com.example.codewarsplugin.CodewarsToolWindowFactory.browser;
 import static com.example.codewarsplugin.config.StringConstants.SIGN_IN_URL;
 
 
@@ -89,6 +91,8 @@ public class LoginService {
             SyncService.stopLoginSpinner();
         }
     }
+
+
 
     private static void initHttpClient() {
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);

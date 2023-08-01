@@ -7,6 +7,9 @@ import com.example.codewarsplugin.services.login.WebDriver;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import static com.example.codewarsplugin.CodewarsToolWindowFactory.browser;
 
 public class SyncService {
     private static List<StateParams> stateParamsList = new ArrayList();
@@ -30,6 +33,13 @@ public class SyncService {
             store.getPreviousViews().add(store.getCurrentView());
             store.setCurrentView(store.getLogedInView());
             store.getCurrentView().setup();
+        }
+        try {
+            browser.getJBCefCookieManager().getCookies("https://www.codewars.com", false).get().forEach(c -> System.out.println("name: " + c.getName() + c.getValue()));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
         }
     }
 
