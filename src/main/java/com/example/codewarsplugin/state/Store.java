@@ -11,6 +11,7 @@ import com.intellij.ui.jcef.JBCefClient;
 import java.awt.*;
 
 
+import static com.example.codewarsplugin.config.StringConstants.SIGN_IN_URL;
 import static com.intellij.ui.jcef.JBCefClient.Properties.JS_QUERY_POOL_SIZE;
 
 public class Store {
@@ -21,7 +22,7 @@ public class Store {
     private final TabManager manager;
 
     public final JBCefClient client = JBCefApp.getInstance().createClient();
-    public final JBCefBrowser browser = new JBCefBrowserBuilder().setClient(client).build();
+    public final JBCefBrowser browser = new JBCefBrowserBuilder().setClient(client).setUrl(SIGN_IN_URL).build();
 
     public Store(SidePanel sidePanel){
         client.setProperty(JS_QUERY_POOL_SIZE, 10);

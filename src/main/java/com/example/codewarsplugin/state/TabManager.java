@@ -54,7 +54,7 @@ public class TabManager {
 
             @Override
             public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
-                if(frame.getURL().equals(DASHBOARD_URL) && previousUrl.equals(SIGN_IN_URL)){
+                if(frame.getURL().equals(DASHBOARD_URL) && (previousUrl.equals(SIGN_IN_URL) || previousUrl.equals(""))){
                     System.out.println("inside listener");
                     browser.executeJavaScript(SERIALIZE_WINDOW + query.inject("result"), browser.getURL(),0);
                     SwingUtilities.invokeLater(setupTabs());
