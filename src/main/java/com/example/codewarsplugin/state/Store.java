@@ -27,7 +27,7 @@ public class Store {
         client.setProperty(JS_QUERY_POOL_SIZE, 10);
         this.sidePanel = sidePanel;
         sidePanel.add(tabbedPane, BorderLayout.CENTER);
-        manager = new TabManager(sidePanel, this);
+        manager = new TabManager(this);
         manager.setupDashboard();
 
     }

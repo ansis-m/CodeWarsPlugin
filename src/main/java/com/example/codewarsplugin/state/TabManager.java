@@ -19,15 +19,14 @@ import static com.example.codewarsplugin.config.StringConstants.*;
 
 public class TabManager {
 
-    private final SidePanel sidePanel;
     private final JBTabbedPane jbTabbedPane;
     private final Store store;
     private final JBCefBrowser browser;
     private final JBCefClient client;
+    private String previousUrl = "";
 
-    public TabManager(SidePanel sidePanel, Store store) {
+    public TabManager(Store store) {
         this.jbTabbedPane = store.getTabbedPane();
-        this.sidePanel = sidePanel;
         this.store = store;
         this.browser = store.getBrowser();
         this.client = store.getClient();
@@ -42,19 +41,29 @@ public class TabManager {
 
         query.addHandler(result -> {
             System.out.println(result+ "\n\n\nuser: " + UserService.getUser(result) );
-            SwingUtilities.invokeLater(setupTabs());
             return null;
         });
 
         handlerHolder[0] = new CefLoadHandlerAdapter() {
 
             @Override
+            public void onLoadingStateChange(
+                    CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
+                System.out.println("change: " + isLoading + " url " + browser.getURL());
+            }
+
+            @Override
             public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
-                if(!frame.getURL().equals(DASHBOARD_URL)){
-                    return;
+                if(frame.getURL().equals(DASHBOARD_URL) && previousUrl.equals(SIGN_IN_URL)){
+                    System.out.println("inside listener");
+                    browser.executeJavaScript(SERIALIZE_WINDOW + query.inject("result"), browser.getURL(),0);
+                    SwingUtilities.invokeLater(setupTabs());
+                } else if(frame.getURL().contains("train")){
+                    System.out.println("train: " + browser.getURL());
+                    final String url = browser.getURL();
+                    SwingUtilities.invokeLater(setupKata(url));
                 }
-                System.out.println("inside listener");
-                browser.executeJavaScript(SERIALIZE_WINDOW + query.inject("result"), browser.getURL(),0);
+                previousUrl = browser.getURL();
             }
         };
         client.addLoadHandler(handlerHolder[0], browser.getCefBrowser());
@@ -62,13 +71,16 @@ public class TabManager {
     }
 
     public Runnable setupTabs() {
-        return new Runnable() {
-            @Override
-            public void run() {
+        return () -> {
+            LoginService.getCookies(browser);
+            System.out.println("Run the main thread");
+        };
+    }
 
-                LoginService.getCookies(browser);
-                System.out.println("Run the main thread");
-            }
+    public Runnable setupKata(String url){
+        return () -> {
+          System.out.println("setup kata: " + url);
+          browser.loadURL(DASHBOARD_URL);
         };
     }
 }
