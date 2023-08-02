@@ -42,7 +42,6 @@ public class LoginView implements View{
 
         JBCefJSQuery query = JBCefJSQuery.create((JBCefBrowserBase) browser);
         query.addHandler(result -> {
-            System.out.println("\n\n\nuser: " + UserService.getUser(result));
             SwingUtilities.invokeLater(LoginService.getCookies());
             return null;
         });
@@ -54,7 +53,6 @@ public class LoginView implements View{
                 if(!frame.getURL().equals(DASHBOARD_URL)){
                     return;
                 }
-                System.out.println("inside listener");
                 //ApplicationManager.getApplication().invokeLater(() -> client.removeLoadHandler(handlerHolder[0], browser));
                 browser.executeJavaScript(
                         "function serialize(obj) {" +
@@ -75,15 +73,6 @@ public class LoginView implements View{
                         browser.getURL(),
                         0
                 );
-            }
-
-            @Override
-            public void onLoadingStateChange(
-                    CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
-
-                System.out.println("loading state change main frame url: " + browser.getMainFrame().getURL());
-
-
             }
         };
 

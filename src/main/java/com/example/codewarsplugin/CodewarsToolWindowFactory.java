@@ -1,6 +1,5 @@
 package com.example.codewarsplugin;
 
-import com.example.codewarsplugin.services.login.WebDriver;
 import com.example.codewarsplugin.state.SyncService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -35,8 +34,6 @@ public class CodewarsToolWindowFactory implements ToolWindowFactory {
         toolWindow.getContentManager().addContent(content);
         panel.revalidate();
         panel.repaint();
-
-
 
 
         SwingUtilities.getWindowAncestor(panel).addWindowListener(new WindowAdapter() {

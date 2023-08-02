@@ -1,14 +1,12 @@
 package com.example.codewarsplugin;
 
 import com.example.codewarsplugin.services.login.LoginService;
-import com.example.codewarsplugin.services.login.WebDriver;
 import com.example.codewarsplugin.services.project.MyProjectManager;
 import com.example.codewarsplugin.state.StateParams;
 import com.example.codewarsplugin.state.SyncService;
 import com.example.codewarsplugin.state.Store;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.ui.jcef.JBCefBrowser;
 import org.cef.network.CefCookieManager;
 
 import javax.swing.*;
@@ -39,7 +37,6 @@ public class SidePanel extends JPanel {
 
     private void cleanup() {
         CefCookieManager.getGlobalManager().deleteCookies(null, null);
-        //WebDriver.quit();
     }
 
     public StateParams getStateParams() {

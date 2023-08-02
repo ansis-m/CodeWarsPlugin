@@ -18,9 +18,6 @@ dependencies {
     }
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.12.5")
-    implementation("io.github.bonigarcia:webdrivermanager:5.0.3")
-    implementation("org.seleniumhq.selenium:selenium-java:3.141.59")
-    implementation("org.seleniumhq.selenium:selenium-api:3.141.59")
 }
 
 // Configure Gradle IntelliJ Plugin
