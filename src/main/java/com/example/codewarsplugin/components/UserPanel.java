@@ -2,7 +2,6 @@ package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.models.user.User;
 import com.example.codewarsplugin.services.utils.Colors;
-import com.example.codewarsplugin.state.SyncService;
 import com.example.codewarsplugin.state.Store;
 import com.intellij.ui.AnimatedIcon;
 
@@ -54,7 +53,6 @@ public class UserPanel extends JPanel {
         add(honorLabel);
         logoutButton.addActionListener((e) -> {
             startSpinner();
-            SyncService.logout();
         });
         logoutButton.setVisible(true);
 

@@ -11,7 +11,6 @@ import com.example.codewarsplugin.state.Store;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.AnimatedIcon;
-import com.intellij.ui.JBColor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -142,10 +141,7 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
     @Override
     public void transitionToWorkView(KataDirectory directory) {
         store.setCurrentKataDirectory(directory);
-        store.getCurrentView().cleanup();
-        store.getPreviousViews().add(store.getCurrentView());
-        store.getWorkView().setup();
-        store.setCurrentView(store.getWorkView());
+
     }
 
     @Override

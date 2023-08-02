@@ -2,81 +2,61 @@ package com.example.codewarsplugin.state;
 
 import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.models.kata.KataDirectory;
-import com.example.codewarsplugin.views.*;
+import com.intellij.ui.components.JBTabbedPane;
+import com.intellij.ui.jcef.JBCefApp;
+import com.intellij.ui.jcef.JBCefBrowser;
+import com.intellij.ui.jcef.JBCefBrowserBuilder;
+import com.intellij.ui.jcef.JBCefClient;
 
-import java.util.LinkedList;
+import java.awt.*;
+
+
+import static com.intellij.ui.jcef.JBCefClient.Properties.JS_QUERY_POOL_SIZE;
 
 public class Store {
 
     private SidePanel sidePanel;
-    private LogedInView logedInView;
-    private LoginView loginView;
-    private WorkView workView;
-    private DescriptionView descriptionView;
-    private View currentView;
-    private LinkedList<View> previousViews = new LinkedList<>();
     private KataDirectory directory;
+    private final JBTabbedPane tabbedPane = new JBTabbedPane();
+    private final TabManager manager;
+
+    public final JBCefClient client = JBCefApp.getInstance().createClient();
+    public final JBCefBrowser browser = new JBCefBrowserBuilder().setClient(client).build();
 
     public Store(SidePanel sidePanel){
+        client.setProperty(JS_QUERY_POOL_SIZE, 10);
         this.sidePanel = sidePanel;
-        logedInView = new LogedInView(this);
-        loginView = new LoginView(this);
-        workView = new WorkView(this);
-        descriptionView = new DescriptionView(this);
-    }
+        sidePanel.add(tabbedPane, BorderLayout.CENTER);
+        manager = new TabManager(sidePanel, this);
+        manager.setupDashboard();
 
-    public View getCurrentView() {
-        return currentView;
-    }
-
-    public void setCurrentView(View currentView) {
-        this.currentView = currentView;
-    }
-
-    public LogedInView getLogedInView() {
-        return logedInView;
-    }
-
-    public LoginView getLoginView() {
-        return loginView;
     }
 
     public SidePanel getSidePanel() {
         return sidePanel;
     }
-    public void setSidePanel(SidePanel sidePanel) {
-        this.sidePanel = sidePanel;
-    }
-
-    public WorkView getWorkView() {
-        return workView;
-    }
-    public void setWorkView(WorkView workView) {
-        this.workView = workView;
-    }
-
-    public View getPreviousView() {
-        return previousViews.pollLast();
-    }
-
-    public LinkedList<View> getPreviousViews() {
-        return previousViews;
-    }
-
-    public void setPreviousViews(LinkedList<View> previousViews) {
-        this.previousViews = previousViews;
-    }
-
     public void setCurrentKataDirectory(KataDirectory directory) {
         this.directory = directory;
     }
-
     public KataDirectory getDirectory() {
         return directory;
     }
 
-    public DescriptionView getDescriptionView() {
-        return descriptionView;
+    public JBTabbedPane getTabbedPane() {
+        return tabbedPane;
+    }
+    public void initTabManager() {
+        manager.setupDashboard();
+    }
+    public TabManager getManager() {
+        return manager;
     }
 
+    public JBCefClient getClient() {
+        return client;
+    }
+
+    public JBCefBrowser getBrowser() {
+        return browser;
+    }
 }

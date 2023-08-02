@@ -29,10 +29,7 @@ public class KataSelectorPanel extends JPanel {
     private void addSelectorListeners() {
         selectorButton.addActionListener((event) -> {
             store.setCurrentKataDirectory((KataDirectory) directoryBox.getSelectedItem());
-            store.getCurrentView().cleanup();
-            store.getPreviousViews().add(store.getCurrentView());
-            store.getWorkView().setup();
-            store.setCurrentView(store.getWorkView());
+
         });
     }
 }

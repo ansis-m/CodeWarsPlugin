@@ -4,13 +4,10 @@ import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.components.DescriptionPanel;
 import com.example.codewarsplugin.components.NavigationBar;
 import com.example.codewarsplugin.components.UserPanel;
-import com.example.codewarsplugin.services.UserService;
 import com.example.codewarsplugin.state.Store;
 
 
 import java.awt.*;
-
-import static com.example.codewarsplugin.CodewarsToolWindowFactory.browser;
 
 
 public class DescriptionView implements View{
@@ -37,9 +34,9 @@ public class DescriptionView implements View{
         var record = store.getDirectory().getRecord();
 
 
-        browser.loadURL(record.getUrl() + "/" + record.getSelectedLanguage().toLowerCase());
-
-        sidePanel.add(browser.getComponent(), BorderLayout.CENTER);
+//        browser.loadURL(record.getUrl() + "/" + record.getSelectedLanguage().toLowerCase());
+//
+//        sidePanel.add(browser.getComponent(), BorderLayout.CENTER);
 
 
         navigationBar = new NavigationBar(store);

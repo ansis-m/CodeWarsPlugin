@@ -8,17 +8,20 @@ public class UserService {
 
     private static User user;
     private static ObjectMapper objectMapper = new ObjectMapper();
+    private static String serializedObjects;
 
 
     public static User getUser(){
-        return user;
+        return getUser(serializedObjects);
     }
 
 
     public static User getUser(String serializedObjects) {
+
         if(user != null) {
             return user;
         }
+        UserService.serializedObjects = serializedObjects;
         System.out.println("create user from " + serializedObjects);
         try {
             JsonNode rootNode = objectMapper.readTree(serializedObjects);

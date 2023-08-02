@@ -73,10 +73,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         });
 
         descriptionButton.addActionListener((e) -> {
-            store.getCurrentView().cleanup();
-            store.getPreviousViews().add(store.getCurrentView());
-            store.getDescriptionView().setup();
-            store.setCurrentView(store.getDescriptionView());
+
         });
     }
 
@@ -193,7 +190,6 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         UserService.clearUser();
         User newUser = UserService.getUser();
 
-        store.getCurrentView().refreshUserPanel();
         setTextPaneText("green", "Commit success!!!", "Your honor increased from " + honor + " to " + newUser.getHonor() + "!");
 
         resetExitStatusPanel(5000);
