@@ -10,11 +10,11 @@ import com.intellij.ui.jcef.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import static com.example.codewarsplugin.config.StringConstants.SIGN_IN_URL;
+import static com.intellij.ui.jcef.JBCefClient.Properties.JS_QUERY_POOL_SIZE;
 
 public class CodewarsToolWindowFactory implements ToolWindowFactory {
 
@@ -25,7 +25,7 @@ public class CodewarsToolWindowFactory implements ToolWindowFactory {
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
 
 
-
+        client.setProperty(JS_QUERY_POOL_SIZE, 10);
 
 
         SidePanel panel = new SidePanel(project, toolWindow);

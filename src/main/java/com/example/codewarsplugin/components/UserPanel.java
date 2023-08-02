@@ -23,6 +23,7 @@ public class UserPanel extends JPanel {
     private CardLayout cardLayout = new CardLayout();
 
     public UserPanel(User user, Store store){
+
         super();
         if (user == null) {
             return;

@@ -18,6 +18,7 @@ import java.awt.*;
 import static com.example.codewarsplugin.CodewarsToolWindowFactory.browser;
 import static com.example.codewarsplugin.CodewarsToolWindowFactory.client;
 import static com.example.codewarsplugin.config.StringConstants.DASHBOARD_URL;
+import static com.intellij.ui.jcef.JBCefClient.Properties.JS_QUERY_POOL_SIZE;
 
 
 public class LoginView implements View{
@@ -41,7 +42,9 @@ public class LoginView implements View{
         final CefLoadHandler[] handlerHolder = new CefLoadHandler[1];
 
         JBCefJSQuery query = JBCefJSQuery.create((JBCefBrowserBase) browser);
+
         query.addHandler(result -> {
+            System.out.println(result+ "\n\n\nuser: " + UserService.getUser(result) );
             SwingUtilities.invokeLater(LoginService.getCookies());
             return null;
         });
@@ -53,6 +56,7 @@ public class LoginView implements View{
                 if(!frame.getURL().equals(DASHBOARD_URL)){
                     return;
                 }
+                System.out.println("inside listener");
                 //ApplicationManager.getApplication().invokeLater(() -> client.removeLoadHandler(handlerHolder[0], browser));
                 browser.executeJavaScript(
                         "function serialize(obj) {" +

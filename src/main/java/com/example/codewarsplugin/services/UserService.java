@@ -4,8 +4,6 @@ import com.example.codewarsplugin.models.user.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static com.example.codewarsplugin.config.StringConstants.DASHBOARD_URL;
-
 public class UserService {
 
     private static User user;
@@ -13,7 +11,7 @@ public class UserService {
 
 
     public static User getUser(){
-        return getUser("");
+        return user;
     }
 
 
@@ -21,7 +19,7 @@ public class UserService {
         if(user != null) {
             return user;
         }
-
+        System.out.println("create user from " + serializedObjects);
         try {
             JsonNode rootNode = objectMapper.readTree(serializedObjects);
             JsonNode targetObject = findObjectWithField(rootNode, "career_paths");

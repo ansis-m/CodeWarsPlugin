@@ -37,10 +37,6 @@ public class DescriptionView implements View{
         var record = store.getDirectory().getRecord();
 
 
-        userPanel = new UserPanel(UserService.getUser(), store);
-        sidePanel.add(userPanel, BorderLayout.NORTH);
-
-
         browser.loadURL(record.getUrl() + "/" + record.getSelectedLanguage().toLowerCase());
 
         sidePanel.add(browser.getComponent(), BorderLayout.CENTER);

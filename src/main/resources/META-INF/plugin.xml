@@ -30,11 +30,6 @@
                     factoryClass="com.example.codewarsplugin.CodewarsToolWindowFactory"
                     secondary="false"
                     icon="/icons/cw_logo_13.svg"/>
-        <toolWindow id="CodeWarsBrowser"
-                    anchor="right"
-                    factoryClass="com.example.codewarsplugin.CodewarsBrowserFactory"
-                    secondary="false"
-                    icon="/icons/cw_logo_13.svg"/>
         <applicationService serviceImplementation="com.example.codewarsplugin.persistence.DataStore"/>
 
     </extensions>
