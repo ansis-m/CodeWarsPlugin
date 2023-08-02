@@ -15,30 +15,16 @@ public class UserService {
     private static User user;
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    public static User getUser() {
+
+    public static User getUser(){
+        return getUser("");
+    }
+
+
+    public static User getUser(String serializedObjects) {
         if(user != null) {
             return user;
         }
-        chromeDriver = WebDriver.getChromeDriver();
-        if (!chromeDriver.getCurrentUrl().equals(DASHBOARD_URL)){
-            chromeDriver.get(DASHBOARD_URL);
-        }
-        JavascriptExecutor jsExecutor = (JavascriptExecutor) chromeDriver;
-        String serializedObjects = (String) jsExecutor.executeScript(
-                "function serialize(obj) {" +
-                        "  const seen = new WeakSet();" +
-                        "  return JSON.stringify(obj, (key, value) => {" +
-                        "    if (typeof value === 'object' && value !== null) {" +
-                        "      if (seen.has(value)) {" +
-                        "        return '[Circular Reference]';" +
-                        "      }" +
-                        "      seen.add(value);" +
-                        "    }" +
-                        "    return value;" +
-                        "  });" +
-                        "}" +
-                        "return serialize(window);"
-        );
 
         try {
             JsonNode rootNode = objectMapper.readTree(serializedObjects);

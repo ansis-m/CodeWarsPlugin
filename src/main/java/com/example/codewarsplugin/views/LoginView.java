@@ -1,35 +1,29 @@
 package com.example.codewarsplugin.views;
 
-import com.example.codewarsplugin.CodewarsToolWindowFactory;
+
 import com.example.codewarsplugin.SidePanel;
-import com.example.codewarsplugin.components.LoginPanel;
-import com.example.codewarsplugin.components.TopImagePanel;
+import com.example.codewarsplugin.services.UserService;
 import com.example.codewarsplugin.services.login.LoginService;
 import com.example.codewarsplugin.state.Store;
-import com.example.codewarsplugin.state.SyncService;
-import com.google.type.DateTime;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.ui.jcef.JBCefBrowser;
+import com.intellij.ui.jcef.JBCefBrowserBase;
+import com.intellij.ui.jcef.JBCefJSQuery;
 import org.cef.browser.CefBrowser;
+import org.cef.browser.CefFrame;
 import org.cef.handler.CefLoadHandler;
 import org.cef.handler.CefLoadHandlerAdapter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDateTime;
-import java.util.concurrent.ExecutionException;
 
 import static com.example.codewarsplugin.CodewarsToolWindowFactory.browser;
 import static com.example.codewarsplugin.CodewarsToolWindowFactory.client;
 import static com.example.codewarsplugin.config.StringConstants.DASHBOARD_URL;
-import static com.example.codewarsplugin.config.StringConstants.SIGN_IN_URL;
 
 
 public class LoginView implements View{
 
     private Store store;
     private SidePanel sidePanel;
-    private LoginPanel loginPanel;
 
 
     public LoginView(Store store) {
@@ -44,35 +38,60 @@ public class LoginView implements View{
         sidePanel.repaint();
 
 
-        CefLoadHandler[] handlerHolder = new CefLoadHandler[1];
+        final CefLoadHandler[] handlerHolder = new CefLoadHandler[1];
+
+        JBCefJSQuery query = JBCefJSQuery.create((JBCefBrowserBase) browser);
+        query.addHandler(result -> {
+            System.out.println("\n\n\nuser: " + UserService.getUser(result));
+            SwingUtilities.invokeLater(LoginService.getCookies());
+            return null;
+        });
 
         handlerHolder[0] = new CefLoadHandlerAdapter() {
+
+            @Override
+            public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
+                if(!frame.getURL().equals(DASHBOARD_URL)){
+                    return;
+                }
+                System.out.println("inside listener");
+                //ApplicationManager.getApplication().invokeLater(() -> client.removeLoadHandler(handlerHolder[0], browser));
+                browser.executeJavaScript(
+                        "function serialize(obj) {" +
+                                "  const seen = new WeakSet();" +
+                                "  return JSON.stringify(obj, (key, value) => {" +
+                                "    if (typeof value === 'object' && value !== null) {" +
+                                "      if (seen.has(value)) {" +
+                                "        return '[Circular Reference]';" +
+                                "      }" +
+                                "      seen.add(value);" +
+                                "    }" +
+                                "    return value;" +
+                                "  });" +
+                                "}" +
+                                "var result = serialize(window);"
+                        + query.inject("result"),
+
+                        browser.getURL(),
+                        0
+                );
+            }
+
             @Override
             public void onLoadingStateChange(
                     CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
 
-                System.out.println("main frame url: " + browser.getMainFrame().getURL());
-
-                if (isLoading){
-                    System.out.println("Loading: " + browser.getURL() +  LocalDateTime.now());
-                }
-                if (!isLoading && browser.getURL().equals(DASHBOARD_URL)){
-                    System.out.println("finished loading: " + browser.getURL() + LocalDateTime.now());
-                    ApplicationManager.getApplication().invokeLater(() -> {
-                        client.removeLoadHandler(handlerHolder[0], browser);
-                    });
-                    SwingUtilities.invokeLater(SyncService::login);
-                }
-            }};
+                System.out.println("loading state change main frame url: " + browser.getMainFrame().getURL());
 
 
+            }
+        };
 
         client.addLoadHandler(handlerHolder[0], browser.getCefBrowser());
-
     }
 
+
     public void cleanup() {
-        //loginPanel.stopSpinner();
         sidePanel.removeAll();
     }
 

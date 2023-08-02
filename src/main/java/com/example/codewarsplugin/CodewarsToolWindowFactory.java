@@ -7,9 +7,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
-import com.intellij.ui.jcef.JBCefApp;
-import com.intellij.ui.jcef.JBCefBrowser;
-import com.intellij.ui.jcef.JBCefClient;
+import com.intellij.ui.jcef.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -26,6 +24,9 @@ public class CodewarsToolWindowFactory implements ToolWindowFactory {
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+
+
+
 
 
         SidePanel panel = new SidePanel(project, toolWindow);

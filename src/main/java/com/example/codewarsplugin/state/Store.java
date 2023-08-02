@@ -1,17 +1,14 @@
 package com.example.codewarsplugin.state;
 
 import com.example.codewarsplugin.SidePanel;
-import com.example.codewarsplugin.components.*;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.views.*;
-import com.intellij.ui.jcef.JBCefBrowser;
 
 import java.util.LinkedList;
 
 public class Store {
 
     private SidePanel sidePanel;
-    private LoginPanel loginPanel;
     private LogedInView logedInView;
     private LoginView loginView;
     private WorkView workView;
@@ -44,9 +41,6 @@ public class Store {
         return loginView;
     }
 
-    public LoginPanel getLoginPanel() {
-        return loginPanel;
-    }
     public SidePanel getSidePanel() {
         return sidePanel;
     }
@@ -81,9 +75,6 @@ public class Store {
         return directory;
     }
 
-    public void setLoginPanel(LoginPanel loginPanel) {
-        this.loginPanel = loginPanel;
-    }
     public DescriptionView getDescriptionView() {
         return descriptionView;
     }

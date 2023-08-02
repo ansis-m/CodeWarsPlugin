@@ -3,10 +3,14 @@ package com.example.codewarsplugin.state;
 import com.example.codewarsplugin.services.login.LoginService;
 import com.example.codewarsplugin.services.UserService;
 import com.example.codewarsplugin.services.login.WebDriver;
+import com.intellij.ui.jcef.JBCefBrowserBase;
+import com.intellij.ui.jcef.JBCefClient;
+import com.intellij.ui.jcef.JBCefJSQuery;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import static com.example.codewarsplugin.CodewarsToolWindowFactory.browser;
@@ -34,13 +38,8 @@ public class SyncService {
             store.setCurrentView(store.getLogedInView());
             store.getCurrentView().setup();
         }
-        try {
-            browser.getJBCefCookieManager().getCookies("https://www.codewars.com", false).get().forEach(c -> System.out.println("name: " + c.getName() + c.getValue()));
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+
+
     }
 
     public static void logout() {
@@ -66,17 +65,4 @@ public class SyncService {
         worker.execute();
     }
 
-    public static void startLoginSpinner(){
-        for(StateParams p : stateParamsList) {
-            var store = p.getStore();
-            store.getLoginPanel().startSpinner();
-        }
-    }
-
-    public static void stopLoginSpinner(){
-        for(StateParams p : stateParamsList) {
-            var store = p.getStore();
-            store.getLoginPanel().stopSpinner();
-        }
-    }
 }
