@@ -6,7 +6,6 @@ import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.files.create.FileManager;
 import com.example.codewarsplugin.services.files.create.FileServiceClient;
 import com.example.codewarsplugin.services.katas.KataInputService;
-import com.example.codewarsplugin.services.katas.KataInputServiceClient;
 import com.example.codewarsplugin.state.Store;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.ComboBox;
@@ -17,7 +16,7 @@ import java.awt.*;
 
 import static com.example.codewarsplugin.services.utils.Colors.getColor;
 
-public class KataInputPanel extends JPanel implements KataInputServiceClient, FileServiceClient {
+public class KataInputPanel extends JPanel implements FileServiceClient {
 
     private KataRecord record;
     private Store store;
@@ -81,17 +80,17 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
         button.addActionListener((e) -> {
             String language = (String) languageBox.getSelectedItem();
             record.setSelectedLanguage(language);
-            KataInputService.getKata(record, this);
+            KataInputService.getKata(record);
         });
 
     }
 
-    @Override
+
     public void processKataInput(KataInput kataInput) {
-        ApplicationManager.getApplication().invokeLater(() -> new FileManager().createFile(kataInput, record, store, this));
+        //ApplicationManager.getApplication().invokeLater(() -> new FileManager().createFiles(kataInput, record, this));
     }
 
-    @Override
+
     public void processInputNotFound(Exception exception) {
 
         failMessage.setText("Setup failed: " + exception.getMessage());

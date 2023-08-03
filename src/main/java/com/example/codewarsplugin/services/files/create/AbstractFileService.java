@@ -4,6 +4,8 @@ import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.project.MyProjectManager;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -18,7 +20,7 @@ public abstract class AbstractFileService implements FileService {
 
     KataInput input;
     KataRecord record;
-    Project project = MyProjectManager.getProject();
+    Project project;
     VirtualFile baseDir;
     VirtualFile directory;
     VirtualFile sourcesRoot;
@@ -26,28 +28,31 @@ public abstract class AbstractFileService implements FileService {
     VirtualFile testFile;
     VirtualFile workFile;
 
-    public AbstractFileService(KataInput input, KataRecord record){
+    public AbstractFileService(KataInput input, KataRecord record, Project project){
         this.input = input;
         this.record = record;
+        this.project = project;
     }
 
     @Override
     public void createDirectory() {
-        WriteCommandAction.runWriteCommandAction(project, () -> {
-            if (sourcesRoot == null) {
-                getSourcesRoot();
-            }
-            try {
-                VirtualFile newDirectory = sourcesRoot.createChildDirectory(this, getDirectoryName());
-                newDirectory.refresh(false, true);
-                VirtualFile metaData = newDirectory.createChildDirectory(this, "metadata");
-                metaData.refresh(false, true);
-                directory = newDirectory;
-                this.metaData = metaData;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+
+
+        if (sourcesRoot == null) {
+            getSourcesRoot();
+        }
+        try {
+            VirtualFile newDirectory = sourcesRoot.createChildDirectory(this, getDirectoryName());
+            newDirectory.refresh(false, true);
+            VirtualFile metaData = newDirectory.createChildDirectory(this, "metadata");
+            metaData.refresh(false, true);
+            directory = newDirectory;
+            this.metaData = metaData;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override

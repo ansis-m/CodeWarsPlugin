@@ -3,10 +3,11 @@ package com.example.codewarsplugin.services.files.create;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
+import com.intellij.openapi.project.Project;
 
 public class PythonFileService extends AbstractFileService{
-    public PythonFileService(KataInput input, KataRecord record) {
-        super(input, record);
+    public PythonFileService(KataInput input, KataRecord record, Project project) {
+        super(input, record, project);
     }
 
     @Override

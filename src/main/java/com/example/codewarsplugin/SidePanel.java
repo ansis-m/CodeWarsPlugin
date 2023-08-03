@@ -20,7 +20,7 @@ public class SidePanel extends JPanel {
     }
 
     private void initPlugin(Project project, ToolWindow toolWindow) {
-        store = new Store(this);
+        store = new Store(this, project, toolWindow);
         Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
     }
 

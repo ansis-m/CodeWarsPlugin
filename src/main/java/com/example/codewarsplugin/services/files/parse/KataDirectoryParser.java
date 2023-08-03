@@ -75,7 +75,7 @@ public class KataDirectoryParser {
             return;
         }
 
-        FileService fileService = FileServiceFactory.createFileService(input, record);
+        FileService fileService = FileServiceFactory.createFileService(input, record, project);
         String testFileName = fileService.getTestFileName();
         String workFileName = fileService.getFileName();
 

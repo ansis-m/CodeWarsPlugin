@@ -83,7 +83,7 @@ public class KataRecordPanel extends JPanel implements KataRecordServiceClient {
     private void addKataRecordSearchListeners(KataRecordPanel kataRecordPanel) {
         submitButton.addActionListener(e -> {
             startSpinner();
-            KataRecordService.getKataRecord(textField.getText(), kataRecordPanel);
+            KataRecordService.getKataRecord(textField.getText());
         });
         textField.addKeyListener(new KeyListener() {
             @Override
@@ -92,7 +92,7 @@ public class KataRecordPanel extends JPanel implements KataRecordServiceClient {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     startSpinner();
-                    KataRecordService.getKataRecord(textField.getText(), kataRecordPanel);
+                    KataRecordService.getKataRecord(textField.getText());
                 }
             }
             @Override

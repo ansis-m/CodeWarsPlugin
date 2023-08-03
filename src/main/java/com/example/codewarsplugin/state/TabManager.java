@@ -6,6 +6,8 @@ import com.example.codewarsplugin.services.katas.KataRecordService;
 import com.example.codewarsplugin.services.katas.KataSetupService;
 import com.example.codewarsplugin.services.katas.KataSetupServiceClient;
 import com.example.codewarsplugin.services.login.LoginService;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.ui.jcef.JBCefBrowser;
 import com.intellij.ui.jcef.JBCefBrowserBase;
@@ -24,16 +26,20 @@ public class TabManager implements KataSetupServiceClient {
 
     private final JBTabbedPane jbTabbedPane;
     private final Store store;
+    private final Project project;
+    private final ToolWindow toolWindow;
     private final JBCefBrowser browser;
     private final JBCefClient client;
     private String previousUrl = "";
     private KataSetupService setupService = new KataSetupService();
 
-    public TabManager(Store store) {
+    public TabManager(Store store, Project project, ToolWindow toolWindow) {
         this.jbTabbedPane = store.getTabbedPane();
         this.store = store;
         this.browser = store.getBrowser();
         this.client = store.getClient();
+        this.project = project;
+        this.toolWindow = toolWindow;
     }
 
     public void setupDashboard(){
@@ -59,13 +65,11 @@ public class TabManager implements KataSetupServiceClient {
             @Override
             public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
                 if(frame.getURL().equals(DASHBOARD_URL) && (previousUrl.equals(SIGN_IN_URL) || previousUrl.equals(""))){
-                    System.out.println("inside listener");
-                    browser.executeJavaScript(SERIALIZE_WINDOW + query.inject("result"), browser.getURL(),0);
                     SwingUtilities.invokeLater(setupTabs());
                 } else if(frame.getURL().contains("train")){
                     System.out.println("train: " + browser.getURL());
                     final String url = browser.getURL();
-                    SwingUtilities.invokeLater(setupKata(url));
+                    setupKata(url);
                 }
                 previousUrl = browser.getURL();
             }
@@ -81,10 +85,18 @@ public class TabManager implements KataSetupServiceClient {
         };
     }
 
-    public Runnable setupKata(String url){
-        return () -> {
-          setupService.setup(url, this);
-          browser.loadURL(DASHBOARD_URL);
-        };
+    public void setupKata(String url){
+        setupService.setup(url, this);
+        SwingUtilities.invokeLater(() -> browser.loadURL(DASHBOARD_URL));
+    }
+
+
+    public Store getStore() {
+        return store;
+    }
+
+    @Override
+    public Project getProject() {
+        return project;
     }
 }

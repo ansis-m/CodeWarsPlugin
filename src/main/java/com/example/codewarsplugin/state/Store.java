@@ -2,6 +2,8 @@ package com.example.codewarsplugin.state;
 
 import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.models.kata.KataDirectory;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.ui.jcef.JBCefApp;
 import com.intellij.ui.jcef.JBCefBrowser;
@@ -20,17 +22,15 @@ public class Store {
     private KataDirectory directory;
     private final JBTabbedPane tabbedPane = new JBTabbedPane();
     private final TabManager manager;
-
     public final JBCefClient client = JBCefApp.getInstance().createClient();
     public final JBCefBrowser browser = new JBCefBrowserBuilder().setClient(client).setUrl(SIGN_IN_URL).build();
 
-    public Store(SidePanel sidePanel){
+    public Store(SidePanel sidePanel, Project project, ToolWindow toolWindow) {
         client.setProperty(JS_QUERY_POOL_SIZE, 10);
         this.sidePanel = sidePanel;
         sidePanel.add(tabbedPane, BorderLayout.CENTER);
-        manager = new TabManager(this);
+        manager = new TabManager(this, project, toolWindow);
         manager.setupDashboard();
-
     }
 
     public SidePanel getSidePanel() {

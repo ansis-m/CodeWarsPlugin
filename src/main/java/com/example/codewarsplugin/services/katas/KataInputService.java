@@ -19,47 +19,28 @@ public class KataInputService {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static void getKata(KataRecord record, KataInputServiceClient client) {
+    public static KataInput getKata(KataRecord record) {
 
         String csrfToken = LoginService.getCsrfToken();
         String sessionId = LoginService.getSessionId();
 
-        SwingWorker<KataInput, Void> worker = new SwingWorker<KataInput, Void>() {
-            @Override
-            protected KataInput doInBackground() {
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(KATA_URL + record.getPath() + record.getSelectedLanguage() + "/session"))
-                        .header("X-Csrf-Token", URLDecoder.decode(csrfToken, StandardCharsets.UTF_8))
-                        .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
-                        .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
-                        .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.noBody())
-                        .build();
-                try {
-                    HttpResponse<String> response = LoginService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-                    KataInput kata = objectMapper.readValue(response.body(), KataInput.class);
-                    kata.setPath(record.getPath());
-                    return kata;
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(KATA_URL + record.getPath() + record.getSelectedLanguage() + "/session"))
+                .header("X-Csrf-Token", URLDecoder.decode(csrfToken, StandardCharsets.UTF_8))
+                .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+        try {
+            HttpResponse<String> response = LoginService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            KataInput kata = objectMapper.readValue(response.body(), KataInput.class);
+            kata.setPath(record.getPath());
+            return kata;
 
-                } catch (Exception e) {
-                    return null;
-                }
-            }
+        } catch (Exception e) {
+            return null;
+        }
 
-            @Override
-            protected void done(){
-                try {
-                    KataInput input = get();
-                    if(input == null || !input.isSuccess()) {
-                        client.processInputNotFound(new RuntimeException("KataInputService HttpRequest failed!"));
-                    } else {
-                        client.processKataInput(get());
-                    }
-                } catch (Exception e) {
-                    client.processInputNotFound(e);
-                }
-            }
-        };
-        worker.execute();
     }
 }

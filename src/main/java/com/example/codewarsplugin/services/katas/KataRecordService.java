@@ -25,49 +25,26 @@ public class KataRecordService {
     public static boolean success = false;
     private static KataRecord record;
 
-    public static void getKataRecord(String name, KataRecordServiceClient client) {
+    public static KataRecord getKataRecord(String name) {
         success = false;
         final ObjectMapper objectMapper = new ObjectMapper();
-        final HttpClient httpClient = HttpClient.newHttpClient();
-        final KataRecord[] records = new KataRecord[1];
 
-        try{
-            SwingWorker<KataRecord, Void> worker = new SwingWorker<KataRecord, Void>() {
-                @Override
-                protected KataRecord doInBackground() {
-                    var slug = generateSlug(name);
-                    String url = RECORD_URL + "/" + slug;
-                    HttpRequest request = HttpRequest.newBuilder()
-                            .uri(URI.create(url))
-                            .build();
-                    try  {
-                        HttpResponse<String> response = LoginService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-                        KataRecord record = objectMapper.readValue(response.body(), KataRecord.class);
-                        record.setPath(getKataPath(record.getId()));
-                        success = true;
-                        return record;
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }
-                @Override
-                protected void done() {
-                    try{
-                        var result = get();
-                        if (result != null) {
-                            client.processKataRecord(result);
-                            records[0] = result;
-                        } else {
-                            client.processKataRecordNotFound(null);
-                        }
-                    } catch (Exception e) {
-                        client.processKataRecordNotFound(null);
-                    }
-                }
-            };
-            worker.execute();
-            record = records[0];
-        } catch (Exception ignored){}
+        var slug = generateSlug(name);
+        String url = RECORD_URL + "/" + slug;
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .build();
+
+        try  {
+            HttpResponse<String> response = LoginService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            KataRecord record = objectMapper.readValue(response.body(), KataRecord.class);
+            record.setPath(getKataPath(record.getId()));
+            success = true;
+            return record;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static String getKataPath(String id) {

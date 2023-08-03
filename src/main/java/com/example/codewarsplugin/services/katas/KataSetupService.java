@@ -1,11 +1,15 @@
 package com.example.codewarsplugin.services.katas;
 
+import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
+import com.example.codewarsplugin.services.files.create.FileManager;
+import com.example.codewarsplugin.services.files.create.FileServiceClient;
 
+import javax.swing.*;
 import java.util.Arrays;
 
-public class KataSetupService implements KataRecordServiceClient, KataInputServiceClient{
+public class KataSetupService implements FileServiceClient {
 
 
     private KataSetupServiceClient client;
@@ -13,31 +17,34 @@ public class KataSetupService implements KataRecordServiceClient, KataInputServi
 
 
     public void setup(String url, KataSetupServiceClient client) {
+
+
+        System.out.println("setup thread: " + SwingUtilities.isEventDispatchThread());
+
+
         this.client = client;
         tokens = url.split("/");
-        KataRecordService.getKataRecord(tokens[4], this);
-    }
-
-    @Override
-    public void processKataRecord(KataRecord record) {
+        KataRecord record = KataRecordService.getKataRecord(tokens[4]);
         System.out.println("Record: " + record.toString());
         record.setSelectedLanguage(tokens[6]);
-        KataInputService.getKata(record, this);
+        KataInput input = KataInputService.getKata(record);
+        System.out.println("Input: " + input.toString());
+        FileManager.createFiles(input, record, client);
+    }
+
+
+    @Override
+    public void notifyFileExists() {
+
     }
 
     @Override
-    public void processKataRecordNotFound(Exception e) {
+    public void transitionToWorkView(KataDirectory directory) {
 
     }
 
     @Override
-    public void processKataInput(KataInput kataInput) {
-        System.out.println("Input: " + kataInput.toString());
-    }
-
-    @Override
-    public void processInputNotFound(Exception e) {
+    public void notifyKataDirectoryCreationFailed() {
 
     }
-
 }
