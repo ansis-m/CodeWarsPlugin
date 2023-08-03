@@ -15,16 +15,15 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.components.JBTabbedPane;
-import com.intellij.ui.jcef.JBCefBrowser;
-import com.intellij.ui.jcef.JBCefBrowserBase;
-import com.intellij.ui.jcef.JBCefClient;
-import com.intellij.ui.jcef.JBCefJSQuery;
+import com.intellij.ui.jcef.*;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.handler.CefLoadHandler;
 import org.cef.handler.CefLoadHandlerAdapter;
 
 import javax.swing.*;
+
+import java.awt.*;
 
 import static com.example.codewarsplugin.config.StringConstants.*;
 
@@ -38,6 +37,7 @@ public class TabManager implements KataSetupServiceClient {
     private final JBCefClient client;
     private String previousUrl = "";
     private KataSetupService setupService = new KataSetupService();
+    private final JBCefBrowser descriptionBrowser = new JBCefBrowserBuilder().build();
 
     public TabManager(Store store, Project project, ToolWindow toolWindow) {
         this.jbTabbedPane = store.getTabbedPane();
@@ -121,8 +121,27 @@ public class TabManager implements KataSetupServiceClient {
         int index = getTabIndex(WORKSPACE);
         if (index == -1) {
             jbTabbedPane.addTab(WORKSPACE, submitPanel);
+            jbTabbedPane.setSelectedIndex(jbTabbedPane.getTabCount() - 1);
         } else {
             jbTabbedPane.setComponentAt(index, submitPanel);
+            jbTabbedPane.setSelectedIndex(index);
+        }
+    }
+
+    @Override
+    public void setupDescription() {
+
+        JPanel descriptionPanel = new JPanel(new BorderLayout());
+        var record = store.getDirectory().getRecord();
+
+        descriptionBrowser.loadURL(record.getUrl() + "/" + record.getSelectedLanguage().toLowerCase());
+        descriptionPanel.add(descriptionBrowser.getComponent(), BorderLayout.CENTER);
+
+        int index = getTabIndex(DESCRIPTION);
+        if (index == -1) {
+            jbTabbedPane.addTab(DESCRIPTION, descriptionPanel);
+        } else {
+            jbTabbedPane.setComponentAt(index, descriptionPanel);
         }
     }
 
