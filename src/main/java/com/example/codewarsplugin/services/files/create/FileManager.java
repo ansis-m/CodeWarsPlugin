@@ -1,17 +1,17 @@
 package com.example.codewarsplugin.services.files.create;
 
+import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.katas.KataSetupServiceClient;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.project.Project;
 
 
 public class FileManager {
-    public static void createFiles(KataInput input, KataRecord record, KataSetupServiceClient client) {
-
-        var project = client.getProject();
+    public static KataDirectory createFiles(KataInput input, KataRecord record, Project project) {
 
 
         FileService service = FileServiceFactory.createFileService(input, record, project);
@@ -26,12 +26,7 @@ public class FileManager {
                 service.createInputFile();
             });
         }, ModalityState.defaultModalityState());
-        var directory = service.createKataDirectory();
-        if (directory.isComplete()) {
-            //store.setCurrentKataDirectory(directory);
+        return service.createKataDirectory();
 
-        } else {
-
-        }
     }
 }

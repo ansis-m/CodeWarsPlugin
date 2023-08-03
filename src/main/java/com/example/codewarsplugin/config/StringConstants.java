@@ -9,6 +9,13 @@ public class StringConstants {
     public static final String FILENAME = "test.json";
 
 
+    public static final String DASHBOARD = "Dashboard";
+    public static final String WORKSPACE = "Workspace";
+    public static final String PROJECT = "Project";
+    public static final String DESCRIPTION = "Description";
+
+
+
     public static final String SERIALIZE_WINDOW =
             "function serialize(obj) {" +
             "  const seen = new WeakSet();" +

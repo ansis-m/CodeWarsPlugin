@@ -1,11 +1,17 @@
 package com.example.codewarsplugin.state;
 
-import com.example.codewarsplugin.models.kata.KataRecord;
+import com.example.codewarsplugin.components.KataSubmitPanel;
+import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.services.UserService;
-import com.example.codewarsplugin.services.katas.KataRecordService;
 import com.example.codewarsplugin.services.katas.KataSetupService;
 import com.example.codewarsplugin.services.katas.KataSetupServiceClient;
 import com.example.codewarsplugin.services.login.LoginService;
+import com.example.codewarsplugin.services.project.MyProjectManager;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.components.JBTabbedPane;
@@ -43,7 +49,7 @@ public class TabManager implements KataSetupServiceClient {
     }
 
     public void setupDashboard(){
-        jbTabbedPane.addTab("dashboard", browser.getComponent());
+        jbTabbedPane.addTab(DASHBOARD, browser.getComponent());
 
         final CefLoadHandler[] handlerHolder = new CefLoadHandler[1];
 
@@ -86,7 +92,7 @@ public class TabManager implements KataSetupServiceClient {
     }
 
     public void setupKata(String url){
-        setupService.setup(url, this);
+        setupService.setup(url, project, this);
         SwingUtilities.invokeLater(() -> browser.loadURL(DASHBOARD_URL));
     }
 
@@ -98,5 +104,48 @@ public class TabManager implements KataSetupServiceClient {
     @Override
     public Project getProject() {
         return project;
+    }
+
+    @Override
+    public void notifyDirectoryCreationFail(KataDirectory directory) {
+
+    }
+
+    @Override
+    public void setupWorkspace(KataDirectory directory) {
+        store.setCurrentKataDirectory(directory);
+        ApplicationManager.getApplication().invokeLater(() -> {
+            WriteCommandAction.runWriteCommandAction(project, openFiles(directory));
+        }, ModalityState.defaultModalityState());
+        KataSubmitPanel submitPanel = new KataSubmitPanel(store);
+        int index = getTabIndex(WORKSPACE);
+        if (index == -1) {
+            jbTabbedPane.addTab(WORKSPACE, submitPanel);
+        } else {
+            jbTabbedPane.setComponentAt(index, submitPanel);
+        }
+    }
+
+    private Runnable openFiles(KataDirectory directory) {
+        return () -> {
+            WriteCommandAction.runWriteCommandAction(project, () -> {
+                OpenFileDescriptor descriptor = new OpenFileDescriptor(MyProjectManager.getProject(), directory.getTestFile());
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(MyProjectManager.getProject());
+                fileEditorManager.openTextEditor(descriptor, false);
+                descriptor = new OpenFileDescriptor(MyProjectManager.getProject(), directory.getWorkFile());
+                fileEditorManager.openTextEditor(descriptor, true);
+            });
+        };
+    }
+
+
+    private int getTabIndex(String title) {
+
+        for(int i = 0; i < jbTabbedPane.getTabCount(); i++) {
+            if (jbTabbedPane.getTitleAt(i).equals(title)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
