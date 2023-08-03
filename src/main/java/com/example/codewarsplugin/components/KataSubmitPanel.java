@@ -4,8 +4,6 @@ import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.models.kata.SubmitResponse;
-import com.example.codewarsplugin.models.user.User;
-import com.example.codewarsplugin.services.UserService;
 import com.example.codewarsplugin.services.katas.KataSubmitService;
 import com.example.codewarsplugin.services.katas.KataSubmitServiceClient;
 import com.example.codewarsplugin.state.Store;
@@ -20,8 +18,6 @@ import static com.example.codewarsplugin.services.utils.Colors.getColor;
 
 public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
-
-    private Store store;
     private KataDirectory directory;
     private JButton attemptButton = new JButton("Attempt");
     private JLabel attemptSpinner = new JLabel(new AnimatedIcon.Big());
@@ -44,7 +40,6 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
     public KataSubmitPanel(Store store) {
         super();
-        this.store = store;
         this.directory = store.getDirectory();
         this.submitService = new KataSubmitService(store, directory, this);
         this.input = directory.getInput();
@@ -178,13 +173,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     @Override
     public void notifyCommitSuccess(HttpResponse<String> response) {
         stopSpinner(commitCardLayout, commitCardPanel);
-
-        int honor = UserService.getUser().getHonor();
-        UserService.clearUser();
-        User newUser = UserService.getUser();
-
-        setTextPaneText("green", "Commit success!!!", "Your honor increased from " + honor + " to " + newUser.getHonor() + "!");
-
+        setTextPaneText("green", "Commit success!!!");
         resetExitStatusPanel(5000);
     }
 

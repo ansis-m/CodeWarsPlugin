@@ -2,7 +2,6 @@ package com.example.codewarsplugin.state;
 
 import com.example.codewarsplugin.components.KataSubmitPanel;
 import com.example.codewarsplugin.models.kata.KataDirectory;
-import com.example.codewarsplugin.services.UserService;
 import com.example.codewarsplugin.services.katas.KataSetupService;
 import com.example.codewarsplugin.services.katas.KataSetupServiceClient;
 import com.example.codewarsplugin.services.login.LoginService;
@@ -50,24 +49,9 @@ public class TabManager implements KataSetupServiceClient {
 
     public void setupDashboard(){
         jbTabbedPane.addTab(DASHBOARD, browser.getComponent());
-
-        final CefLoadHandler[] handlerHolder = new CefLoadHandler[1];
-
         JBCefJSQuery query = JBCefJSQuery.create((JBCefBrowserBase) browser);
 
-        query.addHandler(result -> {
-            System.out.println(result+ "\n\n\nuser: " + UserService.getUser(result) );
-            return null;
-        });
-
-        handlerHolder[0] = new CefLoadHandlerAdapter() {
-
-            @Override
-            public void onLoadingStateChange(
-                    CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
-                System.out.println("change: " + isLoading + " url " + browser.getURL());
-            }
-
+        final CefLoadHandler handler = new CefLoadHandlerAdapter() {
             @Override
             public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
                 if(frame.getURL().equals(DASHBOARD_URL) && (previousUrl.equals(SIGN_IN_URL) || previousUrl.equals(""))){
@@ -80,7 +64,7 @@ public class TabManager implements KataSetupServiceClient {
                 previousUrl = browser.getURL();
             }
         };
-        client.addLoadHandler(handlerHolder[0], browser.getCefBrowser());
+        client.addLoadHandler(handler, browser.getCefBrowser());
         browser.loadURL(SIGN_IN_URL);
     }
 

@@ -1,6 +1,5 @@
 package com.example.codewarsplugin;
 
-import com.example.codewarsplugin.services.project.MyProjectManager;
 import com.example.codewarsplugin.state.Store;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -14,7 +13,6 @@ public class SidePanel extends JPanel {
 
     public SidePanel(Project project, ToolWindow toolWindow) {
         setLayout(new BorderLayout());
-        MyProjectManager.init(project, toolWindow);
         initPlugin(project, toolWindow);
 
     }
