@@ -13,7 +13,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Pattern;
 

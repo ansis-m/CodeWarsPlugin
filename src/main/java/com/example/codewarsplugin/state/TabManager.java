@@ -1,7 +1,10 @@
 package com.example.codewarsplugin.state;
 
-import com.example.codewarsplugin.SidePanel;
+import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.UserService;
+import com.example.codewarsplugin.services.katas.KataRecordService;
+import com.example.codewarsplugin.services.katas.KataSetupService;
+import com.example.codewarsplugin.services.katas.KataSetupServiceClient;
 import com.example.codewarsplugin.services.login.LoginService;
 import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.ui.jcef.JBCefBrowser;
@@ -17,13 +20,14 @@ import javax.swing.*;
 
 import static com.example.codewarsplugin.config.StringConstants.*;
 
-public class TabManager {
+public class TabManager implements KataSetupServiceClient {
 
     private final JBTabbedPane jbTabbedPane;
     private final Store store;
     private final JBCefBrowser browser;
     private final JBCefClient client;
     private String previousUrl = "";
+    private KataSetupService setupService = new KataSetupService();
 
     public TabManager(Store store) {
         this.jbTabbedPane = store.getTabbedPane();
@@ -79,7 +83,7 @@ public class TabManager {
 
     public Runnable setupKata(String url){
         return () -> {
-          System.out.println("setup kata: " + url);
+          setupService.setup(url, this);
           browser.loadURL(DASHBOARD_URL);
         };
     }

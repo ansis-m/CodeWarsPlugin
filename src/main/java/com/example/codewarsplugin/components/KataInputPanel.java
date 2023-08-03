@@ -107,20 +107,6 @@ public class KataInputPanel extends JPanel implements KataInputServiceClient, Fi
         timer.start();
     }
 
-    @Override
-    public void startSpinner() {
-        cardButtonLayout.show(cardButtonPanel, "spinner");
-        revalidate();
-        repaint();
-
-    }
-
-    @Override
-    public void stopSpinner() {
-        cardButtonLayout.show(cardButtonPanel, "button");
-        revalidate();
-        repaint();
-    }
 
     @Override
     public void notifyFileExists() {

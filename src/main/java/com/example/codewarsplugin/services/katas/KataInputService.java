@@ -23,7 +23,6 @@ public class KataInputService {
 
         String csrfToken = LoginService.getCsrfToken();
         String sessionId = LoginService.getSessionId();
-        client.startSpinner();
 
         SwingWorker<KataInput, Void> worker = new SwingWorker<KataInput, Void>() {
             @Override
@@ -49,7 +48,6 @@ public class KataInputService {
 
             @Override
             protected void done(){
-                client.stopSpinner();
                 try {
                     KataInput input = get();
                     if(input == null || !input.isSuccess()) {
