@@ -1,14 +1,12 @@
 package com.example.codewarsplugin.services.katas;
 
 import com.example.codewarsplugin.models.kata.KataRecord;
-import com.example.codewarsplugin.services.login.LoginService;
+import com.example.codewarsplugin.services.cookies.CookieService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-import javax.swing.*;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
@@ -37,7 +35,7 @@ public class KataRecordService {
                 .build();
 
         try  {
-            HttpResponse<String> response = LoginService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = CookieService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             KataRecord record = objectMapper.readValue(response.body(), KataRecord.class);
             record.setPath(getKataPath(record.getId()));
             success = true;
@@ -48,8 +46,8 @@ public class KataRecordService {
     }
 
     public static String getKataPath(String id) {
-        String csrfToken = LoginService.getCsrfToken();
-        String sessionId = LoginService.getSessionId();
+        String csrfToken = CookieService.getCsrfToken();
+        String sessionId = CookieService.getSessionId();
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(String.format(KATA_URL + "/%s/train/java", id)))
@@ -61,7 +59,7 @@ public class KataRecordService {
                 .build();
 
         try {
-            HttpResponse<String> response = LoginService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = CookieService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             String responseBody = response.body();
 
             String script = findScriptWithAppSetup(responseBody);

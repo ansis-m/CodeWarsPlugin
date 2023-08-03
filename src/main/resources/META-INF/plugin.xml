@@ -30,14 +30,11 @@
                     factoryClass="com.example.codewarsplugin.CodewarsToolWindowFactory"
                     secondary="false"
                     icon="/icons/cw_logo_13.svg"/>
-        <applicationService serviceImplementation="com.example.codewarsplugin.persistence.DataStore"/>
 
     </extensions>
 
     <application-components>
-        <component>
-            <implementation-class>com.example.codewarsplugin.persistence.DataStore</implementation-class>
-        </component>
+
     </application-components>
 
 

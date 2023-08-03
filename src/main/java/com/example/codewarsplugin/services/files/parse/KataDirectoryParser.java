@@ -18,18 +18,18 @@ import static com.example.codewarsplugin.services.files.create.AbstractFileServi
 
 public class KataDirectoryParser {
 
-    private static Project project;
-    private static List<VirtualFile> sourcesRoots;
-    private static ArrayList<KataDirectory> directoryList;
+    private Project project;
+    private List<VirtualFile> sourcesRoots;
+    private ArrayList<KataDirectory> directoryList;
 
-    public static void parseSourceDirectories() {
+    public void parseSourceDirectories() {
         project = MyProjectManager.getProject();
         sourcesRoots = new ArrayList<>();
         directoryList = new ArrayList<>();
-        getSourcesRoots().forEach(KataDirectoryParser::processSourcesRoot);
+        getSourcesRoots().forEach(this::processSourcesRoot);
     }
 
-    private static void processSourcesRoot(VirtualFile directory) {
+    private void processSourcesRoot(VirtualFile directory) {
 
         if (directory != null && directory.isDirectory()) {
             for (VirtualFile child : directory.getChildren()) {
@@ -52,7 +52,7 @@ public class KataDirectoryParser {
         }
     }
 
-    private static void fillDirectoryWithFiles(KataDirectory kataDirectory) {
+    private void fillDirectoryWithFiles(KataDirectory kataDirectory) {
 
         KataRecord record = null;
         KataInput input = null;
@@ -88,7 +88,7 @@ public class KataDirectoryParser {
         }
     }
 
-    public static List<VirtualFile> getSourcesRoots() {
+    public List<VirtualFile> getSourcesRoots() {
         VirtualFile baseDir = project.getBaseDir();
         if (baseDir != null && baseDir.isDirectory()) {
             VirtualFile[] children = baseDir.getChildren();
@@ -103,12 +103,12 @@ public class KataDirectoryParser {
         return sourcesRoots;
     }
 
-    public static ArrayList<KataDirectory> getDirectoryList() {
-        KataDirectoryParser.parseSourceDirectories();
+    public ArrayList<KataDirectory> getDirectoryList() {
+        parseSourceDirectories();
         return directoryList;
     }
 
-    public static void add(KataDirectory directory) {
+    public void add(KataDirectory directory) {
         directoryList.add(directory);
     }
 }

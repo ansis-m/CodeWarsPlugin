@@ -2,10 +2,9 @@ package com.example.codewarsplugin.services.katas;
 
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
-import com.example.codewarsplugin.services.login.LoginService;
+import com.example.codewarsplugin.services.cookies.CookieService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.swing.*;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.http.HttpRequest;
@@ -21,8 +20,8 @@ public class KataInputService {
 
     public static KataInput getKata(KataRecord record) {
 
-        String csrfToken = LoginService.getCsrfToken();
-        String sessionId = LoginService.getSessionId();
+        String csrfToken = CookieService.getCsrfToken();
+        String sessionId = CookieService.getSessionId();
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(KATA_URL + record.getPath() + record.getSelectedLanguage() + "/session"))
@@ -33,7 +32,7 @@ public class KataInputService {
                 .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
         try {
-            HttpResponse<String> response = LoginService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = CookieService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             KataInput kata = objectMapper.readValue(response.body(), KataInput.class);
             kata.setPath(record.getPath());
             return kata;

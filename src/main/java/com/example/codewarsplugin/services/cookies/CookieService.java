@@ -1,4 +1,4 @@
-package com.example.codewarsplugin.services.login;
+package com.example.codewarsplugin.services.cookies;
 
 import com.intellij.ui.jcef.JBCefBrowser;
 import com.intellij.ui.jcef.JBCefCookie;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class LoginService {
+public class CookieService {
 
     private static List<JBCefCookie> allCookies = new ArrayList<>();
     private static String csrfToken;

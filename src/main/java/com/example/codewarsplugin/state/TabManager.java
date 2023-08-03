@@ -4,8 +4,7 @@ import com.example.codewarsplugin.components.KataSubmitPanel;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.services.katas.KataSetupService;
 import com.example.codewarsplugin.services.katas.KataSetupServiceClient;
-import com.example.codewarsplugin.services.login.LoginService;
-import com.example.codewarsplugin.services.project.MyProjectManager;
+import com.example.codewarsplugin.services.cookies.CookieService;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -70,7 +69,7 @@ public class TabManager implements KataSetupServiceClient {
 
     public Runnable setupTabs() {
         return () -> {
-            LoginService.getCookies(browser);
+            CookieService.getCookies(browser);
             System.out.println("Run the main thread");
         };
     }
@@ -132,10 +131,10 @@ public class TabManager implements KataSetupServiceClient {
     private Runnable openFiles(KataDirectory directory) {
         return () -> {
             WriteCommandAction.runWriteCommandAction(project, () -> {
-                OpenFileDescriptor descriptor = new OpenFileDescriptor(MyProjectManager.getProject(), directory.getTestFile());
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(MyProjectManager.getProject());
+                OpenFileDescriptor descriptor = new OpenFileDescriptor(project, directory.getTestFile());
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                 fileEditorManager.openTextEditor(descriptor, false);
-                descriptor = new OpenFileDescriptor(MyProjectManager.getProject(), directory.getWorkFile());
+                descriptor = new OpenFileDescriptor(project, directory.getWorkFile());
                 fileEditorManager.openTextEditor(descriptor, true);
             });
         };

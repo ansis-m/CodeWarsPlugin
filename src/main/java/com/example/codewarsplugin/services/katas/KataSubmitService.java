@@ -3,8 +3,7 @@ package com.example.codewarsplugin.services.katas;
 
 import com.example.codewarsplugin.models.*;
 import com.example.codewarsplugin.models.kata.*;
-import com.example.codewarsplugin.services.login.LoginService;
-import com.example.codewarsplugin.services.project.MyProjectManager;
+import com.example.codewarsplugin.services.cookies.CookieService;
 import com.example.codewarsplugin.state.Store;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -15,6 +14,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import javax.swing.*;
@@ -41,11 +41,13 @@ public class KataSubmitService {
     private final KataSubmitServiceClient client;
     private Token token;
     private final Gson gson = new Gson();
+    private final Project project;
 
     public KataSubmitService(Store store, KataDirectory directory, KataSubmitServiceClient client) {
         this.input = directory.getInput();
         this.directory = directory;
         this.client = client;
+        this.project = store.getProject();
     }
 
 
@@ -55,8 +57,8 @@ public class KataSubmitService {
             return;
         }
 
-        String csrfToken = LoginService.getCsrfToken();
-        String sessionId = LoginService.getSessionId();
+        String csrfToken = CookieService.getCsrfToken();
+        String sessionId = CookieService.getSessionId();
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(AUTHORIZE_URL))
@@ -143,8 +145,8 @@ public class KataSubmitService {
         }
 
         getToken();
-        String csrfToken = LoginService.getCsrfToken();
-        String sessionId = LoginService.getSessionId();
+        String csrfToken = CookieService.getCsrfToken();
+        String sessionId = CookieService.getSessionId();
 
         Map<String, String> code = new HashMap<>();
         code.put("code", output.getCode());
@@ -214,8 +216,8 @@ public class KataSubmitService {
 
     public void commit() {
         getToken();
-        String csrfToken = LoginService.getCsrfToken();
-        String sessionId = LoginService.getSessionId();
+        String csrfToken = CookieService.getCsrfToken();
+        String sessionId = CookieService.getSessionId();
 
         SwingWorker<HttpResponse<String>, Void> worker  = new SwingWorker<HttpResponse<String>, Void>() {
             @Override
@@ -255,15 +257,13 @@ public class KataSubmitService {
 
     private void mapSubmitResponse(String body) {
         submitResponse = gson.fromJson(body, SubmitResponse.class);
-
         Map<String, Object> dataMap = gson.fromJson(body, Map.class);
         Map<String, Object> result = (Map<String, Object>) dataMap.get("result");
         createTestResultFile(result);
     }
 
-
     public void createTestResultFile(Map<String, Object> source){
-        WriteCommandAction.runWriteCommandAction(MyProjectManager.getProject(), () -> {
+        WriteCommandAction.runWriteCommandAction(project, () -> {
             if (directory.getDirectory() != null) {
                 try {
                     VirtualFile testFile = Arrays.stream(directory.getDirectory().getChildren()).filter(child -> !child.isDirectory() && child.getName().equals(FILENAME)).findFirst().orElse(null);
@@ -272,8 +272,8 @@ public class KataSubmitService {
                         testFile.refresh(false, true);
                     }
                     testFile.setBinaryContent(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(source).getBytes());
-                    OpenFileDescriptor descriptor = new OpenFileDescriptor(MyProjectManager.getProject(), testFile);
-                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(MyProjectManager.getProject());
+                    OpenFileDescriptor descriptor = new OpenFileDescriptor(project, testFile);
+                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     fileEditorManager.openTextEditor(descriptor, true);
                 } catch (IOException e) {
                     e.printStackTrace();

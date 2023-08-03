@@ -22,8 +22,10 @@ public class Store {
     private KataDirectory directory;
     private final JBTabbedPane tabbedPane = new JBTabbedPane();
     private final TabManager manager;
-    public final JBCefClient client = JBCefApp.getInstance().createClient();
-    public final JBCefBrowser browser = new JBCefBrowserBuilder().setClient(client).setUrl(SIGN_IN_URL).build();
+    private final JBCefClient client = JBCefApp.getInstance().createClient();
+    private final JBCefBrowser browser = new JBCefBrowserBuilder().setClient(client).setUrl(SIGN_IN_URL).build();
+    private final Project project;
+
 
     public Store(SidePanel sidePanel, Project project, ToolWindow toolWindow) {
         client.setProperty(JS_QUERY_POOL_SIZE, 10);
@@ -31,6 +33,7 @@ public class Store {
         sidePanel.add(tabbedPane, BorderLayout.CENTER);
         manager = new TabManager(this, project, toolWindow);
         manager.setupDashboard();
+        this.project = project;
     }
 
     public SidePanel getSidePanel() {
@@ -46,9 +49,6 @@ public class Store {
     public JBTabbedPane getTabbedPane() {
         return tabbedPane;
     }
-    public void initTabManager() {
-        manager.setupDashboard();
-    }
     public TabManager getManager() {
         return manager;
     }
@@ -59,5 +59,9 @@ public class Store {
 
     public JBCefBrowser getBrowser() {
         return browser;
+    }
+
+    public Project getProject() {
+        return project;
     }
 }
