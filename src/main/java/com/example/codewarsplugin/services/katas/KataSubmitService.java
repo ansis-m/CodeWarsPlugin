@@ -73,7 +73,7 @@ public class KataSubmitService {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             token = objectMapper.readValue(response.body(), Token.class);
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -255,11 +255,15 @@ public class KataSubmitService {
         worker.execute();
     }
 
+    @SuppressWarnings("unchecked")
     private void mapSubmitResponse(String body) {
         submitResponse = gson.fromJson(body, SubmitResponse.class);
-        Map<String, Object> dataMap = gson.fromJson(body, Map.class);
-        Map<String, Object> result = (Map<String, Object>) dataMap.get("result");
-        createTestResultFile(result);
+        java.lang.reflect.Type type = new com.google.gson.reflect.TypeToken<Map<String, Object>>(){}.getType();
+        Map<String, Object> dataMap = gson.fromJson(body, type);
+        var result = dataMap.get("result");
+        if (result instanceof Map<?, ?>) {
+            createTestResultFile((Map<String, Object>) result);
+        }
     }
 
     public void createTestResultFile(Map<String, Object> source){

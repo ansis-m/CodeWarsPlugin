@@ -34,6 +34,7 @@ tasks {
     withType<JavaCompile> {
         sourceCompatibility = "11"
         targetCompatibility = "11"
+        options.compilerArgs.add("-Xlint:unchecked")
     }
 
     patchPluginXml {
