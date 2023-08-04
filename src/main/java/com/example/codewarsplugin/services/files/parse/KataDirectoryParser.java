@@ -22,8 +22,11 @@ public class KataDirectoryParser {
     private List<VirtualFile> sourcesRoots;
     private ArrayList<KataDirectory> directoryList;
 
+    public KataDirectoryParser(Project project) {
+        this.project = project;
+    }
+
     public void parseSourceDirectories() {
-        project = MyProjectManager.getProject();
         sourcesRoots = new ArrayList<>();
         directoryList = new ArrayList<>();
         getSourcesRoots().forEach(this::processSourcesRoot);

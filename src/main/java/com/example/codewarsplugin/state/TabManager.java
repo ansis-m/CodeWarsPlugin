@@ -1,7 +1,9 @@
 package com.example.codewarsplugin.state;
 
+import com.example.codewarsplugin.components.KataSelectorPanel;
 import com.example.codewarsplugin.components.KataSubmitPanel;
 import com.example.codewarsplugin.models.kata.KataDirectory;
+import com.example.codewarsplugin.services.files.parse.KataDirectoryParser;
 import com.example.codewarsplugin.services.katas.KataSetupService;
 import com.example.codewarsplugin.services.katas.KataSetupServiceClient;
 import com.example.codewarsplugin.services.cookies.CookieService;
@@ -11,7 +13,6 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.ui.jcef.*;
 import org.cef.browser.CefBrowser;
@@ -20,8 +21,11 @@ import org.cef.handler.CefLoadHandler;
 import org.cef.handler.CefLoadHandlerAdapter;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 import static com.example.codewarsplugin.config.StringConstants.*;
 
@@ -30,48 +34,77 @@ public class TabManager implements KataSetupServiceClient {
     private final JBTabbedPane jbTabbedPane;
     private final Store store;
     private final Project project;
-    private final ToolWindow toolWindow;
     private final JBCefBrowser browser;
     private final JBCefClient client;
     private String previousUrl = "";
     private KataSetupService setupService = new KataSetupService();
     private final JBCefBrowser descriptionBrowser = new JBCefBrowserBuilder().build();
+    private KataDirectoryParser parser;
 
-    public TabManager(Store store, Project project, ToolWindow toolWindow) {
+    public TabManager(Store store, Project project) {
         this.jbTabbedPane = store.getTabbedPane();
         this.store = store;
         this.browser = store.getBrowser();
         this.client = store.getClient();
         this.project = project;
-        this.toolWindow = toolWindow;
+        this.parser = new KataDirectoryParser(project);
     }
 
-    public void setupDashboard(){
+    public void setupTabs(){
         jbTabbedPane.addTab(DASHBOARD, browser.getComponent());
-        JBCefJSQuery query = JBCefJSQuery.create((JBCefBrowserBase) browser);
+        final CefLoadHandler handler = getBrowserListener();
+        client.addLoadHandler(handler, browser.getCefBrowser());
+        browser.loadURL(SIGN_IN_URL);
+        loadProjectTab();
+        addTabListeners();
+    }
 
-        final CefLoadHandler handler = new CefLoadHandlerAdapter() {
+    private void addTabListeners() {
+        jbTabbedPane.addChangeListener(e -> {
+            int selectedIndex = jbTabbedPane.getSelectedIndex();
+            String title = jbTabbedPane.getTitleAt(selectedIndex);
+            switch (title) {
+                case (PROJECT): {
+                    loadProjectTab();
+                    break;
+                }
+                default:
+                    break;
+            }
+        });
+    }
+
+    private void loadProjectTab() {
+        ArrayList<KataDirectory> directories = parser.getDirectoryList();
+        store.setDirectories(directories);
+        if (directories.size() > 0) {
+            KataSelectorPanel selectorPanel = new KataSelectorPanel(store);
+            int index = getTabIndex(PROJECT);
+            if (index == -1) {
+                jbTabbedPane.addTab(PROJECT, selectorPanel);
+            } else {
+                jbTabbedPane.setComponentAt(index, selectorPanel);
+            }
+        }
+    }
+
+    private CefLoadHandler getBrowserListener() {
+        return new CefLoadHandlerAdapter() {
             @Override
             public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
                 if(frame.getURL().equals(DASHBOARD_URL) && (previousUrl.equals(SIGN_IN_URL) || previousUrl.equals(""))){
-                    SwingUtilities.invokeLater(setupTabs());
+                    SwingUtilities.invokeLater(getCookies());
                 } else if(frame.getURL().contains("train")){
-                    System.out.println("train: " + browser.getURL());
                     final String url = browser.getURL();
                     setupKata(url);
                 }
                 previousUrl = browser.getURL();
             }
         };
-        client.addLoadHandler(handler, browser.getCefBrowser());
-        browser.loadURL(SIGN_IN_URL);
     }
 
-    public Runnable setupTabs() {
-        return () -> {
-            CookieService.getCookies(browser);
-            System.out.println("Run the main thread");
-        };
+    private Runnable getCookies() {
+        return () -> CookieService.getCookies(browser);
     }
 
     public void setupKata(String url){
@@ -97,6 +130,7 @@ public class TabManager implements KataSetupServiceClient {
     @Override
     public void setupWorkspace(KataDirectory directory) {
         store.setCurrentKataDirectory(directory);
+        store.addDirectory(directory);
         ApplicationManager.getApplication().invokeLater(() -> {
             WriteCommandAction.runWriteCommandAction(project, openFiles(directory));
         }, ModalityState.defaultModalityState());
@@ -149,5 +183,9 @@ public class TabManager implements KataSetupServiceClient {
             }
         }
         return -1;
+    }
+
+    public JBCefBrowser getDescriptionBrowser() {
+        return descriptionBrowser;
     }
 }

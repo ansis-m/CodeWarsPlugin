@@ -3,14 +3,15 @@ package com.example.codewarsplugin.state;
 import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.ui.jcef.JBCefApp;
 import com.intellij.ui.jcef.JBCefBrowser;
 import com.intellij.ui.jcef.JBCefBrowserBuilder;
 import com.intellij.ui.jcef.JBCefClient;
+import org.cef.network.CefCookieManager;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 
 import static com.example.codewarsplugin.config.StringConstants.SIGN_IN_URL;
@@ -20,6 +21,7 @@ public class Store {
 
     private SidePanel sidePanel;
     private KataDirectory directory;
+    private ArrayList<KataDirectory> directoryList = new ArrayList<>();
     private final JBTabbedPane tabbedPane = new JBTabbedPane();
     private final TabManager manager;
     private final JBCefClient client = JBCefApp.getInstance().createClient();
@@ -27,13 +29,14 @@ public class Store {
     private final Project project;
 
 
-    public Store(SidePanel sidePanel, Project project, ToolWindow toolWindow) {
+    public Store(SidePanel sidePanel, Project project) {
         client.setProperty(JS_QUERY_POOL_SIZE, 10);
         this.sidePanel = sidePanel;
         sidePanel.add(tabbedPane, BorderLayout.CENTER);
-        manager = new TabManager(this, project, toolWindow);
-        manager.setupDashboard();
+        manager = new TabManager(this, project);
+        manager.setupTabs();
         this.project = project;
+        Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
     }
 
     public SidePanel getSidePanel() {
@@ -63,5 +66,25 @@ public class Store {
 
     public Project getProject() {
         return project;
+    }
+
+
+    private void cleanup() {
+        CefCookieManager.getGlobalManager().deleteCookies(null, null);
+        browser.dispose();
+        client.dispose();
+        manager.getDescriptionBrowser().dispose();
+    }
+
+    public void setDirectories(ArrayList<KataDirectory> directories) {
+        this.directoryList = directories;
+    }
+
+    public ArrayList<KataDirectory> getDirectories() {
+        return directoryList;
+    }
+
+    public void addDirectory(KataDirectory directory) {
+        directoryList.add(directory);
     }
 }

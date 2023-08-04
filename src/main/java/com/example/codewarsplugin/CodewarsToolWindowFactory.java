@@ -17,7 +17,7 @@ public class CodewarsToolWindowFactory implements ToolWindowFactory {
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-        SidePanel panel = new SidePanel(project, toolWindow);
+        SidePanel panel = new SidePanel(project);
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(panel, "", false);
         toolWindow.getContentManager().addContent(content);
@@ -27,6 +27,11 @@ public class CodewarsToolWindowFactory implements ToolWindowFactory {
             @Override
             public void windowClosing(WindowEvent e) {
                 System.out.println("closing");
+
+
+                //browser.dispose();
+                //client.dispose();
+                //manager.getDescriptionBrowser().dispose();
             }
         });
     }

@@ -19,7 +19,7 @@ public class KataSelectorPanel extends JPanel {
     public KataSelectorPanel(Store store){
         this.store = store;
         setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        this.kataDirectoryList = new KataDirectoryParser().getDirectoryList();
+        this.kataDirectoryList = store.getDirectories();
         directoryBox = new ComboBox<>(kataDirectoryList.toArray());
         add(directoryBox);
         add(selectorButton);
