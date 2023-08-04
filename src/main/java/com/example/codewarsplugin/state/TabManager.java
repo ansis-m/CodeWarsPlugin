@@ -81,7 +81,7 @@ public class TabManager implements KataSetupServiceClient {
         SwingUtilities.invokeLater(() -> {
             int index = getTabIndex(PROJECT);
             if (directories.size() > 0) {
-                KataSelectorPanel selectorPanel = new KataSelectorPanel(store);
+                KataSelectorPanel selectorPanel = new KataSelectorPanel(store, this);
                 if (index == -1) {
                     jbTabbedPane.insertTab(PROJECT, null, selectorPanel, "Select kata from the current intellij project!", 1);
                 } else {
@@ -152,6 +152,7 @@ public class TabManager implements KataSetupServiceClient {
             jbTabbedPane.revalidate();
             jbTabbedPane.repaint();
         });
+        setupDescription();
 
     }
 
