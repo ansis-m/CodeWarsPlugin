@@ -13,6 +13,7 @@ public class StringConstants {
     public static final String WORKSPACE = "Workspace";
     public static final String PROJECT = "Project";
     public static final String DESCRIPTION = "Description";
+    public static final String ABOUT = "About";
 
 
 

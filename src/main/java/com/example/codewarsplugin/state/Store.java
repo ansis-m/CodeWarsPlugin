@@ -10,7 +10,9 @@ import com.intellij.ui.jcef.JBCefBrowserBuilder;
 import com.intellij.ui.jcef.JBCefClient;
 import org.cef.network.CefCookieManager;
 
+import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 
@@ -22,7 +24,7 @@ public class Store {
     private SidePanel sidePanel;
     private KataDirectory directory;
     private ArrayList<KataDirectory> directoryList = new ArrayList<>();
-    private final JBTabbedPane tabbedPane = new JBTabbedPane();
+    private JBTabbedPane tabbedPane;
     private final TabManager manager;
     private final JBCefClient client = JBCefApp.getInstance().createClient();
     private final JBCefBrowser browser = new JBCefBrowserBuilder().setClient(client).setUrl(SIGN_IN_URL).build();
@@ -31,8 +33,11 @@ public class Store {
 
     public Store(SidePanel sidePanel, Project project) {
         client.setProperty(JS_QUERY_POOL_SIZE, 10);
-        this.sidePanel = sidePanel;
+        this.tabbedPane = new JBTabbedPane();
         sidePanel.add(tabbedPane, BorderLayout.CENTER);
+
+        this.sidePanel = sidePanel;
+
         manager = new TabManager(this, project);
         manager.setupTabs();
         this.project = project;

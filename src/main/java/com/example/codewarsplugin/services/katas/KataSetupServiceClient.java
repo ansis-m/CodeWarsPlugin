@@ -9,7 +9,7 @@ public interface KataSetupServiceClient {
 
     void notifyDirectoryCreationFail(KataDirectory directory);
 
-    void setupWorkspace(KataDirectory directory);
+    void loadWorkspaceTab(KataDirectory directory);
 
-    void setupDescription();
+    void loadDescriptionTab();
 }

@@ -7,6 +7,7 @@ import com.example.codewarsplugin.services.files.parse.KataDirectoryParser;
 import com.example.codewarsplugin.services.katas.KataSetupService;
 import com.example.codewarsplugin.services.katas.KataSetupServiceClient;
 import com.example.codewarsplugin.services.cookies.CookieService;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -22,7 +23,6 @@ import org.cef.handler.CefLoadHandlerAdapter;
 
 import javax.swing.*;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 import static com.example.codewarsplugin.config.StringConstants.*;
@@ -41,6 +41,7 @@ public class TabManager implements KataSetupServiceClient {
 
     public TabManager(Store store, Project project) {
         this.jbTabbedPane = store.getTabbedPane();
+
         this.store = store;
         this.browser = store.getBrowser();
         this.client = store.getClient();
@@ -49,17 +50,31 @@ public class TabManager implements KataSetupServiceClient {
     }
 
     public void setupTabs(){
-        SwingUtilities.invokeLater(() -> {
-            jbTabbedPane.addTab(DASHBOARD, browser.getComponent());
-            final CefLoadHandler handler = getBrowserListener();
-            client.addLoadHandler(handler, browser.getCefBrowser());
-            browser.loadURL(SIGN_IN_URL);
-        });
-        loadProjectTab();
+
+
+        System.out.println("setup tabs EDT: " + SwingUtilities.isEventDispatchThread());
+        // This is called from EDT
+
+        jbTabbedPane.insertTab(DASHBOARD, AllIcons.Javaee.WebService, browser.getComponent(), "Search and select kata!", jbTabbedPane.getTabCount());
+        final CefLoadHandler handler = getBrowserListener();
+        client.addLoadHandler(handler, browser.getCefBrowser());
+        browser.loadURL(SIGN_IN_URL);
+
+        loadAboutTab();
         addTabListeners();
     }
 
+    private void loadAboutTab() {
+        System.out.println("setup About: " + SwingUtilities.isEventDispatchThread());
+        // This is called from EDT
+        jbTabbedPane.insertTab(ABOUT, AllIcons.Actions.Help, new JLabel("to do"), "How to use the plugin?", jbTabbedPane.getTabCount());
+    }
+
     private void addTabListeners() {
+
+        System.out.println("add listeners: " + SwingUtilities.isEventDispatchThread());
+        // This is called from EDT
+
         jbTabbedPane.addChangeListener(e -> {
             int selectedIndex = jbTabbedPane.getSelectedIndex();
             String title = jbTabbedPane.getTitleAt(selectedIndex);
@@ -83,7 +98,7 @@ public class TabManager implements KataSetupServiceClient {
             if (directories.size() > 0) {
                 KataSelectorPanel selectorPanel = new KataSelectorPanel(store, this);
                 if (index == -1) {
-                    jbTabbedPane.insertTab(PROJECT, null, selectorPanel, "Select kata from the current intellij project!", 1);
+                    jbTabbedPane.insertTab(PROJECT, AllIcons.Actions.MenuOpen, selectorPanel, "Select kata from the current intellij project!", 1);
                 } else {
                     jbTabbedPane.setComponentAt(index, selectorPanel);
                 }
@@ -109,7 +124,10 @@ public class TabManager implements KataSetupServiceClient {
     }
 
     private Runnable getCookies() {
-        return () -> CookieService.getCookies(browser);
+        return () -> {
+            CookieService.getCookies(browser);
+            loadProjectTab();
+        };
     }
 
     public void setupKata(String url){
@@ -133,7 +151,7 @@ public class TabManager implements KataSetupServiceClient {
     }
 
     @Override
-    public void setupWorkspace(KataDirectory directory) {
+    public void loadWorkspaceTab(KataDirectory directory) {
         store.setCurrentKataDirectory(directory);
         loadProjectTab();
         ApplicationManager.getApplication().invokeLater(() -> {
@@ -142,32 +160,34 @@ public class TabManager implements KataSetupServiceClient {
         SwingUtilities.invokeLater(() -> {
             KataSubmitPanel submitPanel = new KataSubmitPanel(store);
             int index = getTabIndex(WORKSPACE);
+            int aboutIndex = getTabIndex(ABOUT);
             if (index == -1) {
-                jbTabbedPane.addTab(WORKSPACE, submitPanel);
-                jbTabbedPane.setSelectedIndex(jbTabbedPane.getTabCount() - 1);
+                jbTabbedPane.insertTab(WORKSPACE, AllIcons.Actions.Commit, submitPanel, "Test and submit!", aboutIndex != -1? aboutIndex : jbTabbedPane.getTabCount());
+                loadDescriptionTab();
+                jbTabbedPane.setSelectedIndex(getTabIndex(WORKSPACE));
             } else {
                 jbTabbedPane.setComponentAt(index, submitPanel);
-                jbTabbedPane.setSelectedIndex(index);
+                loadDescriptionTab();
+                jbTabbedPane.setSelectedIndex(getTabIndex(WORKSPACE));
             }
             jbTabbedPane.revalidate();
             jbTabbedPane.repaint();
         });
-        setupDescription();
+
 
     }
 
     @Override
-    public void setupDescription() {
-        SwingUtilities.invokeLater(() -> {
+    public void loadDescriptionTab() {
             var record = store.getDirectory().getRecord();
             descriptionBrowser.loadURL(record.getUrl() + "/" + record.getSelectedLanguage().toLowerCase());
             int index = getTabIndex(DESCRIPTION);
+            int workspaceIndex = getTabIndex(WORKSPACE);
             if (index == -1) {
-                jbTabbedPane.addTab(DESCRIPTION, descriptionBrowser.getComponent());
+                jbTabbedPane.insertTab(DESCRIPTION, AllIcons.Actions.Find, descriptionBrowser.getComponent(), "Kata description in a browser window!", workspaceIndex > 0 ? workspaceIndex + 1 : jbTabbedPane.getTabCount());
             } else {
                 jbTabbedPane.setComponentAt(index, descriptionBrowser.getComponent());
             }
-        });
     }
 
     private Runnable openFiles(KataDirectory directory) {

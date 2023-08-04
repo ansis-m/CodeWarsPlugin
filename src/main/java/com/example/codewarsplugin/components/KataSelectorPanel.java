@@ -31,7 +31,7 @@ public class KataSelectorPanel extends JPanel {
     private void addSelectorListeners() {
         selectorButton.addActionListener((event) -> {
             var directory = directoryBox.getSelectedItem();
-            manager.setupWorkspace((KataDirectory) directory);
+            manager.loadWorkspaceTab((KataDirectory) directory);
 
         });
     }
