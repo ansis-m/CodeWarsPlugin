@@ -21,8 +21,6 @@ import org.cef.handler.CefLoadHandler;
 import org.cef.handler.CefLoadHandlerAdapter;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -51,10 +49,12 @@ public class TabManager implements KataSetupServiceClient {
     }
 
     public void setupTabs(){
-        jbTabbedPane.addTab(DASHBOARD, browser.getComponent());
-        final CefLoadHandler handler = getBrowserListener();
-        client.addLoadHandler(handler, browser.getCefBrowser());
-        browser.loadURL(SIGN_IN_URL);
+        SwingUtilities.invokeLater(() -> {
+            jbTabbedPane.addTab(DASHBOARD, browser.getComponent());
+            final CefLoadHandler handler = getBrowserListener();
+            client.addLoadHandler(handler, browser.getCefBrowser());
+            browser.loadURL(SIGN_IN_URL);
+        });
         loadProjectTab();
         addTabListeners();
     }
@@ -75,17 +75,22 @@ public class TabManager implements KataSetupServiceClient {
     }
 
     private void loadProjectTab() {
+
         ArrayList<KataDirectory> directories = parser.getDirectoryList();
         store.setDirectories(directories);
-        if (directories.size() > 0) {
-            KataSelectorPanel selectorPanel = new KataSelectorPanel(store);
+        SwingUtilities.invokeLater(() -> {
             int index = getTabIndex(PROJECT);
-            if (index == -1) {
-                jbTabbedPane.addTab(PROJECT, selectorPanel);
-            } else {
-                jbTabbedPane.setComponentAt(index, selectorPanel);
+            if (directories.size() > 0) {
+                KataSelectorPanel selectorPanel = new KataSelectorPanel(store);
+                if (index == -1) {
+                    jbTabbedPane.insertTab(PROJECT, null, selectorPanel, "Select kata from the current intellij project!", 1);
+                } else {
+                    jbTabbedPane.setComponentAt(index, selectorPanel);
+                }
+            } else if (index != -1){
+                jbTabbedPane.removeTabAt(index);
             }
-        }
+        });
     }
 
     private CefLoadHandler getBrowserListener() {
@@ -130,47 +135,47 @@ public class TabManager implements KataSetupServiceClient {
     @Override
     public void setupWorkspace(KataDirectory directory) {
         store.setCurrentKataDirectory(directory);
-        store.addDirectory(directory);
+        loadProjectTab();
         ApplicationManager.getApplication().invokeLater(() -> {
             WriteCommandAction.runWriteCommandAction(project, openFiles(directory));
         }, ModalityState.defaultModalityState());
-        KataSubmitPanel submitPanel = new KataSubmitPanel(store);
-        int index = getTabIndex(WORKSPACE);
-        if (index == -1) {
-            jbTabbedPane.addTab(WORKSPACE, submitPanel);
-            jbTabbedPane.setSelectedIndex(jbTabbedPane.getTabCount() - 1);
-        } else {
-            jbTabbedPane.setComponentAt(index, submitPanel);
-            jbTabbedPane.setSelectedIndex(index);
-        }
+        SwingUtilities.invokeLater(() -> {
+            KataSubmitPanel submitPanel = new KataSubmitPanel(store);
+            int index = getTabIndex(WORKSPACE);
+            if (index == -1) {
+                jbTabbedPane.addTab(WORKSPACE, submitPanel);
+                jbTabbedPane.setSelectedIndex(jbTabbedPane.getTabCount() - 1);
+            } else {
+                jbTabbedPane.setComponentAt(index, submitPanel);
+                jbTabbedPane.setSelectedIndex(index);
+            }
+            jbTabbedPane.revalidate();
+            jbTabbedPane.repaint();
+        });
+
     }
 
     @Override
     public void setupDescription() {
-
-        JPanel descriptionPanel = new JPanel(new BorderLayout());
-        var record = store.getDirectory().getRecord();
-
-        descriptionBrowser.loadURL(record.getUrl() + "/" + record.getSelectedLanguage().toLowerCase());
-        descriptionPanel.add(descriptionBrowser.getComponent(), BorderLayout.CENTER);
-
-        int index = getTabIndex(DESCRIPTION);
-        if (index == -1) {
-            jbTabbedPane.addTab(DESCRIPTION, descriptionPanel);
-        } else {
-            jbTabbedPane.setComponentAt(index, descriptionPanel);
-        }
+        SwingUtilities.invokeLater(() -> {
+            var record = store.getDirectory().getRecord();
+            descriptionBrowser.loadURL(record.getUrl() + "/" + record.getSelectedLanguage().toLowerCase());
+            int index = getTabIndex(DESCRIPTION);
+            if (index == -1) {
+                jbTabbedPane.addTab(DESCRIPTION, descriptionBrowser.getComponent());
+            } else {
+                jbTabbedPane.setComponentAt(index, descriptionBrowser.getComponent());
+            }
+        });
     }
 
     private Runnable openFiles(KataDirectory directory) {
         return () -> {
-            WriteCommandAction.runWriteCommandAction(project, () -> {
                 OpenFileDescriptor descriptor = new OpenFileDescriptor(project, directory.getTestFile());
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                 fileEditorManager.openTextEditor(descriptor, false);
                 descriptor = new OpenFileDescriptor(project, directory.getWorkFile());
                 fileEditorManager.openTextEditor(descriptor, true);
-            });
         };
     }
 

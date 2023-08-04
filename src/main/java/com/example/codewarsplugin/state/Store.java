@@ -83,8 +83,4 @@ public class Store {
     public ArrayList<KataDirectory> getDirectories() {
         return directoryList;
     }
-
-    public void addDirectory(KataDirectory directory) {
-        directoryList.add(directory);
-    }
 }
