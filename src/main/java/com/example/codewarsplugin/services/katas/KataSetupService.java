@@ -27,11 +27,9 @@ public class KataSetupService implements FileServiceClient {
             record.setSelectedLanguage(tokens[6]);
             KataInput input = KataInputService.getKata(record);
 
-            KataDirectory directory = FileManager.createFiles(input, record, project);
+            KataDirectory directory = FileManager.createFiles(input, record, project, client);
             if (directory.isComplete()){
                 client.loadWorkspaceTab(directory);
-            } else {
-                client.notifyDirectoryCreationFail(directory);
             }
         });
     }

@@ -7,7 +7,7 @@ public interface KataSetupServiceClient {
 
     public Project getProject();
 
-    void notifyDirectoryCreationFail(KataDirectory directory);
+    void notifyKataFileCreationFail(String message);
 
     void loadWorkspaceTab(KataDirectory directory);
 

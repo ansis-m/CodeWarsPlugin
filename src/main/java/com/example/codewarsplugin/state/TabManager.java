@@ -143,8 +143,11 @@ public class TabManager implements KataSetupServiceClient {
         return project;
     }
 
+
+
+    //this comes from a side thread
     @Override
-    public void notifyDirectoryCreationFail(KataDirectory directory) {
+    public void notifyKataFileCreationFail(String reason) {
 
     }
 

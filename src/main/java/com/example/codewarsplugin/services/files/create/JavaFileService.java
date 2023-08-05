@@ -3,6 +3,7 @@ package com.example.codewarsplugin.services.files.create;
 import com.example.codewarsplugin.models.kata.JsonSource;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -24,35 +25,29 @@ public class JavaFileService extends AbstractFileService {
     }
 
     @Override
-    public void createWorkFile() {
+    public void createWorkFile() throws IOException {
         createFile(true);
     }
 
     @Override
-    public void createTestFile() {
+    public void createTestFile() throws IOException {
         createFile(false);
     }
 
-    public void createFile(boolean isWorkFile) {
+    public void createFile(boolean isWorkFile) throws IOException {
 
         if (directory != null) {
             VirtualFile file = null;
-            try {
-                file = directory.createChildData(this, isWorkFile? getFileName() : getTestFileName());
-                file.refresh(false, true);
-                file.setBinaryContent(getFileContent(isWorkFile));
+            file = directory.createChildData(this, isWorkFile? getFileName() : getTestFileName());
+            file.refresh(false, true);
+            file.setBinaryContent(getFileContent(isWorkFile));
 
-                if(isWorkFile) {
-                    workFile = file;
-                } else {
-                    testFile = file;
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(isWorkFile) {
+                workFile = file;
+            } else {
+                testFile = file;
             }
         }
-
     }
 
     private byte[] getFileContent(boolean isWorkFile) {
@@ -82,7 +77,7 @@ public class JavaFileService extends AbstractFileService {
             int classIndex = matcher.start();
             int startIndex = classIndex + 5;
             int endIndex = input.indexOf('{');
-            return input.substring(startIndex, endIndex).strip().split("[,\\s<]")[0];
+            return endIndex > startIndex? input.substring(startIndex, endIndex).strip().split("[,\\s<]")[0] : "filename";
         } else {
             return "filename";
         }
@@ -108,29 +103,25 @@ public class JavaFileService extends AbstractFileService {
     }
 
     @Override
-    public void createRecordFile() {
+    public void createRecordFile() throws IOException {
         createJsonFile(record);
     }
 
     @Override
-    public void createInputFile() {
+    public void createInputFile() throws IOException {
         createJsonFile(input);
     }
 
-    public void createJsonFile(JsonSource source){
+    public void createJsonFile(JsonSource source) throws IOException {
 
         String filename = source instanceof KataRecord? getRecordFileName() : getInputFileName();
 
         if (metaData != null) {
             VirtualFile file = null;
-            try {
-                file = metaData.createChildData(this, filename);
-                file.refresh(false, true);
-                VirtualFile finalFile = file;
-                finalFile.setBinaryContent(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(source).getBytes(StandardCharsets.UTF_8));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            file = metaData.createChildData(this, filename);
+            file.refresh(false, true);
+            VirtualFile finalFile = file;
+            finalFile.setBinaryContent(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(source).getBytes(StandardCharsets.UTF_8));
         }
 
     }

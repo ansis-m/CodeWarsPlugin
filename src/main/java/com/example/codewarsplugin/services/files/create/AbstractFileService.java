@@ -33,24 +33,14 @@ public abstract class AbstractFileService implements FileService {
     }
 
     @Override
-    public void createDirectory() {
+    public void createDirectory() throws IOException {
 
-
-        if (sourcesRoot == null) {
-            getSourcesRoot();
-        }
-        try {
-            VirtualFile newDirectory = sourcesRoot.createChildDirectory(this, getDirectoryName());
-            newDirectory.refresh(false, true);
-            VirtualFile metaData = newDirectory.createChildDirectory(this, "metadata");
-            metaData.refresh(false, true);
-            directory = newDirectory;
-            this.metaData = metaData;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
+        VirtualFile newDirectory = sourcesRoot.createChildDirectory(this, getDirectoryName());
+        newDirectory.refresh(false, true);
+        VirtualFile metaData = newDirectory.createChildDirectory(this, "metadata");
+        metaData.refresh(false, true);
+        directory = newDirectory;
+        this.metaData = metaData;
     }
 
     @Override
