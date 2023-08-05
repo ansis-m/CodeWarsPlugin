@@ -29,7 +29,8 @@ public class KataDirectoryParser {
     public void parseSourceDirectories() {
         sourcesRoots = new ArrayList<>();
         directoryList = new ArrayList<>();
-        getSourcesRoots().forEach(this::processSourcesRoot);
+        getSourcesRoots(project.getBaseDir());
+        sourcesRoots.forEach(this::processSourcesRoot);
     }
 
     private void processSourcesRoot(VirtualFile directory) {
@@ -91,19 +92,19 @@ public class KataDirectoryParser {
         }
     }
 
-    public List<VirtualFile> getSourcesRoots() {
-        VirtualFile baseDir = project.getBaseDir();
+    public void getSourcesRoots(VirtualFile baseDir) {
         if (baseDir != null && baseDir.isDirectory()) {
             VirtualFile[] children = baseDir.getChildren();
             for (VirtualFile child : children) {
                 if (child.isDirectory()) {
                     if (isSourcesRoot(child, project)) {
                         sourcesRoots.add(child);
+                    } else if (sourcesRoots.size() < 1) {
+                        getSourcesRoots(child);
                     }
                 }
             }
         }
-        return sourcesRoots;
     }
 
     public ArrayList<KataDirectory> getDirectoryList() {

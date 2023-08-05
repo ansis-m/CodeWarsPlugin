@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.services.files.create;
 
 import com.example.codewarsplugin.models.kata.KataDirectory;
+import com.intellij.openapi.vfs.VirtualFile;
 
 public interface FileService {
 
@@ -12,7 +13,7 @@ public interface FileService {
     
     String getDirectoryName();
 
-    void getSourcesRoot();
+    boolean getSourcesRoot();
 
     void createRecordFile();
 
@@ -23,6 +24,9 @@ public interface FileService {
     String getFileName();
 
     String getTestFileName();
+
+
+    void getSourcesRoots(VirtualFile baseDir);
 
     KataDirectory createKataDirectory();
 }

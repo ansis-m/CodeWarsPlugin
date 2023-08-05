@@ -18,12 +18,13 @@ public class FileManager {
 
         ApplicationManager.getApplication().invokeAndWait(() -> {
             WriteCommandAction.runWriteCommandAction(project, () -> {
-                service.getSourcesRoot();
-                service.createDirectory();
-                service.createTestFile();
-                service.createWorkFile();
-                service.createRecordFile();
-                service.createInputFile();
+                if (service.getSourcesRoot()){
+                    service.createDirectory();
+                    service.createTestFile();
+                    service.createWorkFile();
+                    service.createRecordFile();
+                    service.createInputFile();
+                }
             });
         }, ModalityState.defaultModalityState());
         return service.createKataDirectory();

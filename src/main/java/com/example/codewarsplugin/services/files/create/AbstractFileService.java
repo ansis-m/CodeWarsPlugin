@@ -3,10 +3,6 @@ package com.example.codewarsplugin.services.files.create;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
-import com.example.codewarsplugin.services.project.MyProjectManager;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -15,18 +11,20 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public abstract class AbstractFileService implements FileService {
 
-    KataInput input;
-    KataRecord record;
-    Project project;
+    final KataInput input;
+    final KataRecord record;
+    final Project project;
     VirtualFile baseDir;
     VirtualFile directory;
     VirtualFile sourcesRoot;
     VirtualFile metaData;
     VirtualFile testFile;
     VirtualFile workFile;
+    private ArrayList<VirtualFile> sourcesRoots = new ArrayList<>();
 
     public AbstractFileService(KataInput input, KataRecord record, Project project){
         this.input = input;
@@ -56,15 +54,26 @@ public abstract class AbstractFileService implements FileService {
     }
 
     @Override
-    public void getSourcesRoot() {
-        baseDir = project.getBaseDir();
+    public boolean getSourcesRoot() {
+        getSourcesRoots(project.getBaseDir());
+        if (sourcesRoots.size() > 0) {
+            this.sourcesRoot = sourcesRoots.get(0);
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
+    public void getSourcesRoots(VirtualFile baseDir) {
         if (baseDir != null && baseDir.isDirectory()) {
             VirtualFile[] children = baseDir.getChildren();
             for (VirtualFile child : children) {
                 if (child.isDirectory()) {
                     if (isSourcesRoot(child, project)) {
-                        sourcesRoot = child;
-                        return;
+                        sourcesRoots.add(child);
+                    } else if (sourcesRoots.size() < 1) {
+                        getSourcesRoots(child);
                     }
                 }
             }
