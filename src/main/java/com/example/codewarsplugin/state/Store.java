@@ -31,13 +31,12 @@ public class Store {
     private final Project project;
 
 
+    //EDT
     public Store(SidePanel sidePanel, Project project) {
         client.setProperty(JS_QUERY_POOL_SIZE, 10);
         this.tabbedPane = new JBTabbedPane();
         sidePanel.add(tabbedPane, BorderLayout.CENTER);
-
         this.sidePanel = sidePanel;
-
         manager = new TabManager(this, project);
         manager.setupTabs();
         this.project = project;

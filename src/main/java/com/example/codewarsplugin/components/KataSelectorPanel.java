@@ -3,6 +3,7 @@ package com.example.codewarsplugin.components;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.state.Store;
 import com.example.codewarsplugin.state.TabManager;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.ui.ComboBox;
 
 import javax.swing.*;
@@ -31,8 +32,7 @@ public class KataSelectorPanel extends JPanel {
     private void addSelectorListeners() {
         selectorButton.addActionListener((event) -> {
             var directory = directoryBox.getSelectedItem();
-            manager.loadWorkspaceTab((KataDirectory) directory);
-
+            ApplicationManager.getApplication().executeOnPooledThread(() -> manager.loadWorkspaceTab((KataDirectory) directory));
         });
     }
 }
