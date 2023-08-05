@@ -19,7 +19,7 @@ public interface FileService {
 
     void createInputFile();
 
-    String getFileBaseName();
+    String getFileBaseName(String input);
 
     String getFileName();
 

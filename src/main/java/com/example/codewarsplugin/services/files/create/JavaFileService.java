@@ -3,7 +3,6 @@ package com.example.codewarsplugin.services.files.create;
 import com.example.codewarsplugin.models.kata.JsonSource;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
-import com.example.codewarsplugin.services.files.create.AbstractFileService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -11,9 +10,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class JavaFileService extends AbstractFileService {
+
+    private Pattern classPattern = Pattern.compile("(?<!\\.)\\bclass\\b");
 
 
     public JavaFileService(KataInput input, KataRecord record, Project project) {
@@ -62,35 +65,37 @@ public class JavaFileService extends AbstractFileService {
 
     @Override
     public String getTestFileName() {
-        int classIndex = input.getExampleFixture().indexOf("class", 0);
-        int startIndex = classIndex + 5;
-        int endIndex = input.getExampleFixture().indexOf('{');
-
-        return input.getExampleFixture().substring(startIndex, endIndex).strip() + ".java";
+        return getFileBaseName(input.getExampleFixture()) + ".java";
     }
 
     @Override
     public String getFileName() {
-        return getFileBaseName() + ".java";
+        return getFileBaseName(input.getSetup()) + ".java";
     }
 
     @Override
-    public String getFileBaseName(){
-        int classIndex = input.getSetup().indexOf("class", 0);
-        int startIndex = classIndex + 5;
-        int endIndex = input.getSetup().indexOf('{');
+    public String getFileBaseName(String input){
 
-        return input.getSetup().substring(startIndex, endIndex).strip();
+        Matcher matcher = classPattern.matcher(input);
+
+        if (matcher.find()) {
+            int classIndex = matcher.start();
+            int startIndex = classIndex + 5;
+            int endIndex = input.indexOf('{');
+            return input.substring(startIndex, endIndex).strip().split("[,\\s<]")[0];
+        } else {
+            return "filename";
+        }
     }
 
     @Override
     protected String getRecordFileName(){
-        return getFileBaseName() + "Record.json";
+        return getFileBaseName(input.getSetup()) + "Record.json";
     }
 
     @Override
     protected String getInputFileName(){
-        return getFileBaseName() + "Input.json";
+        return getFileBaseName(input.getSetup()) + "Input.json";
     }
 
 
