@@ -11,18 +11,8 @@ public class KataDirectory {
     private KataRecord record;
     private KataInput input;
 
-//    @Override
-//    public String toString() {
-//        return "KataDirectory{" +
-//                "directory=" + directory.getName() +
-//                ", metaDataDirectory=" + metaDataDirectory.getName() +
-//                ", workFile=" + workFile.getName() +
-//                ", testFile=" + testFile.getName() +
-//                ", record=" + record.getName() +
-//                ", input=" + input.getActiveVersion() +
-//                "}\n";
-//    }
 
+    //toString method used in the selector panel.
     @Override
     public String toString() {
         return record.getName() + " in " + record.getSelectedLanguage();
