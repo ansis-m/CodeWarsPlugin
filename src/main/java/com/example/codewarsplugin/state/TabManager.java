@@ -23,6 +23,7 @@ import org.cef.handler.CefLoadHandlerAdapter;
 
 import javax.swing.*;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import static com.example.codewarsplugin.config.StringConstants.*;
@@ -181,12 +182,14 @@ public class TabManager implements KataSetupServiceClient {
     public void loadDescriptionTab() {
             var record = store.getDirectory().getRecord();
             descriptionBrowser.loadURL(record.getUrl() + "/" + record.getSelectedLanguage().toLowerCase());
+            JPanel description = new JPanel(new BorderLayout());
+            description.add(descriptionBrowser.getComponent(), BorderLayout.CENTER);
             int index = getTabIndex(DESCRIPTION);
             int workspaceIndex = getTabIndex(WORKSPACE);
             if (index == -1) {
-                jbTabbedPane.insertTab(DESCRIPTION, AllIcons.Actions.Find, descriptionBrowser.getComponent(), "Kata description in a browser window!", workspaceIndex > 0 ? workspaceIndex + 1 : jbTabbedPane.getTabCount());
+                jbTabbedPane.insertTab(DESCRIPTION, AllIcons.Actions.Find, description, "Kata description in a browser window!", workspaceIndex > 0 ? workspaceIndex + 1 : jbTabbedPane.getTabCount());
             } else {
-                jbTabbedPane.setComponentAt(index, descriptionBrowser.getComponent());
+                jbTabbedPane.setComponentAt(index, description);
             }
     }
 

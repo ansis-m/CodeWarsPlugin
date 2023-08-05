@@ -15,19 +15,16 @@ public class FileManager {
 
 
         FileService service = FileServiceFactory.createFileService(input, record, project);
+        WriteCommandAction.runWriteCommandAction(project, () -> {
+            if (service.getSourcesRoot()){
+                service.createDirectory();
+                service.createTestFile();
+                service.createWorkFile();
+                service.createRecordFile();
+                service.createInputFile();
+            }
+        });
 
-        ApplicationManager.getApplication().invokeAndWait(() -> {
-            WriteCommandAction.runWriteCommandAction(project, () -> {
-                if (service.getSourcesRoot()){
-                    service.createDirectory();
-                    service.createTestFile();
-                    service.createWorkFile();
-                    service.createRecordFile();
-                    service.createInputFile();
-                }
-            });
-        }, ModalityState.defaultModalityState());
         return service.createKataDirectory();
-
     }
 }

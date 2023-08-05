@@ -18,13 +18,15 @@ public class KataSetupService implements FileServiceClient {
 
 
     public void setup(String url, Project project, KataSetupServiceClient client) {
+
+        System.out.println("starting file creation and setup main thread = " + SwingUtilities.isEventDispatchThread());
+
         this.client = client;
         tokens = url.split("/");
         KataRecord record = KataRecordService.getKataRecord(tokens[4]);
-        System.out.println("Record: " + record.toString());
         record.setSelectedLanguage(tokens[6]);
         KataInput input = KataInputService.getKata(record);
-        System.out.println("Input: " + input.toString());
+
         KataDirectory directory = FileManager.createFiles(input, record, project);
         if (directory.isComplete()){
             client.loadWorkspaceTab(directory);
