@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.state;
 
 import com.example.codewarsplugin.SidePanel;
+import com.example.codewarsplugin.components.OverlaySpinner;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBTabbedPane;
@@ -21,6 +22,7 @@ import static com.intellij.ui.jcef.JBCefClient.Properties.JS_QUERY_POOL_SIZE;
 
 public class Store {
 
+    private OverlaySpinner overlaySpinner;
     private SidePanel sidePanel;
     private KataDirectory directory;
     private ArrayList<KataDirectory> directoryList = new ArrayList<>();
@@ -33,14 +35,42 @@ public class Store {
 
     //EDT
     public Store(SidePanel sidePanel, Project project) {
-        client.setProperty(JS_QUERY_POOL_SIZE, 10);
-        this.tabbedPane = new JBTabbedPane();
-        sidePanel.add(tabbedPane, BorderLayout.CENTER);
         this.sidePanel = sidePanel;
+        client.setProperty(JS_QUERY_POOL_SIZE, 10);
+        initTabsAndSpinner();
         manager = new TabManager(this, project);
         manager.setupTabs();
         this.project = project;
         Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
+    }
+
+    private void initTabsAndSpinner() {
+        tabbedPane = new JBTabbedPane();
+        overlaySpinner = new OverlaySpinner();
+
+        tabbedPane.setAlignmentX(0.0f);
+        tabbedPane.setAlignmentY(0.0f);
+
+        overlaySpinner.setAlignmentX(0.0f);
+        overlaySpinner.setAlignmentY(0.0f);
+
+
+        sidePanel.add(overlaySpinner);
+        sidePanel.add(tabbedPane);
+
+        //removeSpinner();
+    }
+
+    public void removeSpinner() {
+        overlaySpinner.setVisible(false);
+        sidePanel.revalidate();
+        sidePanel.repaint();
+    }
+
+    public void overlaySpinner() {
+        overlaySpinner.setVisible(true);
+        sidePanel.revalidate();
+        sidePanel.repaint();
     }
 
     public SidePanel getSidePanel() {

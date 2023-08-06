@@ -1,5 +1,6 @@
 package com.example.codewarsplugin.state;
 
+import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.components.KataSelectorPanel;
 import com.example.codewarsplugin.components.KataSubmitPanel;
 import com.example.codewarsplugin.models.kata.KataDirectory;
@@ -22,7 +23,6 @@ import org.cef.handler.CefLoadHandlerAdapter;
 
 import javax.swing.*;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 import static com.example.codewarsplugin.config.StringConstants.*;
@@ -34,6 +34,7 @@ public class TabManager implements KataSetupServiceClient {
     private final Project project;
     private final JBCefBrowser browser;
     private final JBCefClient client;
+    private final SidePanel sidePanel;
     private String previousUrl = "";
     private KataSetupService setupService = new KataSetupService();
     private final JBCefBrowser descriptionBrowser = new JBCefBrowserBuilder().build();
@@ -43,6 +44,7 @@ public class TabManager implements KataSetupServiceClient {
     public TabManager(Store store, Project project) {
         this.jbTabbedPane = store.getTabbedPane();
         this.store = store;
+        this.sidePanel = store.getSidePanel();
         this.browser = store.getBrowser();
         this.client = store.getClient();
         this.project = project;
@@ -51,9 +53,6 @@ public class TabManager implements KataSetupServiceClient {
 
     //EDT on initialization
     public void setupTabs(){
-
-        System.out.println("setup tabs EDT: " + SwingUtilities.isEventDispatchThread());
-        // This is called from EDT
 
         jbTabbedPane.insertTab(DASHBOARD, AllIcons.Javaee.WebService, browser.getComponent(), "Search and select kata!", jbTabbedPane.getTabCount());
         final CefLoadHandler handler = getBrowserListener();
@@ -66,7 +65,6 @@ public class TabManager implements KataSetupServiceClient {
 
     // This is called from EDT on init
     private void loadAboutTab() {
-        System.out.println("setup About: " + SwingUtilities.isEventDispatchThread());
         jbTabbedPane.insertTab(ABOUT, AllIcons.Actions.Help, new JLabel("to do"), "How to use the plugin?", jbTabbedPane.getTabCount());
     }
 
@@ -97,7 +95,7 @@ public class TabManager implements KataSetupServiceClient {
             ArrayList<KataDirectory> directories = parser.getDirectoryList();
             store.setDirectories(directories);
 
-            ApplicationManager.getApplication().invokeLater(() ->{
+            ApplicationManager.getApplication().invokeLater(() -> {
                 int index = getTabIndex(PROJECT);
                 KataSelectorPanel selectorPanel = new KataSelectorPanel(store, this);
                 if (index == -1) {
@@ -130,6 +128,7 @@ public class TabManager implements KataSetupServiceClient {
     }
 
     public void setupKata(String url){
+        ApplicationManager.getApplication().invokeLater(store::overlaySpinner);
         setupService.setup(url, project, this);
     }
 
@@ -148,15 +147,13 @@ public class TabManager implements KataSetupServiceClient {
     //this comes from a side thread
     @Override
     public void notifyKataFileCreationFail(String reason) {
+        ApplicationManager.getApplication().invokeLater(store::removeSpinner);
 
     }
 
 
-    /* can come from browser trigger or from selector.
-    If comes from browser listener this is side thread - but very suspect - for this reason get a good thread.
-    If comes from the selector - fixed to come from a proper side thread!
-
-    -ensure it is called from a proper side thread
+    /*
+        ensure it is called from a proper side thread
      */
 
     @Override
@@ -178,8 +175,7 @@ public class TabManager implements KataSetupServiceClient {
             }
             loadDescriptionTab();
             jbTabbedPane.setSelectedIndex(getTabIndex(WORKSPACE));
-            jbTabbedPane.revalidate();
-            jbTabbedPane.repaint();
+            store.removeSpinner();
         });
     }
 

@@ -10,7 +10,8 @@ public class SidePanel extends JPanel {
 
     public SidePanel(Project project) {
         super();
-        setLayout(new BorderLayout());
+        OverlayLayout overlayLayout = new OverlayLayout(this);
+        setLayout(overlayLayout);
         new Store(this, project);
     }
 }
