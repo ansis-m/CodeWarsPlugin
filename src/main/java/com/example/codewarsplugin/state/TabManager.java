@@ -113,13 +113,6 @@ public class TabManager implements KataSetupServiceClient {
     private CefLoadHandler getBrowserListener() {
         return new CefLoadHandlerAdapter() {
 
-//            @Override
-//            public void onLoadStart(CefBrowser browser, CefFrame frame, CefRequest.TransitionType transitionType) {
-//                if(frame.getURL().contains("train")) {
-//                    ApplicationManager.getApplication().invokeLater(() -> showOverlaySpinner(true));
-//                }
-//            }
-
             @Override
             public void onLoadingStateChange(
                     CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
@@ -134,7 +127,6 @@ public class TabManager implements KataSetupServiceClient {
 
             @Override
             public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
-                //kataLoadIsInProgress.set(false);
                 if(frame.getURL().equals(DASHBOARD_URL) && (previousUrl.equals(SIGN_IN_URL) || previousUrl.equals(""))){
                     ApplicationManager.getApplication().invokeLater(() -> getCookies());
                 }
@@ -180,7 +172,6 @@ public class TabManager implements KataSetupServiceClient {
     @Override
     public void loadWorkspaceTab(KataDirectory directory) {
 
-        System.out.println("Load workspace tab thread: " + SwingUtilities.isEventDispatchThread());
         store.setCurrentKataDirectory(directory);
         WriteCommandAction.runWriteCommandAction(project, openFiles(directory));
 
@@ -204,6 +195,9 @@ public class TabManager implements KataSetupServiceClient {
     public void showOverlaySpinner(boolean show) {
 
         int index = getTabIndex(DASHBOARD);
+        if(index == -1) {
+            return;
+        }
 
         if (show) {
             jbTabbedPane.setComponentAt(index, spinner);
