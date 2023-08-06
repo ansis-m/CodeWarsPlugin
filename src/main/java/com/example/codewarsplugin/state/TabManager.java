@@ -14,16 +14,20 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.AnimatedIcon;
 import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.ui.jcef.*;
 import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.handler.CefLoadHandler;
 import org.cef.handler.CefLoadHandlerAdapter;
+import org.cef.network.CefRequest;
 
 import javax.swing.*;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.example.codewarsplugin.config.StringConstants.*;
 
@@ -39,6 +43,7 @@ public class TabManager implements KataSetupServiceClient {
     private KataSetupService setupService = new KataSetupService();
     private final JBCefBrowser descriptionBrowser = new JBCefBrowserBuilder().build();
     private KataDirectoryParser parser;
+    private AtomicBoolean kataLoadIsInProgress = new AtomicBoolean(false);
 
     //EDT on initialization
     public TabManager(Store store, Project project) {
@@ -109,14 +114,33 @@ public class TabManager implements KataSetupServiceClient {
 
     private CefLoadHandler getBrowserListener() {
         return new CefLoadHandlerAdapter() {
+
+//            @Override
+//            public void onLoadStart(CefBrowser browser, CefFrame frame, CefRequest.TransitionType transitionType) {
+//                if(frame.getURL().contains("train")) {
+//                    ApplicationManager.getApplication().invokeLater(() -> showOverlaySpinner(true));
+//                }
+//            }
+
             @Override
-            public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
-                if(frame.getURL().equals(DASHBOARD_URL) && (previousUrl.equals(SIGN_IN_URL) || previousUrl.equals(""))){
-                    ApplicationManager.getApplication().invokeLater(() -> getCookies());
-                } else if(frame.getURL().contains("train")){
+            public void onLoadingStateChange(
+                    CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
+
+                if(browser.getURL().contains("train") && !kataLoadIsInProgress.get()) {
+                    ApplicationManager.getApplication().invokeLater(() -> showOverlaySpinner(true));
+                    kataLoadIsInProgress.set(true);
                     final String url = browser.getURL();
                     setupKata(url);
                 }
+            }
+
+            @Override
+            public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
+                //kataLoadIsInProgress.set(false);
+                if(frame.getURL().equals(DASHBOARD_URL) && (previousUrl.equals(SIGN_IN_URL) || previousUrl.equals(""))){
+                    ApplicationManager.getApplication().invokeLater(() -> getCookies());
+                }
+
                 previousUrl = browser.getURL();
             }
         };
@@ -128,7 +152,6 @@ public class TabManager implements KataSetupServiceClient {
     }
 
     public void setupKata(String url){
-        ApplicationManager.getApplication().invokeLater(store::overlaySpinner);
         setupService.setup(url, project, this);
     }
 
@@ -147,8 +170,8 @@ public class TabManager implements KataSetupServiceClient {
     //this comes from a side thread
     @Override
     public void notifyKataFileCreationFail(String reason) {
-        ApplicationManager.getApplication().invokeLater(store::removeSpinner);
-
+        kataLoadIsInProgress.set(false);
+        ApplicationManager.getApplication().invokeLater(() -> this.showOverlaySpinner(false));
     }
 
 
@@ -175,8 +198,17 @@ public class TabManager implements KataSetupServiceClient {
             }
             loadDescriptionTab();
             jbTabbedPane.setSelectedIndex(getTabIndex(WORKSPACE));
-            store.removeSpinner();
+            kataLoadIsInProgress.set(false);
+            showOverlaySpinner(false);
         });
+    }
+
+    public void showOverlaySpinner(boolean show) {
+        if (show) {
+            sidePanel.getCardLayout().show(sidePanel, "spinner");
+        } else {
+            sidePanel.getCardLayout().show(sidePanel, "tabs");
+        }
     }
 
 

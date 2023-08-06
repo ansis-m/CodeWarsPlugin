@@ -17,7 +17,7 @@ public class KataSetupService implements FileServiceClient {
 
 
 
-    //this is called from a browser listener - very suspect side thread. for this reason we put it on a 'good thread'
+    //this is called from a browser listener - suspect side thread. for this reason we put it on a 'good thread'
     public void setup(String url, Project project, KataSetupServiceClient client) {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
             System.out.println("starting file creation and setup main thread = " + SwingUtilities.isEventDispatchThread());
@@ -30,6 +30,8 @@ public class KataSetupService implements FileServiceClient {
             KataDirectory directory = FileManager.createFiles(input, record, project, client);
             if (directory.isComplete()){
                 client.loadWorkspaceTab(directory);
+            } else {
+                client.notifyKataFileCreationFail("Incomplete kata directory!");
             }
         });
     }

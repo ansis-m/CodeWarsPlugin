@@ -8,10 +8,16 @@ import java.awt.*;
 
 public class SidePanel extends JPanel {
 
+
+    private final CardLayout cardLayout = new CardLayout();
+
     public SidePanel(Project project) {
         super();
-        OverlayLayout overlayLayout = new OverlayLayout(this);
-        setLayout(overlayLayout);
+        setLayout(cardLayout);
         new Store(this, project);
+    }
+
+    public CardLayout getCardLayout() {
+        return cardLayout;
     }
 }

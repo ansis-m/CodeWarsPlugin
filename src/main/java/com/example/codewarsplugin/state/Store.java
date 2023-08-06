@@ -11,18 +11,14 @@ import com.intellij.ui.jcef.JBCefBrowserBuilder;
 import com.intellij.ui.jcef.JBCefClient;
 import org.cef.network.CefCookieManager;
 
-import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-
 
 import static com.example.codewarsplugin.config.StringConstants.SIGN_IN_URL;
 import static com.intellij.ui.jcef.JBCefClient.Properties.JS_QUERY_POOL_SIZE;
 
 public class Store {
 
-    private OverlaySpinner overlaySpinner;
     private SidePanel sidePanel;
     private KataDirectory directory;
     private ArrayList<KataDirectory> directoryList = new ArrayList<>();
@@ -37,40 +33,15 @@ public class Store {
     public Store(SidePanel sidePanel, Project project) {
         this.sidePanel = sidePanel;
         client.setProperty(JS_QUERY_POOL_SIZE, 10);
-        initTabsAndSpinner();
+
+        this.tabbedPane = new JBTabbedPane();
+        sidePanel.add(tabbedPane, "tabs");
+        sidePanel.add(new OverlaySpinner(), "spinner");
+
         manager = new TabManager(this, project);
         manager.setupTabs();
         this.project = project;
         Runtime.getRuntime().addShutdownHook(new Thread(this::cleanup));
-    }
-
-    private void initTabsAndSpinner() {
-        tabbedPane = new JBTabbedPane();
-        overlaySpinner = new OverlaySpinner();
-
-        tabbedPane.setAlignmentX(0.0f);
-        tabbedPane.setAlignmentY(0.0f);
-
-        overlaySpinner.setAlignmentX(0.0f);
-        overlaySpinner.setAlignmentY(0.0f);
-
-
-        sidePanel.add(overlaySpinner);
-        sidePanel.add(tabbedPane);
-
-        //removeSpinner();
-    }
-
-    public void removeSpinner() {
-        overlaySpinner.setVisible(false);
-        sidePanel.revalidate();
-        sidePanel.repaint();
-    }
-
-    public void overlaySpinner() {
-        overlaySpinner.setVisible(true);
-        sidePanel.revalidate();
-        sidePanel.repaint();
     }
 
     public SidePanel getSidePanel() {
