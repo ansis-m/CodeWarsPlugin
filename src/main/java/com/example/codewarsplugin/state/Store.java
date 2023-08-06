@@ -14,7 +14,7 @@ import org.cef.network.CefCookieManager;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static com.example.codewarsplugin.config.StringConstants.SIGN_IN_URL;
+import static com.example.codewarsplugin.config.StringConstants.*;
 import static com.intellij.ui.jcef.JBCefClient.Properties.JS_QUERY_POOL_SIZE;
 
 public class Store {
@@ -35,8 +35,7 @@ public class Store {
         client.setProperty(JS_QUERY_POOL_SIZE, 10);
 
         this.tabbedPane = new JBTabbedPane();
-        sidePanel.add(tabbedPane, "tabs");
-        sidePanel.add(new OverlaySpinner(), "spinner");
+        sidePanel.add(tabbedPane, BorderLayout.CENTER);
 
         manager = new TabManager(this, project);
         manager.setupTabs();

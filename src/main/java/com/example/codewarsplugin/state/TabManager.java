@@ -1,8 +1,8 @@
 package com.example.codewarsplugin.state;
 
-import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.components.KataSelectorPanel;
 import com.example.codewarsplugin.components.KataSubmitPanel;
+import com.example.codewarsplugin.components.OverlaySpinner;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.services.files.parse.KataDirectoryParser;
 import com.example.codewarsplugin.services.katas.KataSetupService;
@@ -21,11 +21,10 @@ import org.cef.browser.CefBrowser;
 import org.cef.browser.CefFrame;
 import org.cef.handler.CefLoadHandler;
 import org.cef.handler.CefLoadHandlerAdapter;
-import org.cef.network.CefRequest;
 
 import javax.swing.*;
 
-import java.awt.*;
+
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -38,18 +37,17 @@ public class TabManager implements KataSetupServiceClient {
     private final Project project;
     private final JBCefBrowser browser;
     private final JBCefClient client;
-    private final SidePanel sidePanel;
     private String previousUrl = "";
-    private KataSetupService setupService = new KataSetupService();
+    private final JPanel spinner = new OverlaySpinner();
+    private final KataSetupService setupService = new KataSetupService();
     private final JBCefBrowser descriptionBrowser = new JBCefBrowserBuilder().build();
-    private KataDirectoryParser parser;
-    private AtomicBoolean kataLoadIsInProgress = new AtomicBoolean(false);
+    private final KataDirectoryParser parser;
+    private final AtomicBoolean kataLoadIsInProgress = new AtomicBoolean(false);
 
     //EDT on initialization
     public TabManager(Store store, Project project) {
         this.jbTabbedPane = store.getTabbedPane();
         this.store = store;
-        this.sidePanel = store.getSidePanel();
         this.browser = store.getBrowser();
         this.client = store.getClient();
         this.project = project;
@@ -204,11 +202,16 @@ public class TabManager implements KataSetupServiceClient {
     }
 
     public void showOverlaySpinner(boolean show) {
+
+        int index = getTabIndex(DASHBOARD);
+
         if (show) {
-            sidePanel.getCardLayout().show(sidePanel, "spinner");
+            jbTabbedPane.setComponentAt(index, spinner);
         } else {
-            sidePanel.getCardLayout().show(sidePanel, "tabs");
+            jbTabbedPane.setComponentAt(index, browser.getComponent());
         }
+        jbTabbedPane.revalidate();
+        jbTabbedPane.repaint();
     }
 
 
