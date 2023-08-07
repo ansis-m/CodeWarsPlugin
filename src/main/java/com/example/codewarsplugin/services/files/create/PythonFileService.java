@@ -42,6 +42,11 @@ public class PythonFileService extends AbstractFileService{
     }
 
     @Override
+    public void getSourcesRoot() {
+
+    }
+
+    @Override
     public void createRecordFile() {
 
     }
@@ -65,6 +70,11 @@ public class PythonFileService extends AbstractFileService{
     public KataDirectory createKataDirectory() {
 
         return null;
+    }
+
+    @Override
+    public void getModules() {
+
     }
 
 }

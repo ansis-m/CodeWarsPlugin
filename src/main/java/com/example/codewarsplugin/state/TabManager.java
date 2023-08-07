@@ -4,7 +4,6 @@ import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.components.KataSelectorPanel;
 import com.example.codewarsplugin.components.KataSubmitPanel;
 import com.example.codewarsplugin.components.OverlaySpinner;
-import com.example.codewarsplugin.config.StringConstants;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.services.files.parse.KataDirectoryParser;
 import com.example.codewarsplugin.services.katas.KataSetupService;
@@ -18,7 +17,6 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.ui.AnimatedIcon;
 import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.ui.jcef.*;
 import org.cef.browser.CefBrowser;
@@ -147,6 +145,7 @@ public class TabManager implements KataSetupServiceClient {
 
     public void setupKata(String url){
         setupService.setup(url, project, this);
+
     }
 
 
@@ -159,18 +158,17 @@ public class TabManager implements KataSetupServiceClient {
         return project;
     }
 
-
-
     //this comes from a side thread
     @Override
     public void notifyKataFileCreationFail(String reason) {
         kataLoadIsInProgress.set(false);
         ApplicationManager.getApplication().invokeLater(() -> {
             this.showOverlaySpinner(false);
+            browser.loadURL(DASHBOARD_URL);
             Messages.showMessageDialog(
                     reason,
                     "Ups, Something Went Wrong...",
-                    IconLoader.getIcon("/icons/cw_logo_60.svg", SidePanel.class)
+                    IconLoader.getIcon("/icons/new_cw_logo.svg", SidePanel.class)
             );
         });
     }
@@ -192,11 +190,13 @@ public class TabManager implements KataSetupServiceClient {
             KataSubmitPanel submitPanel = new KataSubmitPanel(store);
             int index = getTabIndex(WORKSPACE);
             int aboutIndex = getTabIndex(ABOUT);
+            int dashboardIndex = getTabIndex(DASHBOARD);
             if (index == -1) {
                 jbTabbedPane.insertTab(WORKSPACE, AllIcons.Actions.Commit, submitPanel, "Test and submit!", aboutIndex != -1? aboutIndex : jbTabbedPane.getTabCount());
             } else {
                 jbTabbedPane.setComponentAt(index, submitPanel);
             }
+            jbTabbedPane.setComponentAt(dashboardIndex, browser.getComponent());
             loadDescriptionTab();
             jbTabbedPane.setSelectedIndex(getTabIndex(WORKSPACE));
             kataLoadIsInProgress.set(false);
@@ -230,7 +230,8 @@ public class TabManager implements KataSetupServiceClient {
             int workspaceIndex = getTabIndex(WORKSPACE);
             if (index == -1) {
                 jbTabbedPane.insertTab(DESCRIPTION, AllIcons.Actions.Find, descriptionBrowser.getComponent(), "Kata description in a browser window!", workspaceIndex > 0 ? workspaceIndex + 1 : jbTabbedPane.getTabCount());
-
+            } else {
+                jbTabbedPane.setComponentAt(index, descriptionBrowser.getComponent());
             }
     }
 

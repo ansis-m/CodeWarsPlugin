@@ -41,8 +41,6 @@ public class KataSetupService implements FileServiceClient {
             KataDirectory directory = FileManager.createFiles(input, record, project, client);
             if (directory.isComplete()){
                 client.loadWorkspaceTab(directory);
-            } else {
-                client.notifyKataFileCreationFail("Kata setup failed. Problem reading/writing files. Incomplete kata directory!");
             }
         });
     }

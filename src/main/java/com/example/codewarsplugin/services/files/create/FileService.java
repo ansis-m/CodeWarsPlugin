@@ -15,7 +15,7 @@ public interface FileService {
     
     String getDirectoryName();
 
-    boolean getSourcesRoot();
+    void getSourcesRoot();
 
     void createRecordFile() throws IOException;
 
@@ -27,8 +27,7 @@ public interface FileService {
 
     String getTestFileName();
 
-
-    void getSourcesRoots(VirtualFile baseDir);
-
     KataDirectory createKataDirectory();
+
+    void getModules();
 }

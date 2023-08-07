@@ -15,21 +15,18 @@ public class FileManager {
         WriteCommandAction.runWriteCommandAction(project, () -> {
 
             try{
-                if (!service.getSourcesRoot()){
-                    client.notifyKataFileCreationFail("Kata setup failed! Cannot find a sources root directory in the current project. Create a sources root and try again!");
-                    return;
-                }
+                service.getModules();
+                service.getSourcesRoot();
                 service.createDirectory();
                 service.createTestFile();
                 service.createWorkFile();
                 service.createRecordFile();
                 service.createInputFile();
             } catch (Exception e) {
-                client.notifyKataFileCreationFail("Kata setup failed with exception: " + e.getMessage());
+                client.notifyKataFileCreationFail("Kata setup failed with " + e.getClass().getSimpleName() + ".\n " + e.getMessage());
             }
 
         });
-
         return service.createKataDirectory();
     }
 }

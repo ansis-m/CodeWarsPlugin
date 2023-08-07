@@ -1,5 +1,6 @@
 package com.example.codewarsplugin.services.files.create;
 
+import com.example.codewarsplugin.exceptions.SourcesRootNotFoundException;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
@@ -24,7 +25,8 @@ public abstract class AbstractFileService implements FileService {
     VirtualFile metaData;
     VirtualFile testFile;
     VirtualFile workFile;
-    private ArrayList<VirtualFile> sourcesRoots = new ArrayList<>();
+    ArrayList<VirtualFile> sourcesRoots = new ArrayList<>();
+    ArrayList<Module> modules = new ArrayList<>();
 
     public AbstractFileService(KataInput input, KataRecord record, Project project){
         this.input = input;
@@ -43,32 +45,6 @@ public abstract class AbstractFileService implements FileService {
         this.metaData = metaData;
     }
 
-    @Override
-    public boolean getSourcesRoot() {
-        getSourcesRoots(project.getBaseDir());
-        if (sourcesRoots.size() > 0) {
-            this.sourcesRoot = sourcesRoots.get(0);
-            return true;
-        }
-        return false;
-    }
-
-
-    @Override
-    public void getSourcesRoots(VirtualFile baseDir) {
-        if (baseDir != null && baseDir.isDirectory()) {
-            VirtualFile[] children = baseDir.getChildren();
-            for (VirtualFile child : children) {
-                if (child.isDirectory()) {
-                    if (isSourcesRoot(child, project)) {
-                        sourcesRoots.add(child);
-                    } else if (sourcesRoots.size() < 1) {
-                        getSourcesRoots(child);
-                    }
-                }
-            }
-        }
-    }
 
     public static boolean isSourcesRoot(VirtualFile directory, Project project) {
         Module[] modules = ModuleManager.getInstance(project).getModules();

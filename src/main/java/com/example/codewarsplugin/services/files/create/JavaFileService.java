@@ -1,16 +1,25 @@
 package com.example.codewarsplugin.services.files.create;
 
+import com.example.codewarsplugin.exceptions.ModuleNotFoundException;
+import com.example.codewarsplugin.exceptions.SeveralModulesInProjectException;
+import com.example.codewarsplugin.exceptions.SourcesRootNotFoundException;
 import com.example.codewarsplugin.models.kata.JsonSource;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -64,8 +73,41 @@ public class JavaFileService extends AbstractFileService {
     }
 
     @Override
+    public void getModules() {
+        ModuleManager moduleManager = ModuleManager.getInstance(project);
+        for (Module module : moduleManager.getModules()) {
+            ModuleType<?> moduleType = ModuleType.get(module);
+            if (moduleType.getName().toLowerCase().contains("java")) {
+                modules.add(module);
+            }
+        }
+        if (modules.size() < 1) {
+            throw new ModuleNotFoundException("Java module not found in the current project! To setup Kata in java start a new java project or create a java module in the current project!");
+        } else if (modules.size() > 1) {
+            throw new SeveralModulesInProjectException("Current project contains several Java modules. Java Katas can be setup only in projects containing a single Java module!");
+        }
+    }
+
+    @Override
     public String getFileName() {
         return getFileBaseName(input.getSetup()) + ".java";
+    }
+
+    @Override
+    public void getSourcesRoot() {
+
+        modules.forEach(m -> {
+            ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(m);
+            VirtualFile[] roots = moduleRootManager.getSourceRoots(false);
+            Arrays.stream(roots).filter(root -> !root.getName().equals("resources")).forEach(sourcesRoots::add);
+        });
+        sourcesRoots.forEach(r -> System.out.println("root: " + r.getName()));
+        if (sourcesRoots.size() > 0) {
+            this.sourcesRoot = sourcesRoots.get(0);
+        } else {
+            throw new SourcesRootNotFoundException("Sources root directory not found in the current java module. Create sources root and try again!");
+        }
+
     }
 
     @Override
