@@ -259,4 +259,5 @@ public class TabManager implements KataSetupServiceClient {
     public JBCefBrowser getDescriptionBrowser() {
         return descriptionBrowser;
     }
+
 }

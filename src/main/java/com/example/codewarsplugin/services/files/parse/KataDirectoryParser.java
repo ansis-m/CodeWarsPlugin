@@ -1,20 +1,23 @@
 package com.example.codewarsplugin.services.files.parse;
 
+import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.files.create.FileService;
 import com.example.codewarsplugin.services.files.create.FileServiceFactory;
-import com.example.codewarsplugin.services.project.MyProjectManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import static com.example.codewarsplugin.services.files.create.AbstractFileService.isSourcesRoot;
 
 public class KataDirectoryParser {
 
@@ -29,7 +32,7 @@ public class KataDirectoryParser {
     public void parseSourceDirectories() {
         sourcesRoots = new ArrayList<>();
         directoryList = new ArrayList<>();
-        getSourcesRoots(project.getBaseDir());
+        getSourcesRoots();
         sourcesRoots.forEach(this::processSourcesRoot);
     }
 
@@ -79,32 +82,39 @@ public class KataDirectoryParser {
             return;
         }
 
-        FileService fileService = FileServiceFactory.createFileService(input, record, project);
-        String testFileName = fileService.getTestFileName();
-        String workFileName = fileService.getFileName();
+        try {
+            FileService fileService = FileServiceFactory.createFileService(input, record, project);
+            String testFileName = fileService.getTestFileName();
+            String workFileName = fileService.getFileName();
 
-        for(VirtualFile file : kataDirectory.getDirectory().getChildren()){
-            if (!file.isDirectory() && file.getName().equals(testFileName)){
-                kataDirectory.setTestFile(file);
-            } else if (!file.isDirectory() && file.getName().equals(workFileName)) {
-                kataDirectory.setWorkFile(file);
-            }
-        }
-    }
-
-    public void getSourcesRoots(VirtualFile baseDir) {
-        if (baseDir != null && baseDir.isDirectory()) {
-            VirtualFile[] children = baseDir.getChildren();
-            for (VirtualFile child : children) {
-                if (child.isDirectory()) {
-                    if (isSourcesRoot(child, project)) {
-                        sourcesRoots.add(child);
-                    } else if (sourcesRoots.size() < 1) {
-                        getSourcesRoots(child);
-                    }
+            for(VirtualFile file : kataDirectory.getDirectory().getChildren()){
+                if (!file.isDirectory() && file.getName().equals(testFileName)){
+                    kataDirectory.setTestFile(file);
+                } else if (!file.isDirectory() && file.getName().equals(workFileName)) {
+                    kataDirectory.setWorkFile(file);
                 }
             }
+        } catch (Exception e) {
+            Messages.showMessageDialog(
+                    "Project directory parsing failed with " + e.getClass().getSimpleName() + ".\n " + e.getMessage(),
+                    "Ups, Something Went Wrong...",
+                    IconLoader.getIcon("/icons/new_cw_logo.svg", SidePanel.class)
+            );
+
         }
+
+    }
+
+    public void getSourcesRoots() {
+
+        ModuleManager moduleManager = ModuleManager.getInstance(project);
+        Arrays.stream(moduleManager.getModules())
+                .forEach(m -> {
+            ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(m);
+            VirtualFile[] roots = moduleRootManager.getSourceRoots(false);
+            Arrays.stream(roots).filter(root -> !root.getName().equals("resources")).forEach(sourcesRoots::add);
+        });
+
     }
 
     public ArrayList<KataDirectory> getDirectoryList() {

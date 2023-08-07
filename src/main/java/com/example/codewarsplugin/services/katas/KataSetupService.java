@@ -20,9 +20,6 @@ public class KataSetupService implements FileServiceClient {
     //this is called from a browser listener - suspect side thread. for this reason we put it on a 'good thread'
     public void setup(String url, Project project, KataSetupServiceClient client) {
 
-
-
-
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
 
             KataRecord record = null;
