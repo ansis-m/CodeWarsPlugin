@@ -86,6 +86,7 @@ public class JavaFileService extends AbstractFileService {
         ModuleManager moduleManager = ModuleManager.getInstance(project);
         for (Module module : moduleManager.getModules()) {
             ModuleType<?> moduleType = ModuleType.get(module);
+            System.out.println("module name: " + moduleType.getName());
             if (moduleType.getName().toLowerCase().contains("java") && !moduleType.getName().toLowerCase().contains("unknown")) {
                 modules.add(module);
             }
