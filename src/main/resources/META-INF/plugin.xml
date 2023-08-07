@@ -38,4 +38,10 @@
     </application-components>
 
 
+    <actions>
+        <group id="MyPlugin.Actions" text="_My Actions" description="Description of our group">
+            <add-to-group group-id="EditorPopupMenu" anchor="last" />
+            <action id="MyPlugin.ShowMessageAction" class="com.example.codewarsplugin.MyActionClass" text="Show Message" description="Shows a message" />
+        </group>
+    </actions>
 </idea-plugin>

@@ -19,6 +19,10 @@ public class KataSetupService implements FileServiceClient {
 
     //this is called from a browser listener - suspect side thread. for this reason we put it on a 'good thread'
     public void setup(String url, Project project, KataSetupServiceClient client) {
+
+
+
+
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
 
             KataRecord record = null;
@@ -30,7 +34,7 @@ public class KataSetupService implements FileServiceClient {
                 record.setSelectedLanguage(tokens[6]);
                 input = KataInputService.getKata(record);
             } catch (Exception e) {
-                client.notifyKataFileCreationFail("Something went wrong with the REST calls to the codewars.com. Try singing in again!");
+                client.notifyKataFileCreationFail("Kata setup failed. Reason: something went wrong with the REST calls to the codewars.com. Try singing in again!");
                 return;
             }
 
@@ -38,7 +42,7 @@ public class KataSetupService implements FileServiceClient {
             if (directory.isComplete()){
                 client.loadWorkspaceTab(directory);
             } else {
-                client.notifyKataFileCreationFail("Incomplete kata directory!");
+                client.notifyKataFileCreationFail("Kata setup failed. Problem reading/writing files. Incomplete kata directory!");
             }
         });
     }

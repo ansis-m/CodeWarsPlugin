@@ -1,8 +1,10 @@
 package com.example.codewarsplugin.state;
 
+import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.components.KataSelectorPanel;
 import com.example.codewarsplugin.components.KataSubmitPanel;
 import com.example.codewarsplugin.components.OverlaySpinner;
+import com.example.codewarsplugin.config.StringConstants;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.services.files.parse.KataDirectoryParser;
 import com.example.codewarsplugin.services.katas.KataSetupService;
@@ -14,6 +16,8 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.AnimatedIcon;
 import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.ui.jcef.*;
@@ -40,7 +44,7 @@ public class TabManager implements KataSetupServiceClient {
     private String previousUrl = "";
     private final JPanel spinner = new OverlaySpinner();
     private final KataSetupService setupService = new KataSetupService();
-    private final JBCefBrowser descriptionBrowser = new JBCefBrowserBuilder().build();
+    private final JBCefBrowser descriptionBrowser = new JBCefBrowserBuilder().setUrl(BASE_URL).build();
     private final KataDirectoryParser parser;
     private final AtomicBoolean kataLoadIsInProgress = new AtomicBoolean(false);
 
@@ -161,7 +165,14 @@ public class TabManager implements KataSetupServiceClient {
     @Override
     public void notifyKataFileCreationFail(String reason) {
         kataLoadIsInProgress.set(false);
-        ApplicationManager.getApplication().invokeLater(() -> this.showOverlaySpinner(false));
+        ApplicationManager.getApplication().invokeLater(() -> {
+            this.showOverlaySpinner(false);
+            Messages.showMessageDialog(
+                    reason,
+                    "Ups, Something Went Wrong...",
+                    IconLoader.getIcon("/icons/cw_logo_60.svg", SidePanel.class)
+            );
+        });
     }
 
 
@@ -176,6 +187,7 @@ public class TabManager implements KataSetupServiceClient {
         WriteCommandAction.runWriteCommandAction(project, openFiles(directory));
 
         ApplicationManager.getApplication().invokeLater(() -> {
+
             browser.loadURL(DASHBOARD_URL);
             KataSubmitPanel submitPanel = new KataSubmitPanel(store);
             int index = getTabIndex(WORKSPACE);
@@ -218,6 +230,7 @@ public class TabManager implements KataSetupServiceClient {
             int workspaceIndex = getTabIndex(WORKSPACE);
             if (index == -1) {
                 jbTabbedPane.insertTab(DESCRIPTION, AllIcons.Actions.Find, descriptionBrowser.getComponent(), "Kata description in a browser window!", workspaceIndex > 0 ? workspaceIndex + 1 : jbTabbedPane.getTabCount());
+
             }
     }
 
