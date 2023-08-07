@@ -28,4 +28,12 @@ public class StringConstants {
     public static final String SPINNER = "spinner";
     public static final String TABS = "tabs";
 
+
+    //
+    public static final String PICK_JAVA_MODULE = "Pick Java Module!";
+    public static final String SEVERAL_JAVA_MODULES = "Project contains several Java modules. Pick the one you want to add kata files to!";
+
+    public static final String PICK_JAVA_SOURCE = "Pick Java Source Directory!";
+    public static final String SEVERAL_JAVA_SOURCES = "Module contains several source directories. Pick the one you want to add kata files to!";
+
 }

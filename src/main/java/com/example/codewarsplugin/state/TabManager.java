@@ -161,7 +161,7 @@ public class TabManager implements KataSetupServiceClient {
     //this comes from a side thread
     @Override
     public void notifyKataFileCreationFail(String reason) {
-        kataLoadIsInProgress.set(false);
+
         ApplicationManager.getApplication().invokeLater(() -> {
             this.showOverlaySpinner(false);
             browser.loadURL(DASHBOARD_URL);
@@ -170,6 +170,7 @@ public class TabManager implements KataSetupServiceClient {
                     "Ups, Something Went Wrong...",
                     IconLoader.getIcon("/icons/new_cw_logo.svg", SidePanel.class)
             );
+            kataLoadIsInProgress.set(false);
         });
     }
 

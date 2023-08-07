@@ -11,19 +11,18 @@ import java.util.concurrent.ExecutionException;
 
 public class CookieService {
 
-    private static List<JBCefCookie> allCookies = new ArrayList<>();
     private static String csrfToken;
     private static String sessionId;
     private static JBCefCookie csrfCookie;
     private static JBCefCookie sessionIdCookie;
     public static boolean loginSuccess = false;
     private static HttpClient httpClient;
-    private static CookieManager cookieManager = new CookieManager();
+    private static final CookieManager cookieManager = new CookieManager();
 
 
     public static void getCookies(JBCefBrowser browser) {
         try {
-            allCookies = browser.getJBCefCookieManager().getCookies("https://www.codewars.com", true).get();
+            List<JBCefCookie> allCookies = browser.getJBCefCookieManager().getCookies("https://www.codewars.com", true).get();
             csrfCookie = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get();
             sessionIdCookie = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get();
             csrfToken = csrfCookie.getValue();

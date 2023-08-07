@@ -25,7 +25,6 @@ public class KataSetupService implements FileServiceClient {
             KataRecord record = null;
             KataInput input = null;
             try{
-                System.out.println("starting file creation and setup main thread = " + SwingUtilities.isEventDispatchThread());
                 tokens = url.split("/");
                 record = KataRecordService.getKataRecord(tokens[4]);
                 record.setSelectedLanguage(tokens[6]);
