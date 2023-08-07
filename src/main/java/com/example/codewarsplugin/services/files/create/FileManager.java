@@ -18,8 +18,7 @@ public class FileManager {
             service = FileServiceFactory.createFileService(input, record, project);
             service.getModules();
             service.getSourcesRoot();
-        } catch (ClassNotFoundException | IllegalAccessException | NoSuchMethodException | InvocationTargetException |
-                 InstantiationException e) {
+        } catch (Exception e) {
             client.notifyKataFileCreationFail("Kata setup failed with " + e.getClass().getSimpleName() + ".\n " + e.getMessage());
             return null;
         }

@@ -7,6 +7,7 @@ import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.files.create.FileService;
 import com.example.codewarsplugin.services.files.create.FileServiceFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -95,12 +96,11 @@ public class KataDirectoryParser {
                 }
             }
         } catch (Exception e) {
-            Messages.showMessageDialog(
+            ApplicationManager.getApplication().invokeLater(() -> Messages.showMessageDialog(
                     "Project directory parsing failed with " + e.getClass().getSimpleName() + ".\n " + e.getMessage(),
                     "Ups, Something Went Wrong...",
                     IconLoader.getIcon("/icons/new_cw_logo.svg", SidePanel.class)
-            );
-
+            ));
         }
 
     }
