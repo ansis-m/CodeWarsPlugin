@@ -32,6 +32,8 @@ public abstract class AbstractFileService implements FileService {
     final Project project;
     VirtualFile baseDir;
     VirtualFile directory;
+    VirtualFile testDirectory;
+    VirtualFile workDirectory;
     VirtualFile sourcesRoot;
     VirtualFile metaData;
     VirtualFile testFile;
@@ -80,6 +82,8 @@ public abstract class AbstractFileService implements FileService {
         kataDirectory.setRecord(record);
         kataDirectory.setDirectory(directory);
         kataDirectory.setMetaDataDirectory(metaData);
+        kataDirectory.setWorkDirectory(workDirectory);
+        kataDirectory.setTestDirectory(testDirectory);
 
         return kataDirectory;
     }

@@ -45,9 +45,15 @@ public class KataDirectoryParser {
                     if (child.getName().startsWith("codewars")){
                         KataDirectory kataDirectory = new KataDirectory();
                         kataDirectory.setDirectory(child);
+                        kataDirectory.setWorkDirectory(child);
+                        kataDirectory.setTestDirectory(child);
                         for (VirtualFile grandchild : child.getChildren()) {
                             if(grandchild.getName().equals("metadata")){
                                 kataDirectory.setMetaDataDirectory(grandchild);
+                            } else if (grandchild.getName().equals("solution")){
+                                kataDirectory.setWorkDirectory(grandchild);
+                            } else if (grandchild.getName().equals("test")){
+                                kataDirectory.setTestDirectory(grandchild);
                             }
                         }
                         fillDirectoryWithFiles(kataDirectory);
@@ -88,10 +94,13 @@ public class KataDirectoryParser {
             String testFileName = fileService.getTestFileName();
             String workFileName = fileService.getFileName();
 
-            for(VirtualFile file : kataDirectory.getDirectory().getChildren()){
+            for(VirtualFile file : kataDirectory.getTestDirectory().getChildren()){
                 if (!file.isDirectory() && file.getName().equals(testFileName)){
                     kataDirectory.setTestFile(file);
-                } else if (!file.isDirectory() && file.getName().equals(workFileName)) {
+                }
+            }
+            for(VirtualFile file : kataDirectory.getWorkDirectory().getChildren()){
+                if (!file.isDirectory() && file.getName().equals(workFileName)){
                     kataDirectory.setWorkFile(file);
                 }
             }
@@ -105,6 +114,7 @@ public class KataDirectoryParser {
 
     }
 
+    //todo fix for python
     public void getSourcesRoots() {
 
         ModuleManager moduleManager = ModuleManager.getInstance(project);

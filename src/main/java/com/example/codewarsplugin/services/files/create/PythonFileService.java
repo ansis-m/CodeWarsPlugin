@@ -70,12 +70,6 @@ public class PythonFileService extends AbstractFileService{
     }
 
     @Override
-    public KataDirectory createKataDirectory() {
-
-        return null;
-    }
-
-    @Override
     public void initDirectory() {
 
         try {
@@ -83,7 +77,6 @@ public class PythonFileService extends AbstractFileService{
             file.refresh(false, true);
 
         } catch (Exception ignored){}
-
     }
 
     public static String sanitizeForPackageName(String input) {

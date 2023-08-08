@@ -5,6 +5,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 public class KataDirectory {
 
     private VirtualFile directory;
+    private VirtualFile testDirectory;
+    private VirtualFile workDirectory;
     private VirtualFile metaDataDirectory;
     private VirtualFile workFile;
     private VirtualFile testFile;
@@ -67,6 +69,28 @@ public class KataDirectory {
     }
 
     public boolean isComplete() {
-        return directory != null && metaDataDirectory != null && record != null && input != null && workFile != null;
+        return directory != null
+                && metaDataDirectory != null
+                && workDirectory != null
+                && testDirectory != null
+                && record != null
+                && input != null
+                && workFile != null;
+    }
+
+    public VirtualFile getTestDirectory() {
+        return testDirectory;
+    }
+
+    public void setTestDirectory(VirtualFile testDirectory) {
+        this.testDirectory = testDirectory;
+    }
+
+    public VirtualFile getWorkDirectory() {
+        return workDirectory;
+    }
+
+    public void setWorkDirectory(VirtualFile workDirectory) {
+        this.workDirectory = workDirectory;
     }
 }

@@ -35,6 +35,9 @@ public class JavaFileService extends AbstractFileService {
 
     public void createFile(boolean isWorkFile) throws IOException {
 
+        VirtualFile directory = isWorkFile? workDirectory : testDirectory;
+
+
         if (directory != null) {
             VirtualFile file = null;
             file = directory.createChildData(this, isWorkFile? getFileName() : getTestFileName());
@@ -64,7 +67,8 @@ public class JavaFileService extends AbstractFileService {
 
     @Override
     public void initDirectory() {
-
+        testDirectory = directory;
+        workDirectory = directory;
     }
 
     @Override
