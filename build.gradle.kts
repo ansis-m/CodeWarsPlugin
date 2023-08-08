@@ -23,8 +23,8 @@ dependencies {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2022.1.4")
-    type.set("IC") // Target IDE Platform
+    version.set("2022.3.1")
+    type.set("IU") // Target IDE Platform
 
     plugins.set(listOf("PythonCore:221.6008.17")) //for development only, to be removed in production
 }
