@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.services.files.create;
 
 import com.example.codewarsplugin.models.kata.KataDirectory;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.IOException;
@@ -29,5 +30,9 @@ public interface FileService {
 
     KataDirectory createKataDirectory();
 
-    void getModules();
+    void getModules(String language);
+
+    Module pickModule();
+
+    void initDirectory();
 }

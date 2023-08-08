@@ -42,7 +42,7 @@ public class KataDirectoryParser {
         if (directory != null && directory.isDirectory()) {
             for (VirtualFile child : directory.getChildren()) {
                 if (child.isDirectory()) {
-                    if (child.getName().startsWith("codewars.")){
+                    if (child.getName().startsWith("codewars")){
                         KataDirectory kataDirectory = new KataDirectory();
                         kataDirectory.setDirectory(child);
                         for (VirtualFile grandchild : child.getChildren()) {

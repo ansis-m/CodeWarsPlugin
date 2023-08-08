@@ -30,10 +30,12 @@ public class StringConstants {
 
 
     //
-    public static final String PICK_JAVA_MODULE = "Pick Java Module!";
-    public static final String SEVERAL_JAVA_MODULES = "Project contains several Java modules. Pick the one you want to add kata files to!";
+    public static final String PICK_MODULE = "Pick %s Module!";
+    public static final String SEVERAL_MODULES = "Project contains several %s modules. Pick the one you want to add kata files to!";
 
-    public static final String PICK_JAVA_SOURCE = "Pick Java Source Directory!";
-    public static final String SEVERAL_JAVA_SOURCES = "Module contains several source directories. Pick the one you want to add kata files to!";
+    public static final String PICK_SOURCE = "Pick The Source Directory!";
+    public static final String SEVERAL_SOURCES = "Module contains several source directories. Pick the one you want to add kata files to!";
+
+    public static final String MODULE_NOT_FOUND = "{0} module not found in the current project! To setup Kata in {0} start a new {0} project or create a {0} module in the current project! Also, make sure that {0} is supported by IDE and {0} plugin is installed!";
 
 }

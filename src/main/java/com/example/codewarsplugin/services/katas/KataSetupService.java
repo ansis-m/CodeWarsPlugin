@@ -8,9 +8,6 @@ import com.example.codewarsplugin.services.files.create.FileServiceClient;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 
-import javax.swing.*;
-
-
 public class KataSetupService implements FileServiceClient {
 
     private String[] tokens;

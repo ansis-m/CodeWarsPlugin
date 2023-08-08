@@ -7,8 +7,6 @@ import com.example.codewarsplugin.services.katas.KataSetupServiceClient;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 
-import java.lang.reflect.InvocationTargetException;
-
 
 public class FileManager {
     public static KataDirectory createFiles(KataInput input, KataRecord record, Project project, KataSetupServiceClient client) {
@@ -16,7 +14,7 @@ public class FileManager {
         FileService service = null;
         try {
             service = FileServiceFactory.createFileService(input, record, project);
-            service.getModules();
+            service.getModules(input.getLanguageName());
             service.getSourcesRoot();
         } catch (Exception e) {
             client.notifyKataFileCreationFail("Kata setup failed with " + e.getClass().getSimpleName() + ".\n " + e.getMessage());
@@ -27,10 +25,19 @@ public class FileManager {
         WriteCommandAction.runWriteCommandAction(project, () -> {
             try{
                 finalService.createDirectory();
+                System.out.println("created dir\n");
+
+                finalService.initDirectory();
+                System.out.println("init dir\n");
+
                 finalService.createTestFile();
+                System.out.println("created test files\n");
                 finalService.createWorkFile();
+                System.out.println("created work files\n");
                 finalService.createRecordFile();
+                System.out.println("created record files\n");
                 finalService.createInputFile();
+                System.out.println("created input files\n");
             } catch (Exception e) {
                 client.notifyKataFileCreationFail("Kata setup failed with " + e.getClass().getSimpleName() + ".\n " + e.getMessage());
             }

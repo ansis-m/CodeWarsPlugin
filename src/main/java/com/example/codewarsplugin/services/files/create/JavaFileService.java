@@ -1,31 +1,18 @@
 package com.example.codewarsplugin.services.files.create;
 
-import com.example.codewarsplugin.SidePanel;
-import com.example.codewarsplugin.exceptions.ModuleNotFoundException;
-import com.example.codewarsplugin.exceptions.SourcesRootNotFoundException;
 import com.example.codewarsplugin.models.kata.JsonSource;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import static com.example.codewarsplugin.config.StringConstants.*;
 
 public class JavaFileService extends AbstractFileService {
 
@@ -76,62 +63,13 @@ public class JavaFileService extends AbstractFileService {
     }
 
     @Override
-    public void getModules() {
-        ModuleManager moduleManager = ModuleManager.getInstance(project);
-        for (Module module : moduleManager.getModules()) {
-            ModuleType<?> moduleType = ModuleType.get(module);
-            System.out.println("module name: " + moduleType.getName());
-            if (moduleType.getName().toLowerCase().contains("java") && !moduleType.getName().toLowerCase().contains("unknown")) {
-                modules.add(module);
-            }
-        }
-        if (modules.size() < 1) {
-            throw new ModuleNotFoundException("Java module not found in the current project! To setup Kata in java start a new java project or create a java module in the current project!");
-        }
+    public void initDirectory() {
+
     }
 
     @Override
     public String getFileName() {
         return getFileBaseName(input.getSetup()) + ".java";
-    }
-
-    @Override
-    public void getSourcesRoot() {
-
-        Module module = null;
-
-        if (modules.size() == 1){
-            module = modules.get(0);
-        } else if (modules.size() > 1) {
-            AtomicInteger index = new AtomicInteger(0);
-            ApplicationManager.getApplication().invokeAndWait(() -> {
-                index.set(Messages.showIdeaMessageDialog(project, SEVERAL_JAVA_MODULES, PICK_JAVA_MODULE, modules.stream().map(Module::getName).toArray(String[]::new), 0, IconLoader.getIcon("/icons/new_cw_logo.svg", SidePanel.class), null));
-            });
-            module = modules.get(index.get());
-            System.out.println("index: " + index.get() + " module name: " + module.getName());
-        }
-
-
-        ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-        VirtualFile[] roots = moduleRootManager.getSourceRoots(false);
-
-        System.out.println("roots size: " + roots.length);
-        Arrays.stream(roots).filter(root -> !root.getName().equals("resources")).forEach(sourcesRoots::add);
-
-
-        System.out.println("list size: " + sourcesRoots.size());
-        if (sourcesRoots.size() == 1) {
-            this.sourcesRoot = sourcesRoots.get(0);
-        } else if (sourcesRoots.size() > 1) {
-            AtomicInteger index = new AtomicInteger(0);
-            ApplicationManager.getApplication().invokeAndWait(() -> {
-                index.set(Messages.showIdeaMessageDialog(project, SEVERAL_JAVA_SOURCES, PICK_JAVA_SOURCE, sourcesRoots.stream().map(VirtualFile::getName).toArray(String[]::new), 0, IconLoader.getIcon("/icons/new_cw_logo.svg", SidePanel.class), null));
-            });
-            this.sourcesRoot = sourcesRoots.get(index.get());
-        } else {
-            throw new SourcesRootNotFoundException("Sources root directory not found in the current java module. Create sources root and try again!");
-        }
-
     }
 
     @Override
