@@ -1,6 +1,7 @@
 package com.example.codewarsplugin.services.files.parse;
 
 import com.example.codewarsplugin.SidePanel;
+import com.example.codewarsplugin.exceptions.ModuleNotFoundException;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
@@ -8,7 +9,9 @@ import com.example.codewarsplugin.services.files.create.FileService;
 import com.example.codewarsplugin.services.files.create.FileServiceFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.Messages;
@@ -16,9 +19,13 @@ import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import static com.example.codewarsplugin.config.StringConstants.MODULE_NOT_FOUND;
 
 public class KataDirectoryParser {
 
@@ -119,12 +126,18 @@ public class KataDirectoryParser {
 
         ModuleManager moduleManager = ModuleManager.getInstance(project);
         Arrays.stream(moduleManager.getModules())
-                .forEach(m -> {
-            ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(m);
-            VirtualFile[] roots = moduleRootManager.getSourceRoots(false);
-            Arrays.stream(roots).filter(root -> !root.getName().equals("resources")).forEach(sourcesRoots::add);
-        });
-
+            .forEach(m ->
+            {
+                ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(m);
+                ModuleType<?> moduleType = ModuleType.get(m);
+                if (moduleType.getName().toLowerCase().contains("java") && !moduleType.getName().toLowerCase().contains("unknown")) {
+                    VirtualFile[] roots = moduleRootManager.getSourceRoots(false);
+                    Arrays.stream(roots).filter(root -> !root.getName().equals("resources")).forEach(sourcesRoots::add);
+                } else if (moduleType.getName().toLowerCase().contains("python")) {
+                    VirtualFile[] roots = moduleRootManager.getContentRoots();
+                    Collections.addAll(sourcesRoots, roots);
+                }
+            });
     }
 
     public ArrayList<KataDirectory> getDirectoryList() {

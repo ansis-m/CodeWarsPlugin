@@ -89,6 +89,36 @@ public abstract class AbstractFileService implements FileService {
     }
 
     @Override
+    public void createWorkFile() throws IOException {
+        createFile(true);
+    }
+
+    @Override
+    public void createTestFile() throws IOException {
+        createFile(false);
+    }
+
+    @Override
+    public void createFile(boolean isWorkFile) throws IOException {
+
+        VirtualFile directory = isWorkFile? workDirectory : testDirectory;
+
+
+        if (directory != null) {
+            VirtualFile file = null;
+            file = directory.createChildData(this, isWorkFile? getFileName() : getTestFileName());
+            file.refresh(false, true);
+            file.setBinaryContent(getFileContent(isWorkFile));
+
+            if(isWorkFile) {
+                workFile = file;
+            } else {
+                testFile = file;
+            }
+        }
+    }
+
+    @Override
     public void getModules(String language) {
         ModuleManager moduleManager = ModuleManager.getInstance(project);
         for (Module module : moduleManager.getModules()) {

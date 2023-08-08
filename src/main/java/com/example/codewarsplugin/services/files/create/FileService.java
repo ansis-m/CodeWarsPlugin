@@ -35,4 +35,7 @@ public interface FileService {
     Module pickModule();
 
     void initDirectory();
+
+    void createFile(boolean isWorkFile) throws IOException;
+    byte[] getFileContent(boolean isWorkFile);
 }

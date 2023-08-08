@@ -24,35 +24,7 @@ public class JavaFileService extends AbstractFileService {
     }
 
     @Override
-    public void createWorkFile() throws IOException {
-        createFile(true);
-    }
-
-    @Override
-    public void createTestFile() throws IOException {
-        createFile(false);
-    }
-
-    public void createFile(boolean isWorkFile) throws IOException {
-
-        VirtualFile directory = isWorkFile? workDirectory : testDirectory;
-
-
-        if (directory != null) {
-            VirtualFile file = null;
-            file = directory.createChildData(this, isWorkFile? getFileName() : getTestFileName());
-            file.refresh(false, true);
-            file.setBinaryContent(getFileContent(isWorkFile));
-
-            if(isWorkFile) {
-                workFile = file;
-            } else {
-                testFile = file;
-            }
-        }
-    }
-
-    private byte[] getFileContent(boolean isWorkFile) {
+    public byte[] getFileContent(boolean isWorkFile) {
         return (getPackage() + (isWorkFile? input.getSetup() : input.getExampleFixture())).getBytes();
     }
 
