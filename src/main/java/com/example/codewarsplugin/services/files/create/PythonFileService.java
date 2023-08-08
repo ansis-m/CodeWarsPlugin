@@ -4,6 +4,7 @@ import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -76,6 +77,12 @@ public class PythonFileService extends AbstractFileService{
 
     @Override
     public void initDirectory() {
+
+        try {
+            VirtualFile file = directory.createChildData(this, "__init__.py");
+            file.refresh(false, true);
+
+        } catch (Exception ignored){}
 
     }
 
