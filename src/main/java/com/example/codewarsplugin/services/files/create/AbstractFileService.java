@@ -3,9 +3,11 @@ package com.example.codewarsplugin.services.files.create;
 import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.exceptions.ModuleNotFoundException;
 import com.example.codewarsplugin.exceptions.SourcesRootNotFoundException;
+import com.example.codewarsplugin.models.kata.JsonSource;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -18,6 +20,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +33,6 @@ public abstract class AbstractFileService implements FileService {
     final KataInput input;
     final KataRecord record;
     final Project project;
-    VirtualFile baseDir;
     VirtualFile directory;
     VirtualFile testDirectory;
     VirtualFile workDirectory;
@@ -86,6 +88,30 @@ public abstract class AbstractFileService implements FileService {
         kataDirectory.setTestDirectory(testDirectory);
 
         return kataDirectory;
+    }
+
+    @Override
+    public void createRecordFile() throws IOException {
+        createJsonFile(record);
+    }
+
+    @Override
+    public void createInputFile() throws IOException {
+        createJsonFile(input);
+    }
+
+    public void createJsonFile(JsonSource source) throws IOException {
+
+        String filename = source instanceof KataRecord? getRecordFileName() : getInputFileName();
+
+        if (metaData != null) {
+            VirtualFile file = null;
+            file = metaData.createChildData(this, filename);
+            file.refresh(false, true);
+            VirtualFile finalFile = file;
+            finalFile.setBinaryContent(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(source).getBytes(StandardCharsets.UTF_8));
+        }
+
     }
 
     @Override

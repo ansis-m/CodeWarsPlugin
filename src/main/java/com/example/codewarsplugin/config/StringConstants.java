@@ -44,6 +44,7 @@ public class StringConstants {
     public static final String MODULE_NOT_FOUND = "{0} module not found in the current project! To setup Kata in {0} start a new {0} project or create a {0} module in the current project! Also, make sure that {0} is supported by IDE and {0} plugin is installed!";
 
     public static final String PYTHON_TEST_FRAMEWORK_MESSAGE = "# codewars_test can be installed from https://github.com/codewars/python-test-framework\n" +
-            "# activate venv and run pip install git+https://github.com/codewars/python-test-framework.git#egg=codewars_test from the module/project root\n\n\n";
+            "# activate venv and run \"pip install git+https://github.com/codewars/python-test-framework.git#egg=codewars_test\"\n\n\n";
 
 }
+//.\venv\Scripts\activate

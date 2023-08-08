@@ -1,6 +1,5 @@
 package com.example.codewarsplugin.services.files.create;
 
-import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.intellij.openapi.project.Project;
@@ -23,30 +22,19 @@ public class PythonFileService extends AbstractFileService{
     }
 
     @Override
-    protected String getRecordFileName() {
-        return null;
+    protected String getRecordFileName(){
+        return "record.json";
     }
 
     @Override
-    protected String getInputFileName() {
-        return null;
+    protected String getInputFileName(){
+        return "input.json";
     }
 
     @Override
     public String getDirectoryName() {
         return "codewars_" + getFileBaseName(record.getSlug());
 
-    }
-
-    @Override
-    public void createRecordFile() {
-        throw new RuntimeException("createRecordFile not implemented in python file service");
-
-    }
-
-    @Override
-    public void createInputFile() {
-        throw new RuntimeException("createInputFile not implemented in python file service");
     }
 
     @Override

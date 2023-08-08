@@ -1,14 +1,9 @@
 package com.example.codewarsplugin.services.files.create;
 
-import com.example.codewarsplugin.models.kata.JsonSource;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class JavaFileService extends AbstractFileService {
 
-    private Pattern classPattern = Pattern.compile("(?<!\\.)\\bclass\\b");
+    private final Pattern classPattern = Pattern.compile("(?<!\\.)\\bclass\\b");
 
 
     public JavaFileService(KataInput input, KataRecord record, Project project) {
@@ -82,29 +77,6 @@ public class JavaFileService extends AbstractFileService {
                         .collect(Collectors.joining("."));
     }
 
-    @Override
-    public void createRecordFile() throws IOException {
-        createJsonFile(record);
-    }
-
-    @Override
-    public void createInputFile() throws IOException {
-        createJsonFile(input);
-    }
-
-    public void createJsonFile(JsonSource source) throws IOException {
-
-        String filename = source instanceof KataRecord? getRecordFileName() : getInputFileName();
-
-        if (metaData != null) {
-            VirtualFile file = null;
-            file = metaData.createChildData(this, filename);
-            file.refresh(false, true);
-            VirtualFile finalFile = file;
-            finalFile.setBinaryContent(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(source).getBytes(StandardCharsets.UTF_8));
-        }
-
-    }
 
     public static String sanitizeForPackageName(String input) {
         if (input == null || input.isEmpty()) {
