@@ -80,12 +80,12 @@ public class KataDirectoryParser {
         ObjectMapper mapper = new ObjectMapper();
 
         for(VirtualFile metafile : kataDirectory.getMetaDataDirectory().getChildren()){
-            if (!metafile.isDirectory() && metafile.getName().contains("Record.json")){
+            if (!metafile.isDirectory() && metafile.getName().toLowerCase().contains("record.json")){
                 try {
                     record = mapper.readValue(metafile.contentsToByteArray(), KataRecord.class);
                     kataDirectory.setRecord(record);
                 } catch (Exception e){ System.out.println("exception record parsing failed"); e.printStackTrace();}
-            } else if (!metafile.isDirectory() && metafile.getName().contains("Input.json")){
+            } else if (!metafile.isDirectory() && metafile.getName().toLowerCase().contains("input.json")){
                 try {
                     input = mapper.readValue(metafile.contentsToByteArray(), KataInput.class);
                     kataDirectory.setInput(input);
@@ -121,7 +121,6 @@ public class KataDirectoryParser {
 
     }
 
-    //todo fix for python
     public void getSourcesRoots() {
 
         ModuleManager moduleManager = ModuleManager.getInstance(project);
