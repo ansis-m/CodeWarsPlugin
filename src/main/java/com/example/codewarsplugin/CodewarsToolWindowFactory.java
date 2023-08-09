@@ -1,5 +1,6 @@
 package com.example.codewarsplugin;
 
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
@@ -18,7 +19,7 @@ public class CodewarsToolWindowFactory implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         SidePanel panel = new SidePanel(project);
-        ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
+        ContentFactory contentFactory = ServiceManager.getService(ContentFactory.class);
         Content content = contentFactory.createContent(panel, "", false);
         toolWindow.getContentManager().addContent(content);
 

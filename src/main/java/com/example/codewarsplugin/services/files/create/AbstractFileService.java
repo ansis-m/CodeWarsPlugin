@@ -16,7 +16,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.IOException;
@@ -58,20 +57,6 @@ public abstract class AbstractFileService implements FileService {
         metaData.refresh(false, true);
         directory = newDirectory;
         this.metaData = metaData;
-    }
-
-
-    public static boolean isSourcesRoot(VirtualFile directory, Project project) {
-        Module[] modules = ModuleManager.getInstance(project).getModules();
-        for (Module module : modules) {
-            ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-            for (VirtualFile sourceRoot : rootManager.getSourceRoots()) {
-                if (VfsUtil.isAncestor(sourceRoot, directory, false)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @Override
@@ -150,13 +135,22 @@ public abstract class AbstractFileService implements FileService {
         for (Module module : moduleManager.getModules()) {
             ModuleType<?> moduleType = ModuleType.get(module);
             System.out.println("module name: " + moduleType.getName());
-            if (moduleType.getName().toLowerCase().contains(language) && !moduleType.getName().toLowerCase().contains("unknown")) {
+            if (shouldAddModule(moduleType, language)) {
                 modules.add(module);
             }
         }
         if (modules.size() < 1) {
-            throw new ModuleNotFoundException(MessageFormat.format(MODULE_NOT_FOUND, language));
+            if (language.equals("javascript")){
+                throw new ModuleNotFoundException(JS_MODULE_NOT_FOUND);
+            } else {
+                throw new ModuleNotFoundException(MessageFormat.format(MODULE_NOT_FOUND, language));
+            }
         }
+    }
+
+    private boolean shouldAddModule(ModuleType<?> moduleType, String language) {
+        return (moduleType.getName().toLowerCase().contains(language) && !moduleType.getName().toLowerCase().contains("unknown")) ||
+                (moduleType.getName().toLowerCase().contains("web") && language.equals("javascript"));
     }
 
     @Override

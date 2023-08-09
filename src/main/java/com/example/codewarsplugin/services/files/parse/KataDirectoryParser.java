@@ -129,14 +129,25 @@ public class KataDirectoryParser {
             {
                 ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(m);
                 ModuleType<?> moduleType = ModuleType.get(m);
-                if (moduleType.getName().toLowerCase().contains("java") && !moduleType.getName().toLowerCase().contains("unknown")) {
+                System.out.println("module type get name: " + moduleType.getName());
+                if (moduleIsJava(moduleType)) {
                     VirtualFile[] roots = moduleRootManager.getSourceRoots(false);
                     Arrays.stream(roots).filter(root -> !root.getName().equals("resources")).forEach(sourcesRoots::add);
                 } else if (moduleType.getName().toLowerCase().contains("python")) {
                     VirtualFile[] roots = moduleRootManager.getContentRoots();
                     Collections.addAll(sourcesRoots, roots);
+                } else if (moduleType.getName().toLowerCase().contains("web")) {
+                    System.out.println("parsing javascript module!!!");
+                    VirtualFile[] roots = moduleRootManager.getContentRoots();
+                    Collections.addAll(sourcesRoots, roots);
                 }
             });
+    }
+
+    private static boolean moduleIsJava(ModuleType<?> moduleType) {
+        return moduleType.getName().toLowerCase().contains("java")
+                && !moduleType.getName().toLowerCase().contains("unknown")
+                && !moduleType.getName().toLowerCase().contains("javascript");
     }
 
     public ArrayList<KataDirectory> getDirectoryList() {

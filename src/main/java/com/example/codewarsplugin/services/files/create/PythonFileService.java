@@ -59,6 +59,14 @@ public class PythonFileService extends AbstractFileService{
             workDirectory = directory;
             testDirectory = directory;
         } catch (Exception ignored){}
+        importTest();
+    }
+
+    private void importTest() {
+        String test = input.getExampleFixture();
+        if (!test.contains("codewars_test")) {
+            input.setExampleFixture("import codewars_test as test\n" + test);
+        }
     }
 
     public static String sanitizeForPackageName(String input) {
@@ -76,7 +84,6 @@ public class PythonFileService extends AbstractFileService{
                     result.append(c);
                     lastCharWasUnderscore = c == '_';
                 }
-
             } else {
                 if (!lastCharWasUnderscore) {
                     result.append('_');
