@@ -65,11 +65,11 @@ public class JavascriptFileService extends AbstractFileService{
     }
 
     private String getImportMessage() {
-        return "// Install Mocha to run tests locally!\n" +
-                "//run npm install mocha --save-dev\n\n";
+        return "// Install Mocha to run tests locally!" +
+                " Run \"npm install mocha --save-dev\".\n\n";
     }
 
     private String getExport() {
-        return String.format("\n\nmodule.exports = %s;\n//required only to run tests locally", getFileBaseName(input.getSetup()));
+        return String.format("\n\nmodule.exports = %s;  //required only to run tests locally", getFileBaseName(input.getSetup()));
     }
 }

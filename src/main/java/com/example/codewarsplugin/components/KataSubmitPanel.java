@@ -27,7 +27,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     private JLabel testSpinner = new JLabel(new AnimatedIcon.Big());
     private JPanel testCardPanel = new JPanel();
     private CardLayout testCardLayout = new CardLayout();
-    private JButton commitButton = new JButton("Commit");
+    private JButton commitButton = new JButton("Submit");
     private JLabel commitSpinner = new JLabel(new AnimatedIcon.Big());
     private JPanel commitCardPanel = new JPanel();
     private CardLayout commitCardLayout = new CardLayout();
