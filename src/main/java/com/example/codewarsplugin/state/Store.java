@@ -75,9 +75,9 @@ public class Store {
 
     private void cleanup() {
         CefCookieManager.getGlobalManager().deleteCookies(null, null);
-        browser.dispose();
-        client.dispose();
-        manager.getDescriptionBrowser().dispose();
+//        browser.dispose();
+//        client.dispose();
+//        manager.getDescriptionBrowser().dispose();
     }
 
     public void setDirectories(ArrayList<KataDirectory> directories) {

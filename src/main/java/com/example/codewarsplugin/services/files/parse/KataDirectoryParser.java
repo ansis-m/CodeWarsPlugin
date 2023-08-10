@@ -46,27 +46,31 @@ public class KataDirectoryParser {
 
     private void processSourcesRoot(VirtualFile directory) {
 
-        if (directory != null && directory.isDirectory()) {
-            for (VirtualFile child : directory.getChildren()) {
-                if (child.isDirectory()) {
-                    if (child.getName().startsWith("codewars")){
-                        KataDirectory kataDirectory = new KataDirectory();
-                        kataDirectory.setDirectory(child);
-                        kataDirectory.setWorkDirectory(child);
-                        kataDirectory.setTestDirectory(child);
-                        for (VirtualFile grandchild : child.getChildren()) {
-                            if(grandchild.getName().equals("metadata")){
-                                kataDirectory.setMetaDataDirectory(grandchild);
-                            } else if (grandchild.getName().equals("solution")){
-                                kataDirectory.setWorkDirectory(grandchild);
-                            } else if (grandchild.getName().equals("test")){
-                                kataDirectory.setTestDirectory(grandchild);
-                            }
+        if (directory == null && !directory.isDirectory()) {
+            return;
+        }
+        for (VirtualFile child : directory.getChildren()) {
+            if (child.isDirectory()) {
+                if (child.getName().startsWith("codewars")){
+                    KataDirectory kataDirectory = new KataDirectory();
+                    kataDirectory.setDirectory(child);
+                    kataDirectory.setWorkDirectory(child);
+                    kataDirectory.setTestDirectory(child);
+                    for (VirtualFile grandchild : child.getChildren()) {
+                        if(grandchild.getName().equals("metadata")){
+                            kataDirectory.setMetaDataDirectory(grandchild);
+                        } else if (grandchild.getName().equals("solution")){
+                            kataDirectory.setWorkDirectory(grandchild);
+                        } else if (grandchild.getName().equals("test")){
+                            kataDirectory.setTestDirectory(grandchild);
                         }
-                        fillDirectoryWithFiles(kataDirectory);
-                        if(kataDirectory.isComplete()){
-                            directoryList.add(kataDirectory);
-                        }
+                    }
+                    if(kataDirectory.getMetaDataDirectory() == null) {
+                        continue;
+                    }
+                    fillDirectoryWithFiles(kataDirectory);
+                    if(kataDirectory.isComplete()){
+                        directoryList.add(kataDirectory);
                     }
                 }
             }

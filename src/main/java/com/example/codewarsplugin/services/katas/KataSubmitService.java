@@ -17,7 +17,6 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -28,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.example.codewarsplugin.config.StringConstants.*;
 
@@ -79,50 +79,35 @@ public class KataSubmitService {
 
     public void attempt(){
         KataOutput output = mapOutput();
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                try {
-                    HttpResponse<String> response = call(output);
+        try {
+            HttpResponse<String> response = call(output);
 
-                    if(response.statusCode() >= 200 && response.statusCode() < 300) {
-                        mapSubmitResponse(response.body());
-                        notifyServer(output);
-                        client.notifyAttemptSuccess(submitResponse);
-                    } else {
-                        client.notifyBadAttemptStatusCode(response);
-                    }
-                } catch (Exception e) {
-                    client.notifyAttemptRunException(e);
-                }
-                return null;
+            if(response.statusCode() >= 200 && response.statusCode() < 300) {
+                mapSubmitResponse(response.body());
+                notifyServer(output);
+                client.notifyAttemptSuccess(submitResponse);
+            } else {
+                client.notifyBadAttemptStatusCode(response);
             }
-        };
-        worker.execute();
-
+        } catch (Exception e) {
+            client.notifyAttemptRunException(e);
+        }
     }
 
     public void test() {
         KataOutput output = mapTestOutput();
-        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                try {
-                    HttpResponse<String> response = call(output);
-                    if(response.statusCode() >= 200 && response.statusCode() < 300) {
-                        mapSubmitResponse(response.body());
-                        notifyServer(output);
-                        client.notifyTestSuccess(submitResponse);
-                    } else {
-                        client.notifyBadTestStatusCode(response);
-                    }
-                } catch (Exception e) {
-                    client.notifyTestRunException(e);
-                }
-                return null;
+        try {
+            HttpResponse<String> response = call(output);
+            if(response.statusCode() >= 200 && response.statusCode() < 300) {
+                mapSubmitResponse(response.body());
+                notifyServer(output);
+                client.notifyTestSuccess(submitResponse);
+            } else {
+                client.notifyBadTestStatusCode(response);
             }
-        };
-        worker.execute();
+        } catch (Exception e) {
+            client.notifyTestRunException(e);
+        }
     }
 
     private HttpResponse<String> call(KataOutput output) throws IOException, InterruptedException {
@@ -168,11 +153,6 @@ public class KataSubmitService {
         httpClient.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-
-    private void writeSolution(String solution) {
-        this.input.setSetup(solution);
-    }
-
     private KataOutput mapOutput() {
 
         KataOutput output = new KataOutput();
@@ -190,18 +170,16 @@ public class KataSubmitService {
     }
 
     private String readWorkFile() {
-        ApplicationManager.getApplication().invokeAndWait(() -> {
-            FileDocumentManager.getInstance().getDocument(directory.getWorkFile());
+
+        AtomicReference<String> atomicString = new AtomicReference<>("");
+        ApplicationManager.getApplication().runReadAction(() -> {
+            FileDocumentManager documentManager = FileDocumentManager.getInstance();
+            Document document = documentManager.getDocument(directory.getWorkFile());
+            if (document != null) {
+                atomicString.set(stripPackage(document.getText()));
+            }
         });
-
-        FileDocumentManager documentManager = FileDocumentManager.getInstance();
-        Document document = documentManager.getDocument(directory.getWorkFile());
-
-        if (document != null) {
-            return stripPackage(document.getText());
-        }
-
-        return "";
+        return atomicString.get();
     }
 
     private String stripPackage(String text) {
@@ -219,40 +197,26 @@ public class KataSubmitService {
         String csrfToken = CookieService.getCsrfToken();
         String sessionId = CookieService.getSessionId();
 
-        SwingWorker<HttpResponse<String>, Void> worker  = new SwingWorker<HttpResponse<String>, Void>() {
-            @Override
-            protected HttpResponse<String> doInBackground() {
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(RECORD_URL + input.getPath() + "solutions/" + input.getSolutionId() + "/finalize"))
-                        .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
-                        .header("Content-Type", "application/json")
-                        .header("Authorization", token.getToken())
-                        .header("X-Csrf-Token", URLDecoder.decode(csrfToken, StandardCharsets.UTF_8))
-                        .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
-                        .POST(HttpRequest.BodyPublishers.noBody())
-                        .build();
-                try {
-                    return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-                } catch (Exception e) {
-                    client.notifyCommitException(e);
-                    return null;
-                }
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(RECORD_URL + input.getPath() + "solutions/" + input.getSolutionId() + "/finalize"))
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
+                .header("Content-Type", "application/json")
+                .header("Authorization", token.getToken())
+                .header("X-Csrf-Token", URLDecoder.decode(csrfToken, StandardCharsets.UTF_8))
+                .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+        try {
+            var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() >= 200 && response.statusCode() < 300) {
+                client.notifyCommitSuccess(response);
+            } else {
+                client.notifyCommitFailed(response);
             }
-            @Override
-            protected void done(){
-                try{
-                    var response = get();
-                    if (response.statusCode() >= 200 && response.statusCode() < 300) {
-                        client.notifyCommitSuccess(response);
-                    } else {
-                        client.notifyCommitFailed(response);
-                    }
-                } catch (Exception e) {
-                    client.notifyCommitException(e);
-                }
-            }
-        };
-        worker.execute();
+
+        } catch (Exception e) {
+            client.notifyCommitException(e);
+        }
     }
 
     @SuppressWarnings("unchecked")

@@ -3,13 +3,26 @@ package com.example.codewarsplugin.services.files.create;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
+import com.example.codewarsplugin.services.files.parse.KataDirectoryParser;
 import com.example.codewarsplugin.services.katas.KataSetupServiceClient;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.project.Project;
 
+import java.util.ArrayList;
+
 
 public class FileManager {
     public static KataDirectory createFiles(KataInput input, KataRecord record, Project project, KataSetupServiceClient client) {
+
+        //todo check if exists and return
+        ArrayList<KataDirectory> directories = new KataDirectoryParser(project).getDirectoryList();
+        for(KataDirectory d: directories){
+            if (d.getRecord().equals(record)) {
+                System.out.println("winner winner chicken dinner");
+                return d;
+            }
+
+        }
 
         FileService service = null;
         try {

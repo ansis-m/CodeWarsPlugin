@@ -24,6 +24,7 @@ public class KataSetupService implements FileServiceClient {
             try{
                 tokens = url.split("/");
                 record = KataRecordService.getKataRecord(tokens[4]);
+                record.setWorkUrl(url);
                 record.setSelectedLanguage(tokens[6]);
                 input = KataInputService.getKata(record);
             } catch (Exception e) {
@@ -33,7 +34,9 @@ public class KataSetupService implements FileServiceClient {
 
             KataDirectory directory = FileManager.createFiles(input, record, project, client);
             if (directory != null && directory.isComplete()){
-                client.loadWorkspaceTab(directory);
+                client.loadWorkspaceTab(directory, false);
+            } else {
+                client.reset();
             }
         });
     }

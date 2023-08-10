@@ -7,7 +7,9 @@ import com.example.codewarsplugin.models.kata.SubmitResponse;
 import com.example.codewarsplugin.services.katas.KataSubmitService;
 import com.example.codewarsplugin.services.katas.KataSubmitServiceClient;
 import com.example.codewarsplugin.state.Store;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.ui.AnimatedIcon;
+import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,29 +20,30 @@ import static com.example.codewarsplugin.services.utils.Colors.getColor;
 
 public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
-    private KataDirectory directory;
-    private JButton attemptButton = new JButton("Attempt");
-    private JLabel attemptSpinner = new JLabel(new AnimatedIcon.Big());
-    private JPanel attemptCardPanel = new JPanel();
-    private CardLayout attemptCardLayout = new CardLayout();
-    private JButton testButton = new JButton("Test");
-    private JLabel testSpinner = new JLabel(new AnimatedIcon.Big());
-    private JPanel testCardPanel = new JPanel();
-    private CardLayout testCardLayout = new CardLayout();
-    private JButton commitButton = new JButton("Submit");
-    private JLabel commitSpinner = new JLabel(new AnimatedIcon.Big());
-    private JPanel commitCardPanel = new JPanel();
-    private CardLayout commitCardLayout = new CardLayout();
-    private JTextPane textPane = new JTextPane();
-    private ArrayList<JButton> buttonList = new ArrayList<>();
+    private final JButton attemptButton = new JButton("Attempt");
+    private final JLabel attemptSpinner = new JLabel(new AnimatedIcon.Big());
+    private final JPanel attemptCardPanel = new JPanel();
+    private final CardLayout attemptCardLayout = new CardLayout();
+    private final JButton testButton = new JButton("Test");
+    private final JLabel testSpinner = new JLabel(new AnimatedIcon.Big());
+    private final JPanel testCardPanel = new JPanel();
+    private final CardLayout testCardLayout = new CardLayout();
+    private final JButton commitButton = new JButton("Submit");
+    private final JLabel commitSpinner = new JLabel(new AnimatedIcon.Big());
+    private final JPanel commitCardPanel = new JPanel();
+    private final CardLayout commitCardLayout = new CardLayout();
+    private final JTextPane textPane = new JTextPane();
+    private final ArrayList<JButton> buttonList = new ArrayList<>();
     private boolean attemptSuccessful = false;
-    private KataSubmitService submitService;
-    private KataInput input;
-    private KataRecord record;
+    private final KataSubmitService submitService;
+    private final KataInput input;
+    private final KataRecord record;
+    private final Store store;
 
     public KataSubmitPanel(Store store) {
         super();
-        this.directory = store.getDirectory();
+        this.store = store;
+        KataDirectory directory = store.getDirectory();
         this.submitService = new KataSubmitService(store, directory, this);
         this.input = directory.getInput();
         this.record = directory.getRecord();
@@ -53,17 +56,17 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     private void addButtonListeners() {
         attemptButton.addActionListener((e) -> {
             startSpinner(attemptCardLayout, attemptCardPanel);
-            this.submitService.attempt();
+            ApplicationManager.getApplication().executeOnPooledThread(this.submitService::attempt);
         });
 
         testButton.addActionListener((e) -> {
             startSpinner(testCardLayout, testCardPanel);
-            this.submitService.test();
+            ApplicationManager.getApplication().executeOnPooledThread(this.submitService::test);
         });
 
         commitButton.addActionListener((e) -> {
             startSpinner(commitCardLayout, commitCardPanel);
-            this.submitService.commit();
+            ApplicationManager.getApplication().executeOnPooledThread(this.submitService::commit);
         });
 
     }
@@ -77,7 +80,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         
         var constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.CENTER;
-        constraints.insets = new Insets(0, 0, 10, 0);
+        constraints.insets = JBUI.insetsBottom(10);
 
         JLabel titleLabel = new JLabel(record.getName());
         titleLabel.setFont(titleLabel.getFont().deriveFont(20f));
@@ -118,78 +121,101 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
     @Override
     public void notifyAttemptRunException(Exception e) {
-        attemptSuccessful = false;
-        stopSpinner(attemptCardLayout, attemptCardPanel);
-        setTextPaneText("#B1361E", "Ups, attempt failed with exception...", e.getMessage());
-        resetExitStatusPanel(4000);
+        ApplicationManager.getApplication().invokeLater(() -> {
+            attemptSuccessful = false;
+            stopSpinner(attemptCardLayout, attemptCardPanel);
+            setTextPaneText("#B1361E", "Ups, attempt failed with exception...", e.getMessage());
+            resetExitStatusPanel(4000);
+        });
     }
 
     @Override
     public void notifyAttemptSuccess(SubmitResponse submitResponse) {
-        stopSpinner(attemptCardLayout, attemptCardPanel);
-        if (submitResponse.getExitCode() == 0){
-            attemptSuccessful = true;
-            setTextPaneText("green", "Congrats, you passed all the test cases!", "You may now commit the solution!");
-        } else {
-            setTextPaneText("#B1361E","One or several test cases failed.", "See the test log in test.json");
-            resetExitStatusPanel(4000);
-        }
+        ApplicationManager.getApplication().invokeLater(() -> {
+            //store.getBrowser().loadURL(store.getBrowser().getCefBrowser().getURL());
+            stopSpinner(attemptCardLayout, attemptCardPanel);
+            if (submitResponse.getExitCode() == 0) {
+                commitButton.setEnabled(true);
+                attemptSuccessful = true;
+                setTextPaneText("green", "Congrats, you passed all the test cases!", "You may now commit the solution!");
+            } else {
+                commitButton.setEnabled(false);
+                setTextPaneText("#B1361E", "One or several test cases failed.", "See the test log in test.json");
+                resetExitStatusPanel(4000);
+            }
+        });
     }
 
     @Override
     public void notifyBadAttemptStatusCode(HttpResponse<String> response) {
-        attemptSuccessful = false;
-        stopSpinner(attemptCardLayout, attemptCardPanel);
-        setTextPaneText("#B1361E", "Ups, attempt failed with bad status code: " + response.statusCode(), "Perhaps log out, and log in would help?!");
-        resetExitStatusPanel(4000);
+        ApplicationManager.getApplication().invokeLater(() -> {
+            attemptSuccessful = false;
+            stopSpinner(attemptCardLayout, attemptCardPanel);
+            setTextPaneText("#B1361E", "Ups, attempt failed with bad status code: " + response.statusCode(), "Perhaps log out, and log in would help?!");
+            resetExitStatusPanel(6000);
+        });
     }
 
     @Override
     public void notifyTestSuccess(SubmitResponse submitResponse) {
-        attemptSuccessful = false;
-        stopSpinner(testCardLayout, testCardPanel);
-        if (submitResponse.getExitCode() == 0) {
-            setTextPaneText("green","All test cases passed!");
-        } else {
-            setTextPaneText("#B1361E","One or several test cases failed.", "See the test log in test.json");
-        }
-        resetExitStatusPanel(3600);
+        ApplicationManager.getApplication().invokeLater(() -> {
+            //store.getBrowser().loadURL(store.getBrowser().getCefBrowser().getURL());
+            attemptSuccessful = false;
+            stopSpinner(testCardLayout, testCardPanel);
+            if (submitResponse.getExitCode() == 0) {
+                setTextPaneText("green", "All test cases passed!");
+            } else {
+                setTextPaneText("#B1361E", "One or several test cases failed.", "See the test log in test.json");
+
+            }
+            resetExitStatusPanel(6000);
+        });
     }
 
     @Override
     public void notifyBadTestStatusCode(HttpResponse<String> response) {
-        stopSpinner(testCardLayout, testCardPanel);
-        setTextPaneText("#B1361E", "Ups, attempt failed with bad status code " + response.statusCode(), "Perhaps log out, and log in would help?!");
-        resetExitStatusPanel(4000);
+        ApplicationManager.getApplication().invokeLater(() -> {
+            stopSpinner(testCardLayout, testCardPanel);
+            setTextPaneText("#B1361E", "Ups, attempt failed with bad status code " + response.statusCode(), "Perhaps log out, and log in would help?!");
+            resetExitStatusPanel(6000);
+        });
     }
 
     @Override
     public void notifyTestRunException(Exception e) {
-        stopSpinner(testCardLayout, testCardPanel);
-        setTextPaneText("#B1361E","Ups, test run failed with exception: ", e.getMessage());
-        resetExitStatusPanel(3000);
+        ApplicationManager.getApplication().invokeLater(() -> {
+            stopSpinner(testCardLayout, testCardPanel);
+            setTextPaneText("#B1361E", "Ups, test run failed with exception: ", e.getMessage());
+            resetExitStatusPanel(3000);
+        });
     }
 
     @Override
     public void notifyCommitSuccess(HttpResponse<String> response) {
-        stopSpinner(commitCardLayout, commitCardPanel);
-        setTextPaneText("green", "Commit success!!!");
-        resetExitStatusPanel(5000);
+        ApplicationManager.getApplication().invokeLater(() -> {
+            //store.getBrowser().loadURL(store.getBrowser().getCefBrowser().getURL());
+            stopSpinner(commitCardLayout, commitCardPanel);
+            setTextPaneText("green", "Commit success!!!");
+            resetExitStatusPanel(5000);
+        });
     }
 
     @Override
     public void notifyCommitFailed(HttpResponse<String> response) {
-        stopSpinner(commitCardLayout, commitCardPanel);
-        setTextPaneText("#B1361E", "Ups, attempt failed with bad status code " + response.statusCode(), "Perhaps log out, and log in would help?!");
-        resetExitStatusPanel(4000);
+        ApplicationManager.getApplication().invokeLater(() -> {
+            stopSpinner(commitCardLayout, commitCardPanel);
+            setTextPaneText("#B1361E", "Ups, attempt failed with bad status code " + response.statusCode(), "Perhaps log out, and log in would help?!");
+            resetExitStatusPanel(6000);
+        });
     }
 
     @Override
     public void notifyCommitException(Exception e) {
-        stopSpinner(commitCardLayout, commitCardPanel);
-        setTextPaneText("#B1361E", "Ups, commit failed with exception...", e.getMessage());
-        resetExitStatusPanel(4000);
-        e.printStackTrace();
+        ApplicationManager.getApplication().invokeLater(() -> {
+            stopSpinner(commitCardLayout, commitCardPanel);
+            setTextPaneText("#B1361E", "Ups, commit failed with exception...", e.getMessage());
+            resetExitStatusPanel(6000);
+        });
     }
 
     private void setupCommitCardPanel() {
@@ -212,25 +238,21 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     }
 
     public void startSpinner(CardLayout layout, JPanel panel) {
-        SwingUtilities.invokeLater(() -> {
-            attemptSuccessful = false;
-            buttonList.forEach(button -> button.setEnabled(false));
-            layout.show(panel, "spinner");
-            revalidate();
-            repaint();
-        });
+        attemptSuccessful = false;
+        buttonList.forEach(button -> button.setEnabled(false));
+        layout.show(panel, "spinner");
+        revalidate();
+        repaint();
     }
 
     public void stopSpinner(CardLayout layout, JPanel panel) {
-        SwingUtilities.invokeLater(() -> {
-            buttonList.forEach(button -> button.setEnabled(true));
-            if (!attemptSuccessful) {
-                commitButton.setEnabled(false);
-            }
-            layout.show(panel, "button");
-            revalidate();
-            repaint();
-        });
+        buttonList.forEach(button -> button.setEnabled(true));
+        if (!attemptSuccessful) {
+            commitButton.setEnabled(false);
+        }
+        layout.show(panel, "button");
+        revalidate();
+        repaint();
     }
 
     private void addButtonsToList() {

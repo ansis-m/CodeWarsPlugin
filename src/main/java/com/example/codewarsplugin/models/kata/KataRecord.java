@@ -3,6 +3,7 @@ package com.example.codewarsplugin.models.kata;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 
@@ -19,6 +20,20 @@ public class KataRecord implements JsonSource{
     private String description;
     private Rank rank;
     private String[] tags;
+    private String workUrl;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KataRecord that = (KataRecord) o;
+        return id.equals(that.id) && name.equals(that.name) && slug.equals(that.slug) && selectedLanguage.equals(that.selectedLanguage);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, slug, selectedLanguage);
+    }
 
     @Override
     public String toString() {
@@ -123,6 +138,14 @@ public class KataRecord implements JsonSource{
 
     public void setLanguages(String[] languages) {
         this.languages = languages;
+    }
+
+    public void setWorkUrl(String url) {
+        this.workUrl = url;
+    }
+
+    public String getWorkUrl() {
+        return workUrl;
     }
 
     public class Rank {
