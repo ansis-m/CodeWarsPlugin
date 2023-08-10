@@ -1,7 +1,6 @@
 package com.example.codewarsplugin.state;
 
 import com.example.codewarsplugin.SidePanel;
-import com.example.codewarsplugin.components.OverlaySpinner;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBTabbedPane;

@@ -11,5 +11,5 @@ public interface KataSetupServiceClient {
 
     void loadWorkspaceTab(KataDirectory directory, boolean loadUrl);
 
-    void reset();
+    void loadWorkspace(KataDirectory directory, boolean loadUrl);
 }

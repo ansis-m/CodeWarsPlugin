@@ -34,9 +34,7 @@ public class KataSetupService implements FileServiceClient {
 
             KataDirectory directory = FileManager.createFiles(input, record, project, client);
             if (directory != null && directory.isComplete()){
-                client.loadWorkspaceTab(directory, false);
-            } else {
-                client.reset();
+                client.loadWorkspace(directory, false);
             }
         });
     }

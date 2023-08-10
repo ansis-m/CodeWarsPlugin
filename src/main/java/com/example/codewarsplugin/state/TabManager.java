@@ -27,6 +27,7 @@ import org.cef.handler.CefLoadHandlerAdapter;
 import javax.swing.*;
 
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -43,7 +44,8 @@ public class TabManager implements KataSetupServiceClient {
     private final JPanel spinner = new OverlaySpinner();
     private final KataSetupService setupService = new KataSetupService();
     private final KataDirectoryParser parser;
-    private final AtomicBoolean kataLoadIsInProgress = new AtomicBoolean(false);
+    private final AtomicBoolean shouldFetchAndCreateFilesOnUrlLoad = new AtomicBoolean(true);
+    private final JPanel browserPanel = new JPanel(new BorderLayout());
 
     //EDT on initialization
     public TabManager(Store store, Project project) {
@@ -57,8 +59,8 @@ public class TabManager implements KataSetupServiceClient {
 
     //EDT on initialization
     public void setupTabs(){
-
-        jbTabbedPane.insertTab(DASHBOARD, AllIcons.Javaee.WebService, browser.getComponent(), "Search and select kata!", jbTabbedPane.getTabCount());
+        browserPanel.add(browser.getComponent(), BorderLayout.CENTER);
+        jbTabbedPane.insertTab(DASHBOARD, AllIcons.Javaee.WebService, browserPanel, "Search and select kata!", jbTabbedPane.getTabCount());
         final CefLoadHandler handler = getBrowserListener();
         client.addLoadHandler(handler, browser.getCefBrowser());
         browser.loadURL(SIGN_IN_URL);
@@ -117,24 +119,21 @@ public class TabManager implements KataSetupServiceClient {
 
     private CefLoadHandler getBrowserListener() {
         return new CefLoadHandlerAdapter() {
-
-            @Override
-            public void onLoadingStateChange(
-                    CefBrowser browser, boolean isLoading, boolean canGoBack, boolean canGoForward) {
-
-                if(browser.getURL().contains("train") && !kataLoadIsInProgress.get()) {
-                    ApplicationManager.getApplication().invokeLater(() -> showOverlaySpinner(true));
-                    kataLoadIsInProgress.set(true);
-                    final String url = browser.getURL();
-                    setupKata(url);
-                }
-            }
             @Override
             public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
                 if(frame.getURL().equals(DASHBOARD_URL) && (previousUrl.equals(SIGN_IN_URL) || previousUrl.equals(""))){
                     ApplicationManager.getApplication().invokeLater(() -> getCookies());
+                } else if(browser.getURL().contains("train") && shouldFetchAndCreateFilesOnUrlLoad.get() && !previousUrl.equals(browser.getURL())) {
+                    System.out.println("Enter the browser listener: " + shouldFetchAndCreateFilesOnUrlLoad.get());
+                    System.out.println("url: " + browser.getURL());
+                    ApplicationManager.getApplication().invokeLater(() -> showOverlaySpinner(true));
+                    final String url = browser.getURL();
+                    setupKata(url);
+                } else {
+                    System.out.println("Pass the browser listener: " + shouldFetchAndCreateFilesOnUrlLoad.get());
                 }
                 previousUrl = browser.getURL();
+                shouldFetchAndCreateFilesOnUrlLoad.set(true);
             }
         };
     }
@@ -146,11 +145,6 @@ public class TabManager implements KataSetupServiceClient {
 
     public void setupKata(String url){
         setupService.setup(url, project, this);
-    }
-
-
-    public Store getStore() {
-        return store;
     }
 
     @Override
@@ -170,7 +164,6 @@ public class TabManager implements KataSetupServiceClient {
                     "Ups, Something Went Wrong...",
                     IconLoader.getIcon("/icons/new_cw_logo.svg", SidePanel.class)
             );
-            kataLoadIsInProgress.set(false);
             jbTabbedPane.revalidate();
             jbTabbedPane.repaint();
         });
@@ -181,8 +174,37 @@ public class TabManager implements KataSetupServiceClient {
         ensure it is called from a proper side thread
      */
 
+
+    //called form the project tab
     @Override
     public void loadWorkspaceTab(KataDirectory directory, boolean loadUrl) {
+
+        store.setCurrentKataDirectory(directory);
+        WriteCommandAction.runWriteCommandAction(project, openFiles(directory));
+
+        KataSubmitPanel submitPanel = new KataSubmitPanel(store);
+        int index = getTabIndex(WORKSPACE);
+        int aboutIndex = getTabIndex(ABOUT);
+        if(loadUrl && directory.getRecord().getWorkUrl() != null) {
+            System.out.println("load work url on selector: " + directory.getRecord().getWorkUrl());
+            int i = getTabIndex(DASHBOARD);
+            jbTabbedPane.setSelectedIndex(i);
+
+            browser.loadURL(directory.getRecord().getWorkUrl());
+        }
+        if (index == -1) {
+            jbTabbedPane.insertTab(WORKSPACE, AllIcons.Actions.Commit, submitPanel, "Test and submit!", aboutIndex != -1? aboutIndex : jbTabbedPane.getTabCount());
+        } else {
+            jbTabbedPane.setComponentAt(index, submitPanel);
+        }
+        //jbTabbedPane.setSelectedIndex(getTabIndex(WORKSPACE));
+            jbTabbedPane.revalidate();
+            jbTabbedPane.repaint();
+    }
+
+    //called from the browser listener
+    @Override
+    public void loadWorkspace(KataDirectory directory, boolean loadUrl) {
 
         store.setCurrentKataDirectory(directory);
         WriteCommandAction.runWriteCommandAction(project, openFiles(directory));
@@ -192,25 +214,16 @@ public class TabManager implements KataSetupServiceClient {
             KataSubmitPanel submitPanel = new KataSubmitPanel(store);
             int index = getTabIndex(WORKSPACE);
             int aboutIndex = getTabIndex(ABOUT);
-            if(loadUrl && directory.getRecord().getWorkUrl() != null) {
-                browser.loadURL(directory.getRecord().getUrl());
-            }
+
             if (index == -1) {
                 jbTabbedPane.insertTab(WORKSPACE, AllIcons.Actions.Commit, submitPanel, "Test and submit!", aboutIndex != -1? aboutIndex : jbTabbedPane.getTabCount());
             } else {
                 jbTabbedPane.setComponentAt(index, submitPanel);
             }
-            jbTabbedPane.setSelectedIndex(getTabIndex(WORKSPACE));
-            kataLoadIsInProgress.set(false);
             showOverlaySpinner(false);
             jbTabbedPane.revalidate();
             jbTabbedPane.repaint();
         });
-    }
-
-    @Override
-    public void reset() {
-        kataLoadIsInProgress.set(false);
     }
 
     public void showOverlaySpinner(boolean show) {
@@ -223,7 +236,7 @@ public class TabManager implements KataSetupServiceClient {
         if (show) {
             jbTabbedPane.setComponentAt(index, spinner);
         } else {
-            jbTabbedPane.setComponentAt(index, browser.getComponent());
+            jbTabbedPane.setComponentAt(index, browserPanel);
         }
         jbTabbedPane.revalidate();
         jbTabbedPane.repaint();
@@ -251,4 +264,7 @@ public class TabManager implements KataSetupServiceClient {
         return -1;
     }
 
+    public AtomicBoolean getShouldFetchAndCreateFilesOnUrlLoad() {
+        return shouldFetchAndCreateFilesOnUrlLoad;
+    }
 }
