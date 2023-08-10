@@ -45,6 +45,7 @@ public class TabManager implements KataSetupServiceClient {
     private final KataSetupService setupService = new KataSetupService();
     private final KataDirectoryParser parser;
     private final AtomicBoolean shouldFetchAndCreateFilesOnUrlLoad = new AtomicBoolean(true);
+    private final AtomicBoolean shouldReloadUrl = new AtomicBoolean(false);
     private final JPanel browserPanel = new JPanel(new BorderLayout());
 
     //EDT on initialization
@@ -79,7 +80,6 @@ public class TabManager implements KataSetupServiceClient {
     // This is called from EDT on init
     private void addTabListeners() {
 
-        System.out.println("add listeners: " + SwingUtilities.isEventDispatchThread());
         jbTabbedPane.addChangeListener(e -> {
             int selectedIndex = jbTabbedPane.getSelectedIndex();
             String title = jbTabbedPane.getTitleAt(selectedIndex);
@@ -88,10 +88,20 @@ public class TabManager implements KataSetupServiceClient {
                     loadProjectTab();
                     break;
                 }
-                default:
+                case (DASHBOARD): {
+                    reloadBrowser();
                     break;
+                }
             }
         });
+    }
+
+    private void reloadBrowser() {
+        if (shouldReloadUrl.get()) {
+            browser.getCefBrowser().reload();
+            shouldReloadUrl.set(false);
+            shouldFetchAndCreateFilesOnUrlLoad.set(false);
+        }
     }
 
 
@@ -134,6 +144,7 @@ public class TabManager implements KataSetupServiceClient {
                 }
                 previousUrl = browser.getURL();
                 shouldFetchAndCreateFilesOnUrlLoad.set(true);
+                shouldReloadUrl.set(false);
             }
         };
     }
@@ -266,5 +277,9 @@ public class TabManager implements KataSetupServiceClient {
 
     public AtomicBoolean getShouldFetchAndCreateFilesOnUrlLoad() {
         return shouldFetchAndCreateFilesOnUrlLoad;
+    }
+
+    public AtomicBoolean getShouldReloadUrl() {
+        return shouldReloadUrl;
     }
 }

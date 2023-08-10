@@ -56,16 +56,19 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     private void addButtonListeners() {
         attemptButton.addActionListener((e) -> {
             startSpinner(attemptCardLayout, attemptCardPanel);
+            store.getManager().getShouldReloadUrl().set(true);
             ApplicationManager.getApplication().executeOnPooledThread(this.submitService::attempt);
         });
 
         testButton.addActionListener((e) -> {
             startSpinner(testCardLayout, testCardPanel);
+            store.getManager().getShouldReloadUrl().set(true);
             ApplicationManager.getApplication().executeOnPooledThread(this.submitService::test);
         });
 
         commitButton.addActionListener((e) -> {
             startSpinner(commitCardLayout, commitCardPanel);
+            store.getManager().getShouldReloadUrl().set(true);
             ApplicationManager.getApplication().executeOnPooledThread(this.submitService::commit);
         });
 
