@@ -79,7 +79,6 @@ public class TabManager implements KataSetupServiceClient {
 
     // This is called from EDT on init
     private void addTabListeners() {
-
         jbTabbedPane.addChangeListener(e -> {
             int selectedIndex = jbTabbedPane.getSelectedIndex();
             String title = jbTabbedPane.getTitleAt(selectedIndex);
@@ -97,13 +96,12 @@ public class TabManager implements KataSetupServiceClient {
     }
 
     private void reloadBrowser() {
-        if (shouldReloadUrl.get()) {
+        if (shouldReloadUrl.get() && browser.getCefBrowser().getURL().contains("train")) {
             browser.getCefBrowser().reload();
-            shouldReloadUrl.set(false);
             shouldFetchAndCreateFilesOnUrlLoad.set(false);
         }
+        shouldReloadUrl.set(false);
     }
-
 
     //called from EDT on tab listener
     //called from EDT on login
@@ -163,7 +161,6 @@ public class TabManager implements KataSetupServiceClient {
         return project;
     }
 
-    //this comes from a side thread
     @Override
     public void notifyKataFileCreationFail(String reason) {
 
@@ -180,13 +177,7 @@ public class TabManager implements KataSetupServiceClient {
         });
     }
 
-
-    /*
-        ensure it is called from a proper side thread
-     */
-
-
-    //called form the project tab
+    //called form the project tab on EDT
     @Override
     public void loadWorkspaceTab(KataDirectory directory, boolean loadUrl) {
 
@@ -197,10 +188,8 @@ public class TabManager implements KataSetupServiceClient {
         int index = getTabIndex(WORKSPACE);
         int aboutIndex = getTabIndex(ABOUT);
         if(loadUrl && directory.getRecord().getWorkUrl() != null) {
-            System.out.println("load work url on selector: " + directory.getRecord().getWorkUrl());
-            int i = getTabIndex(DASHBOARD);
-            jbTabbedPane.setSelectedIndex(i);
-
+            int webIndex = getTabIndex(DASHBOARD);
+            jbTabbedPane.setSelectedIndex(webIndex);
             browser.loadURL(directory.getRecord().getWorkUrl());
         }
         if (index == -1) {
@@ -208,9 +197,8 @@ public class TabManager implements KataSetupServiceClient {
         } else {
             jbTabbedPane.setComponentAt(index, submitPanel);
         }
-        //jbTabbedPane.setSelectedIndex(getTabIndex(WORKSPACE));
-            jbTabbedPane.revalidate();
-            jbTabbedPane.repaint();
+        jbTabbedPane.revalidate();
+        jbTabbedPane.repaint();
     }
 
     //called from the browser listener
@@ -243,7 +231,6 @@ public class TabManager implements KataSetupServiceClient {
         if(index == -1) {
             return;
         }
-
         if (show) {
             jbTabbedPane.setComponentAt(index, spinner);
         } else {
@@ -253,20 +240,17 @@ public class TabManager implements KataSetupServiceClient {
         jbTabbedPane.repaint();
     }
 
-
     private Runnable openFiles(KataDirectory directory) {
         return () -> {
-                OpenFileDescriptor descriptor = new OpenFileDescriptor(project, directory.getTestFile());
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                fileEditorManager.openTextEditor(descriptor, false);
-                descriptor = new OpenFileDescriptor(project, directory.getWorkFile());
-                fileEditorManager.openTextEditor(descriptor, true);
+            OpenFileDescriptor descriptor = new OpenFileDescriptor(project, directory.getTestFile());
+            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+            fileEditorManager.openTextEditor(descriptor, false);
+            descriptor = new OpenFileDescriptor(project, directory.getWorkFile());
+            fileEditorManager.openTextEditor(descriptor, true);
         };
     }
 
-
     private int getTabIndex(String title) {
-
         for(int i = 0; i < jbTabbedPane.getTabCount(); i++) {
             if (jbTabbedPane.getTitleAt(i).equals(title)) {
                 return i;

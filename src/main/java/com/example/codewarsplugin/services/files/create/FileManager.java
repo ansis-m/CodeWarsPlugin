@@ -10,18 +10,14 @@ import com.intellij.openapi.project.Project;
 
 import java.util.ArrayList;
 
-
 public class FileManager {
     public static KataDirectory createFiles(KataInput input, KataRecord record, Project project, KataSetupServiceClient client) {
 
-        //todo check if exists and return
         ArrayList<KataDirectory> directories = new KataDirectoryParser(project).getDirectoryList();
         for(KataDirectory d: directories){
             if (d.getRecord().equals(record)) {
-                System.out.println("winner winner chicken dinner");
                 return d;
             }
-
         }
 
         FileService service = null;
@@ -39,10 +35,8 @@ public class FileManager {
             try{
                 finalService.createDirectory();
                 System.out.println("created dir\n");
-
                 finalService.initDirectory();
                 System.out.println("init dir\n");
-
                 finalService.createTestFile();
                 System.out.println("created test files\n");
                 finalService.createWorkFile();
@@ -54,7 +48,6 @@ public class FileManager {
             } catch (Exception e) {
                 client.notifyKataFileCreationFail("Kata setup failed with " + e.getClass().getSimpleName() + ".\n " + e.getMessage());
             }
-
         });
         return service.createKataDirectory();
     }
