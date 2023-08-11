@@ -93,4 +93,8 @@ public class KataDirectory {
     public void setWorkDirectory(VirtualFile workDirectory) {
         this.workDirectory = workDirectory;
     }
+
+    public boolean isTheSame(KataDirectory directory) {
+        return directory != null && directory.getRecord().equals(this.record);
+    }
 }

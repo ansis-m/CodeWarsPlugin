@@ -33,6 +33,7 @@ public class KataSelectorPanel extends JPanel {
         this.store = store;
         parser = new KataDirectoryParser(store.getProject());
         kataDirectoryList = parser.getDirectoryList();
+        removeCurrentDirectory();
         model = new DefaultComboBoxModel<>(kataDirectoryList.toArray());
         directoryBox = new ComboBox<>(model);
 
@@ -90,6 +91,7 @@ public class KataSelectorPanel extends JPanel {
                 new FileManager().deleteFiles(directory, store.getProject());
 
                 kataDirectoryList = parser.getDirectoryList();
+                removeCurrentDirectory();
                 model.removeAllElements();
                 model.addAll(kataDirectoryList);
                 if (model.getSize() > 0) {
@@ -100,5 +102,9 @@ public class KataSelectorPanel extends JPanel {
                 repaint();
             }
         });
+    }
+
+    private void removeCurrentDirectory() {
+        kataDirectoryList.removeIf(directory -> directory.isTheSame(store.getDirectory()));
     }
 }
