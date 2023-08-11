@@ -29,7 +29,7 @@ public class JavascriptFileService extends AbstractFileService{
         return "codewars-" + record.getSlug().replaceAll("[^a-zA-Z0-9-_]+", "-").replaceAll("-+", "-");
     }
 
-    @Override
+
     public String getFileBaseName(String input) {
         Matcher matcher = classPattern.matcher(input);
 

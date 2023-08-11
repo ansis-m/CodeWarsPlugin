@@ -1,15 +1,13 @@
 package com.example.codewarsplugin.services.files.parse;
 
 import com.example.codewarsplugin.SidePanel;
-import com.example.codewarsplugin.exceptions.ModuleNotFoundException;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
-import com.example.codewarsplugin.services.files.create.FileService;
+import com.example.codewarsplugin.services.files.create.AbstractFileService;
 import com.example.codewarsplugin.services.files.create.FileServiceFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
@@ -19,13 +17,10 @@ import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static com.example.codewarsplugin.config.StringConstants.MODULE_NOT_FOUND;
 
 public class KataDirectoryParser {
 
@@ -101,7 +96,7 @@ public class KataDirectoryParser {
         }
 
         try {
-            FileService fileService = FileServiceFactory.createFileService(input, record, project);
+            AbstractFileService fileService = FileServiceFactory.createFileService(input, record, project);
             String testFileName = fileService.getTestFileName();
             String workFileName = fileService.getFileName();
 

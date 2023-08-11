@@ -17,6 +17,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.example.codewarsplugin.config.StringConstants.*;
 
-public abstract class AbstractFileService implements FileService {
+public abstract class AbstractFileService {
 
     final KataInput input;
     final KataRecord record;
@@ -48,7 +49,6 @@ public abstract class AbstractFileService implements FileService {
         this.project = project;
     }
 
-    @Override
     public void createDirectory() throws IOException {
 
         VirtualFile newDirectory = sourcesRoot.createChildDirectory(this, getDirectoryName());
@@ -59,7 +59,6 @@ public abstract class AbstractFileService implements FileService {
         this.metaData = metaData;
     }
 
-    @Override
     public KataDirectory createKataDirectory() {
 
         KataDirectory kataDirectory = new KataDirectory();
@@ -75,12 +74,10 @@ public abstract class AbstractFileService implements FileService {
         return kataDirectory;
     }
 
-    @Override
     public void createRecordFile() throws IOException {
         createJsonFile(record);
     }
 
-    @Override
     public void createInputFile() throws IOException {
         createJsonFile(input);
     }
@@ -99,22 +96,18 @@ public abstract class AbstractFileService implements FileService {
 
     }
 
-    @Override
     public void createWorkFile() throws IOException {
         createFile(true);
     }
 
-    @Override
     public void createTestFile() throws IOException {
         createFile(false);
     }
 
-    @Override
     public void createFile(boolean isWorkFile) throws IOException {
 
         VirtualFile directory = isWorkFile? workDirectory : testDirectory;
-
-
+        
         if (directory != null) {
             VirtualFile file = null;
             file = directory.createChildData(this, isWorkFile? getFileName() : getTestFileName());
@@ -129,7 +122,6 @@ public abstract class AbstractFileService implements FileService {
         }
     }
 
-    @Override
     public void getModules(String language) {
         ModuleManager moduleManager = ModuleManager.getInstance(project);
         for (Module module : moduleManager.getModules()) {
@@ -148,12 +140,11 @@ public abstract class AbstractFileService implements FileService {
         }
     }
 
-    private boolean shouldAddModule(ModuleType<?> moduleType, String language) {
+    private boolean shouldAddModule(@NotNull ModuleType<?> moduleType, String language) {
         return (moduleType.getName().toLowerCase().contains(language) && !moduleType.getName().toLowerCase().contains("unknown")) ||
                 (moduleType.getName().toLowerCase().contains("web") && language.equals("javascript"));
     }
 
-    @Override
     public Module pickModule() {
         if (modules.size() == 0){
             throw new RuntimeException("Modules array empty!");
@@ -168,7 +159,6 @@ public abstract class AbstractFileService implements FileService {
         }
     }
 
-    @Override
     public void getSourcesRoot() {
 
         Module module = pickModule();
@@ -193,7 +183,12 @@ public abstract class AbstractFileService implements FileService {
         }
     }
 
+    public abstract String getTestFileName();
+    public abstract String getFileName();
     protected abstract String getRecordFileName();
-
     protected abstract String getInputFileName();
+    protected abstract String getDirectoryName();
+    protected abstract byte[] getFileContent(boolean isWorkFile);
+
+    public abstract void initDirectory();
 }

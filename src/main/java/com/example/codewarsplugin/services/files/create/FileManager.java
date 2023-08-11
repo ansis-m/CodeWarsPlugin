@@ -20,7 +20,7 @@ public class FileManager {
             }
         }
 
-        FileService service = null;
+        AbstractFileService service = null;
         try {
             service = FileServiceFactory.createFileService(input, record, project);
             service.getModules(input.getLanguageName());
@@ -29,7 +29,7 @@ public class FileManager {
             client.notifyKataFileCreationFail("Kata setup failed with " + e.getClass().getSimpleName() + ".\n " + e.getMessage());
             return null;
         }
-        FileService finalService = service;
+        AbstractFileService finalService = service;
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
             try{

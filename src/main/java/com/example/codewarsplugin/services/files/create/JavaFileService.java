@@ -43,7 +43,7 @@ public class JavaFileService extends AbstractFileService {
         return getFileBaseName(input.getSetup()) + ".java";
     }
 
-    @Override
+
     public String getFileBaseName(String input){
 
         Matcher matcher = classPattern.matcher(input);

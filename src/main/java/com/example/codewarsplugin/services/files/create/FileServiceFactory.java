@@ -15,8 +15,8 @@ public class FileServiceFactory {
 
     public static final List<String> SUPPORTED_LANGUAGES = List.of("java", "python", "javascript");
 
-    private final static String PACKAGE = FileService.class.getPackageName();
-    public static FileService createFileService(KataInput input, KataRecord record, Project project) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, LanguageNotSupportedException {
+    private final static String PACKAGE = AbstractFileService.class.getPackageName();
+    public static AbstractFileService createFileService(KataInput input, KataRecord record, Project project) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, LanguageNotSupportedException {
 
         SUPPORTED_LANGUAGES.stream()
                 .filter(language -> language.equals(input.getLanguageName()))
@@ -26,7 +26,7 @@ public class FileServiceFactory {
         String className = capitalize(input.getLanguageName()) + "FileService";
         Class<?> serviceClass = Class.forName(PACKAGE + "." + className);
         Constructor<?> constructor = serviceClass.getDeclaredConstructor(KataInput.class, KataRecord.class, Project.class);
-        return (FileService) constructor.newInstance(input, record, project);
+        return (AbstractFileService) constructor.newInstance(input, record, project);
 
     }
 
