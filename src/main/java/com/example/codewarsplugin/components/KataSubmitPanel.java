@@ -1,5 +1,6 @@
 package com.example.codewarsplugin.components;
 
+import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
@@ -8,6 +9,8 @@ import com.example.codewarsplugin.services.katas.KataSubmitService;
 import com.example.codewarsplugin.services.katas.KataSubmitServiceClient;
 import com.example.codewarsplugin.state.Store;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.AnimatedIcon;
 import com.intellij.util.ui.JBUI;
 
@@ -16,6 +19,7 @@ import java.awt.*;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
+import static com.example.codewarsplugin.config.StringConstants.MESSAGE_ICON;
 import static com.example.codewarsplugin.services.utils.Colors.getColor;
 
 public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
@@ -32,7 +36,6 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     private final JLabel commitSpinner = new JLabel(new AnimatedIcon.Big());
     private final JPanel commitCardPanel = new JPanel();
     private final CardLayout commitCardLayout = new CardLayout();
-    private final JTextPane textPane = new JTextPane();
     private final ArrayList<JButton> buttonList = new ArrayList<>();
     private boolean attemptSuccessful = false;
     private final KataSubmitService submitService;
@@ -79,7 +82,6 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         setupAttemptCardPanel();
         setupTestCardPanel();
         setupCommitCardPanel();
-        setupTextPane();
         
         var constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.CENTER;
@@ -110,16 +112,6 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         constraints.gridy = 2;
 
         add(buttonPanel, constraints);
-
-        constraints.gridx = 0;
-        constraints.gridy = 3;
-        add(textPane, constraints);
-    }
-
-    private void setupTextPane() {
-        textPane.setContentType("text/html");
-        textPane.setEditable(false);
-        textPane.setPreferredSize(new Dimension(370, 200));
     }
 
     @Override
@@ -127,24 +119,21 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         ApplicationManager.getApplication().invokeLater(() -> {
             attemptSuccessful = false;
             stopSpinner(attemptCardLayout, attemptCardPanel);
-            setTextPaneText("#B1361E", "Ups, attempt failed with exception...", e.getMessage());
-            resetExitStatusPanel(4000);
+            Messages.showMessageDialog("Ups, attempt failed with exception..." + e.getMessage(), "Attempt Failed", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
         });
     }
 
     @Override
     public void notifyAttemptSuccess(SubmitResponse submitResponse) {
         ApplicationManager.getApplication().invokeLater(() -> {
-            //store.getBrowser().loadURL(store.getBrowser().getCefBrowser().getURL());
             stopSpinner(attemptCardLayout, attemptCardPanel);
             if (submitResponse.getExitCode() == 0) {
                 commitButton.setEnabled(true);
                 attemptSuccessful = true;
-                setTextPaneText("green", "Congrats, you passed all the test cases!", "You may now commit the solution!");
+                Messages.showMessageDialog("Congrats, you passed all the test cases! \nYou may now commit the solution!", "Attempt Success!", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
             } else {
                 commitButton.setEnabled(false);
-                setTextPaneText("#B1361E", "One or several test cases failed.", "See the test log in test.json");
-                resetExitStatusPanel(4000);
+                Messages.showMessageDialog("One or several test cases failed. \nSee the test log in test.md", "Attempt Failed!", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
             }
         });
     }
@@ -154,24 +143,20 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         ApplicationManager.getApplication().invokeLater(() -> {
             attemptSuccessful = false;
             stopSpinner(attemptCardLayout, attemptCardPanel);
-            setTextPaneText("#B1361E", "Ups, attempt failed with bad status code: " + response.statusCode(), "Perhaps log out, and log in would help?!");
-            resetExitStatusPanel(6000);
+            Messages.showMessageDialog("Ups, attempt failed with bad status code: " + response.statusCode() + "\nPerhaps log out, and log in would help?!", "Attempt Failed!", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
         });
     }
 
     @Override
     public void notifyTestSuccess(SubmitResponse submitResponse) {
         ApplicationManager.getApplication().invokeLater(() -> {
-            //store.getBrowser().loadURL(store.getBrowser().getCefBrowser().getURL());
             attemptSuccessful = false;
             stopSpinner(testCardLayout, testCardPanel);
             if (submitResponse.getExitCode() == 0) {
-                setTextPaneText("green", "All test cases passed!");
+                Messages.showMessageDialog("All test cases passed!", "Attempt Success!", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
             } else {
-                setTextPaneText("#B1361E", "One or several test cases failed.", "See the test log in test.json");
-
+                Messages.showMessageDialog("One or several test cases failed. \nSee the test log in test.md", "Attempt Failed!", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
             }
-            resetExitStatusPanel(6000);
         });
     }
 
@@ -179,8 +164,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     public void notifyBadTestStatusCode(HttpResponse<String> response) {
         ApplicationManager.getApplication().invokeLater(() -> {
             stopSpinner(testCardLayout, testCardPanel);
-            setTextPaneText("#B1361E", "Ups, attempt failed with bad status code " + response.statusCode(), "Perhaps log out, and log in would help?!");
-            resetExitStatusPanel(6000);
+            Messages.showMessageDialog("Ups, attempt failed with bad status code: " + response.statusCode() + "\nPerhaps log out, and log in would help?!", "Attempt Failed!", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
         });
     }
 
@@ -188,18 +172,15 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     public void notifyTestRunException(Exception e) {
         ApplicationManager.getApplication().invokeLater(() -> {
             stopSpinner(testCardLayout, testCardPanel);
-            setTextPaneText("#B1361E", "Ups, test run failed with exception: ", e.getMessage());
-            resetExitStatusPanel(3000);
+            Messages.showMessageDialog("Ups, attempt failed with exception..." + e.getMessage(), "Attempt Failed", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
         });
     }
 
     @Override
     public void notifyCommitSuccess(HttpResponse<String> response) {
         ApplicationManager.getApplication().invokeLater(() -> {
-            //store.getBrowser().loadURL(store.getBrowser().getCefBrowser().getURL());
             stopSpinner(commitCardLayout, commitCardPanel);
-            setTextPaneText("green", "Commit success!!!");
-            resetExitStatusPanel(5000);
+            Messages.showMessageDialog("Congrats, you commited your solution! \nSelect a new Kata!", "Commit Success!", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
         });
     }
 
@@ -207,8 +188,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     public void notifyCommitFailed(HttpResponse<String> response) {
         ApplicationManager.getApplication().invokeLater(() -> {
             stopSpinner(commitCardLayout, commitCardPanel);
-            setTextPaneText("#B1361E", "Ups, attempt failed with bad status code " + response.statusCode(), "Perhaps log out, and log in would help?!");
-            resetExitStatusPanel(6000);
+            Messages.showMessageDialog("Ups, attempt failed with bad status code: " + response.statusCode() + "\nPerhaps log out, and log in would help?!", "Attempt Failed!", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
         });
     }
 
@@ -216,8 +196,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     public void notifyCommitException(Exception e) {
         ApplicationManager.getApplication().invokeLater(() -> {
             stopSpinner(commitCardLayout, commitCardPanel);
-            setTextPaneText("#B1361E", "Ups, commit failed with exception...", e.getMessage());
-            resetExitStatusPanel(6000);
+            Messages.showMessageDialog("Ups, attempt failed with exception..." + e.getMessage(), "Attempt Failed", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
         });
     }
 
@@ -262,29 +241,5 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         buttonList.add(testButton);
         buttonList.add(attemptButton);
         buttonList.add(commitButton);
-    }
-
-    private void resetExitStatusPanel(int time){
-        Timer timer = new Timer(time, e -> SwingUtilities.invokeLater(() -> {
-            setTextPaneText("white","");
-            revalidate();
-            repaint();
-        }));
-        timer.setRepeats(false);
-        timer.start();
-    }
-
-
-    private void setTextPaneText(String color, String... args){
-
-        StringBuilder builder = new StringBuilder("<html><body style='font-family: " + UIManager.getFont("Label.font").getFamily()+ "; font-size: 13px; color: " + color + ";'><div style='text-align: center;'>");
-        for(var arg : args) {
-            builder.append(arg);
-            builder.append("<br>");
-        }
-        builder.append("</div></body></html>");
-        textPane.setText(builder.toString());
-        revalidate();
-        repaint();
     }
 }

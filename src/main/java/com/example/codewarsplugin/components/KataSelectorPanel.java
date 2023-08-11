@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static com.example.codewarsplugin.config.StringConstants.MESSAGE_ICON;
+
 public class KataSelectorPanel extends JPanel {
 
     private final ComboBox<Object> directoryBox;
@@ -22,7 +24,7 @@ public class KataSelectorPanel extends JPanel {
     private final JButton selectorButton = new JButton("Setup Kata");
     private final JButton deleteButton = new JButton("Delete Kata");
     private final JPanel innerPanel = new JPanel(new GridBagLayout());
-    private final JLabel title = new JLabel("", IconLoader.getIcon("/icons/new_cw_logo.svg", SidePanel.class), JLabel.CENTER);
+    private final JLabel title = new JLabel("", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class), JLabel.CENTER);
     private final Store store;
     private final TabManager manager;
     private ArrayList<KataDirectory> kataDirectoryList;
@@ -85,7 +87,7 @@ public class KataSelectorPanel extends JPanel {
 
         deleteButton.addActionListener((event) -> {
             var directory = (KataDirectory) directoryBox.getSelectedItem();
-            int result = Messages.showOkCancelDialog("All \"" + directory.getRecord().getName() + "\" kata files will be deleted!", "Confirm Delete Kata Files", "Ok", "Cancel", IconLoader.getIcon("/icons/new_cw_logo.svg", SidePanel.class));
+            int result = Messages.showOkCancelDialog("All \"" + directory.getRecord().getName() + "\" kata files will be deleted!", "Confirm Delete Kata Files", "Ok", "Cancel", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
             System.out.println("Message select: " + result);
             if (result == 0) {
                 new FileManager().deleteFiles(directory, store.getProject());

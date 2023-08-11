@@ -153,7 +153,7 @@ public abstract class AbstractFileService {
         } else {
             AtomicInteger index = new AtomicInteger(0);
             ApplicationManager.getApplication().invokeAndWait(() -> {
-                index.set(Messages.showIdeaMessageDialog(project, String.format(SEVERAL_MODULES, input.getLanguageName()), String.format(PICK_MODULE, input.getLanguageName()), modules.stream().map(Module::getName).toArray(String[]::new), 0, IconLoader.getIcon("/icons/new_cw_logo.svg", SidePanel.class), null));
+                index.set(Messages.showIdeaMessageDialog(project, String.format(SEVERAL_MODULES, input.getLanguageName()), String.format(PICK_MODULE, input.getLanguageName()), modules.stream().map(Module::getName).toArray(String[]::new), 0, IconLoader.getIcon(MESSAGE_ICON, SidePanel.class), null));
             });
             return modules.get(index.get());
         }
@@ -175,7 +175,7 @@ public abstract class AbstractFileService {
         } else if (sourcesRoots.size() > 1) {
             AtomicInteger index = new AtomicInteger(0);
             ApplicationManager.getApplication().invokeAndWait(() -> {
-                index.set(Messages.showIdeaMessageDialog(project, SEVERAL_SOURCES, PICK_SOURCE, sourcesRoots.stream().map(VirtualFile::getName).toArray(String[]::new), 0, IconLoader.getIcon("/icons/new_cw_logo.svg", SidePanel.class), null));
+                index.set(Messages.showIdeaMessageDialog(project, SEVERAL_SOURCES, PICK_SOURCE, sourcesRoots.stream().map(VirtualFile::getName).toArray(String[]::new), 0, IconLoader.getIcon(MESSAGE_ICON, SidePanel.class), null));
             });
             this.sourcesRoot = sourcesRoots.get(index.get());
         } else {

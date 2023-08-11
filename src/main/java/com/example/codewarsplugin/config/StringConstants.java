@@ -7,6 +7,8 @@ public class StringConstants {
     public static final String AUTHORIZE_URL = "https://www.codewars.com/api/v1/runner/authorize";
     public static final String KATA_URL = "https://www.codewars.com/kata";
     public static final String BASE_URL = "https://www.codewars.com";
+
+    public static String MESSAGE_ICON = "/icons/new_cw_logo.svg";
     public static final String FILENAME = "test.json";
     public static final String DASHBOARD = "Dashboard";
     public static final String WORKSPACE = "Workspace";

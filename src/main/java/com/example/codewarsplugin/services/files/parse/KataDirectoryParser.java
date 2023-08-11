@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.example.codewarsplugin.config.StringConstants.MESSAGE_ICON;
+
 public class KataDirectoryParser {
 
     private final Project project;
@@ -114,7 +116,7 @@ public class KataDirectoryParser {
             ApplicationManager.getApplication().invokeLater(() -> Messages.showMessageDialog(
                     "Project directory parsing failed with " + e.getClass().getSimpleName() + ".\n " + e.getMessage(),
                     "Ups, Something Went Wrong...",
-                    IconLoader.getIcon("/icons/new_cw_logo.svg", SidePanel.class)
+                    IconLoader.getIcon(MESSAGE_ICON, SidePanel.class)
             ));
         }
 

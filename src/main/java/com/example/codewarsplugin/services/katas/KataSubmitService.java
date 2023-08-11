@@ -53,10 +53,6 @@ public class KataSubmitService {
 
     private void getToken(){
 
-        if (token != null) {
-            return;
-        }
-
         String csrfToken = CookieService.getCsrfToken();
         String sessionId = CookieService.getSessionId();
 
@@ -73,8 +69,7 @@ public class KataSubmitService {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             token = objectMapper.readValue(response.body(), Token.class);
 
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
     }
 
     public void attempt(){

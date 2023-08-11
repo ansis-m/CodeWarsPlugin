@@ -166,7 +166,7 @@ public class TabManager implements KataSetupServiceClient {
             Messages.showMessageDialog(
                     reason,
                     "Ups, Something Went Wrong...",
-                    IconLoader.getIcon("/icons/new_cw_logo.svg", SidePanel.class)
+                    IconLoader.getIcon(MESSAGE_ICON, SidePanel.class)
             );
             jbTabbedPane.revalidate();
             jbTabbedPane.repaint();
