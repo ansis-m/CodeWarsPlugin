@@ -8,7 +8,6 @@ public class SubmitResponse {
     private Integer wallTime;
     private String message;
     private String token;
-    //private String result;
 
     @Override
     public String toString() {

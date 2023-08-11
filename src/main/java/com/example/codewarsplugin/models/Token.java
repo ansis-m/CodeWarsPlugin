@@ -1,9 +1,16 @@
 package com.example.codewarsplugin.models;
 
+import java.time.LocalDateTime;
+
 public class Token {
 
     private boolean success;
+    private final LocalDateTime time;
     private String token;
+
+    public Token(){
+        time = LocalDateTime.now();
+    }
 
     @Override
     public String toString() {
@@ -27,5 +34,9 @@ public class Token {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
     }
 }

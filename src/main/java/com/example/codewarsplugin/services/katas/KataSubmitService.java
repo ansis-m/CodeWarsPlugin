@@ -24,6 +24,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,6 +54,10 @@ public class KataSubmitService {
 
     private void getToken(){
 
+        if (token != null && token.getTime().plusSeconds(60).isAfter(LocalDateTime.now())) {
+            return;
+        }
+
         String csrfToken = CookieService.getCsrfToken();
         String sessionId = CookieService.getSessionId();
 
@@ -67,6 +72,7 @@ public class KataSubmitService {
 
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("token: " + response.body());
             token = objectMapper.readValue(response.body(), Token.class);
 
         } catch (Exception ignored) {}
@@ -216,6 +222,7 @@ public class KataSubmitService {
 
     @SuppressWarnings("unchecked")
     private void mapSubmitResponse(String body) {
+        System.out.println("body: " + body);
         submitResponse = gson.fromJson(body, SubmitResponse.class);
         java.lang.reflect.Type type = new com.google.gson.reflect.TypeToken<Map<String, Object>>(){}.getType();
         Map<String, Object> dataMap = gson.fromJson(body, type);
@@ -234,7 +241,14 @@ public class KataSubmitService {
                         testFile = directory.getDirectory().createChildData(this, FILENAME);
                         testFile.refresh(false, true);
                     }
-                    testFile.setBinaryContent(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(source).getBytes());
+                    String resultString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(source);
+
+
+                    System.out.println(resultString);
+
+                    var result = objectMapper.readValue(resultString, Result.class);
+
+                    testFile.setBinaryContent(result.toString().getBytes());
                     OpenFileDescriptor descriptor = new OpenFileDescriptor(project, testFile);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     fileEditorManager.openTextEditor(descriptor, true);
