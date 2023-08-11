@@ -24,7 +24,7 @@ import java.util.List;
 
 public class KataDirectoryParser {
 
-    private Project project;
+    private final Project project;
     private List<VirtualFile> sourcesRoots;
     private ArrayList<KataDirectory> directoryList;
 

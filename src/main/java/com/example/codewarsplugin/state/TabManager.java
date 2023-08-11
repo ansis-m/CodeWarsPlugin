@@ -43,7 +43,6 @@ public class TabManager implements KataSetupServiceClient {
     private String previousUrl = "";
     private final JPanel spinner = new OverlaySpinner();
     private final KataSetupService setupService = new KataSetupService();
-    private final KataDirectoryParser parser;
     private final AtomicBoolean shouldFetchAndCreateFilesOnUrlLoad = new AtomicBoolean(true);
     private final AtomicBoolean shouldReloadUrl = new AtomicBoolean(false);
     private final JPanel browserPanel = new JPanel(new BorderLayout());
@@ -55,7 +54,6 @@ public class TabManager implements KataSetupServiceClient {
         this.browser = store.getBrowser();
         this.client = store.getClient();
         this.project = project;
-        this.parser = new KataDirectoryParser(project);
     }
 
     //EDT on initialization
@@ -108,8 +106,6 @@ public class TabManager implements KataSetupServiceClient {
     private void loadProjectTab() {
 
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
-            ArrayList<KataDirectory> directories = parser.getDirectoryList();
-            store.setDirectories(directories);
 
             ApplicationManager.getApplication().invokeLater(() -> {
                 int index = getTabIndex(PROJECT);
