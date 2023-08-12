@@ -16,6 +16,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jsoup.internal.StringUtil;
 
 import java.io.IOException;
 import java.net.URI;
@@ -84,7 +85,13 @@ public class KataSubmitService {
             HttpResponse<String> response = call(output);
 
             if(response.statusCode() >= 200 && response.statusCode() < 300) {
-                mapSubmitResponse(response.body());
+                try{
+                    mapSubmitResponse(response.body());
+                } catch (Exception e) {
+                    System.out.println("Error writing .md: " + e.getMessage());
+                    e.printStackTrace();
+                }
+
                 notifyServer(output);
                 client.notifyAttemptSuccess(submitResponse);
             } else {
@@ -100,7 +107,12 @@ public class KataSubmitService {
         try {
             HttpResponse<String> response = call(output);
             if(response.statusCode() >= 200 && response.statusCode() < 300) {
-                mapSubmitResponse(response.body());
+                try{
+                    mapSubmitResponse(response.body());
+                } catch (Exception e) {
+                    System.out.println("Error writing .md: " + e.getMessage());
+                    e.printStackTrace();
+                }
                 notifyServer(output);
                 client.notifyTestSuccess(submitResponse);
             } else {
@@ -228,11 +240,11 @@ public class KataSubmitService {
         Map<String, Object> dataMap = gson.fromJson(body, type);
         var result = dataMap.get("result");
         if (result instanceof Map<?, ?>) {
-            createTestResultFile((Map<String, Object>) result);
+            createTestResultFile((Map<String, Object>) result, submitResponse);
         }
     }
 
-    public void createTestResultFile(Map<String, Object> source){
+    public void createTestResultFile(Map<String, Object> source, SubmitResponse submitResponse){
         WriteCommandAction.runWriteCommandAction(project, () -> {
             if (directory.getDirectory() != null) {
                 try {
@@ -248,7 +260,7 @@ public class KataSubmitService {
 
                     var result = objectMapper.readValue(resultString, Result.class);
 
-                    testFile.setBinaryContent(result.toString().getBytes());
+                    testFile.setBinaryContent(writeResultToMd(result, submitResponse));
                     OpenFileDescriptor descriptor = new OpenFileDescriptor(project, testFile);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     fileEditorManager.openTextEditor(descriptor, true);
@@ -257,5 +269,120 @@ public class KataSubmitService {
                 }
             }
         });
+    }
+
+    private static byte[] writeResultToMd(Result result, SubmitResponse submitResponse) {
+
+        StringBuilder builder = new StringBuilder();
+        writeError(builder, submitResponse);
+        if (result.output.size() > 0) {
+            writeResult(builder, result);
+        }
+
+        builder
+                .append("\n\n<style>\n")
+                .append("    body {\n")
+                .append("    font-family: 'Arial', sans-serif;\n")
+                .append("    //background-color: #f5f5f5;\n")
+                .append("    padding: 20px;\n")
+                .append("}\n")
+                .append("        h1 {\n")
+                .append("            font-size: 2.5em;\n")
+                .append("            border-bottom: 2px solid #3498db;\n")
+                .append("            padding-bottom: 10px;\n")
+                .append("            margin-bottom: 20px;\n")
+                .append("            margin-left: 0em;")
+                .append("        }\n")
+                .append("        h2 {\n")
+                .append("            font-size: 2em;\n")
+                .append("            border-bottom: 2px solid #e74c3c;\n")
+                .append("            padding-bottom: 8px;\n")
+                .append("            margin-bottom: 18px;\n")
+                .append("            margin-left: 0em;")
+                .append("        }\n")
+                .append("        h3 {\n")
+                .append("            font-size: 1.5em;\n")
+                .append("            margin-bottom: 16px;\n")
+                .append("            margin-left: 1em;")
+                .append("        }\n")
+                .append("        h4 {\n")
+                .append("            font-size: 1.2em;\n")
+                .append("            margin-bottom: 14px;\n")
+                .append("            margin-left: 2em;")
+                .append("        }\n")
+                .append("        p {\n")
+                .append("            font-size: 1.1em;\n")
+                .append("            margin-bottom: 12px;\n")
+                .append("            line-height: 1.5;\n")
+                .append("            margin-left: 3em;")
+                .append("        }\n")
+                .append("        a {\n")
+                .append("            color: #e74c3c;\n")
+                .append("            text-decoration: underline;\n")
+                .append("            margin-left: 3em;")
+                .append("        }")
+                .append("        .simple {\n")
+                .append("            font-size: 1.1em;\n")
+                .append("            margin-bottom: 12px;\n")
+                .append("            line-height: 1.5;\n")
+                .append("            margin-left: 0em;")
+                .append("        }\n")
+                .append("</style>");
+
+        return builder.toString().getBytes();
+    }
+
+    private static void writeError(StringBuilder builder, SubmitResponse submitResponse) {
+        if (!StringUtil.isBlank(submitResponse.getStderr())) {
+            builder.append("# ").append(submitResponse.getStderr()).append("\n");
+        }
+        if (!StringUtil.isBlank(submitResponse.getStdout())) {
+            builder.append("Stdout: ").append(submitResponse.getStdout()).append("\n");
+        }
+        if (!StringUtil.isBlank(submitResponse.getMessage())) {
+            builder.append("Message: ").append(submitResponse.getMessage()).append("\n");
+        }
+
+    }
+
+    private static void writeResult(StringBuilder builder, Result result) {
+        builder.append("# Result\n");
+        builder.append("<div class=\"simple\">\n");
+        builder.append("passed: ").append(result.passed).append("&nbsp;&nbsp;");
+        builder.append("failed: ").append(result.failed);
+        builder.append("</div>\n");
+        builder.append("\n");
+        if (result.timedOut) {
+            builder.append("\n## Timed Out\n");
+            builder.append("Time Limit: ").append(result.wallTime).append("ms\n");
+            builder.append("Test Time: ").append(result.testTime).append("ms\n");
+        }
+        if (result.serverError) {
+            builder.append("\n## Server Error\n");
+            builder.append(result.errors).append("errors\n");
+            builder.append("error: ").append(result.error).append("\n");
+        }
+        builder.append("\n## Output");
+        if (result.output != null) {
+            for(var output : result.output) {
+                builder.append("\n### ").append(output.v).append("\n");
+                if (output.items != null) {
+                    for(var item : output.items) {
+                        if (!StringUtil.isBlank(item.v) && item.v.length() > 2) {
+                            builder.append("#### ").append(item.v).append("\n");
+                        }
+                        if(item.items != null) {
+                            for(var nestedItem : item.items) {
+                                if (nestedItem.t.equals("log")) {
+                                    builder.append("**").append(nestedItem.t).append("** : ").append(nestedItem.v.replaceAll("(\r\n|\n|\r)", "  $1")).append("  \n");
+                                } else {
+                                    builder.append("**").append(nestedItem.t).append("** : ").append(nestedItem.v).append("  \n");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
