@@ -327,6 +327,12 @@ public class KataSubmitService {
                 .append("            line-height: 1.5;\n")
                 .append("            margin-left: 0em;")
                 .append("        }\n")
+                .append("        ul {\n")
+                .append("             padding-left: 5em;\n")
+                .append("         }\n\n")
+                .append("         ul li {\n")
+                .append("             text-indent: 0em;\n")
+                .append("         }")
                 .append("</style>");
 
         return builder.toString().getBytes();
@@ -334,28 +340,37 @@ public class KataSubmitService {
 
     private static void writeError(StringBuilder builder, SubmitResponse submitResponse) {
         if (!StringUtil.isBlank(submitResponse.getStderr())) {
-            builder.append("# ").append(submitResponse.getStderr()).append("\n");
+            builder.append("## STDERR").append("  \n");
+        } else {
+            return;
         }
+        builder.append("\n\n<div class=\"simple\">\n");
+        builder.append("Strerr: " + submitResponse.getStderr()).append("&nbsp;&nbsp;&nbsp;&nbsp;");
         if (!StringUtil.isBlank(submitResponse.getStdout())) {
-            builder.append("Stdout: ").append(submitResponse.getStdout()).append("\n");
+            builder.append("Stdout: ").append(submitResponse.getStdout()).append("&nbsp;&nbsp;&nbsp;&nbsp;");
         }
         if (!StringUtil.isBlank(submitResponse.getMessage())) {
-            builder.append("Message: ").append(submitResponse.getMessage()).append("\n");
+            builder.append("Message: ").append(submitResponse.getMessage());
         }
+        builder.append("</div>\n\n");
 
     }
 
     private static void writeResult(StringBuilder builder, Result result) {
-        builder.append("# Result\n");
+
+        builder.append("## Result\n");
         builder.append("<div class=\"simple\">\n");
-        builder.append("passed: ").append(result.passed).append("&nbsp;&nbsp;");
-        builder.append("failed: ").append(result.failed);
+        builder.append("passed: ").append(result.passed).append("&nbsp;&nbsp;&nbsp;&nbsp;");
+        builder.append("failed: ").append(result.failed).append("&nbsp;&nbsp;&nbsp;&nbsp;");
+        builder.append("errors: ").append(result.errors);
         builder.append("</div>\n");
         builder.append("\n");
         if (result.timedOut) {
             builder.append("\n## Timed Out\n");
-            builder.append("Time Limit: ").append(result.wallTime).append("ms\n");
+            builder.append("<div class=\"simple\">\n");
+            builder.append("Time Limit: ").append(result.wallTime).append("ms\n").append("&nbsp;&nbsp;&nbsp;&nbsp;");
             builder.append("Test Time: ").append(result.testTime).append("ms\n");
+            builder.append("</div>\n");
         }
         if (result.serverError) {
             builder.append("\n## Server Error\n");
@@ -374,9 +389,9 @@ public class KataSubmitService {
                         if(item.items != null) {
                             for(var nestedItem : item.items) {
                                 if (nestedItem.t.equals("log")) {
-                                    builder.append("**").append(nestedItem.t).append("** : ").append(nestedItem.v.replaceAll("(\r\n|\n|\r)", "  $1")).append("  \n");
+                                    builder.append("+ **").append(nestedItem.t).append("** : ").append(nestedItem.v.replaceAll("(\r\n|\n|\r)", "  $1")).append("  \n");
                                 } else {
-                                    builder.append("**").append(nestedItem.t).append("** : ").append(nestedItem.v).append("  \n");
+                                    builder.append("+ **").append(nestedItem.t).append("** : ").append(nestedItem.v).append("  \n");
                                 }
                             }
                         }
