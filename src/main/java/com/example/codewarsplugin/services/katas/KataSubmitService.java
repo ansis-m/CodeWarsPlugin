@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -276,19 +277,17 @@ public class KataSubmitService {
         StringBuilder builder = new StringBuilder();
         appendError(builder, submitResponse);
         if (result.output != null && result.output.size() > 0) {
-            writeResult(builder, result);
+            appendResult(builder, result);
         }
         appendStyling(builder);
         return builder.toString().getBytes();
     }
 
-
     private static void appendError(StringBuilder builder, SubmitResponse submitResponse) {
         if (!StringUtil.isBlank(submitResponse.getStderr())) {
             builder.append("## Stderr  \n");
             builder.append("\n\n<div class=\"simple\">\n")
-                    .append("Strerr: ").append(submitResponse.getStderr()).append("&nbsp;&nbsp;&nbsp;&nbsp;");
-
+                    .append("Stderr: ").append(submitResponse.getStderr()).append("&nbsp;&nbsp;&nbsp;&nbsp;");
             if (!StringUtil.isBlank(submitResponse.getStdout())) {
                 builder.append("Stdout: ").append(submitResponse.getStdout()).append("&nbsp;&nbsp;&nbsp;&nbsp;");
             }
@@ -296,61 +295,91 @@ public class KataSubmitService {
             if (!StringUtil.isBlank(submitResponse.getMessage())) {
                 builder.append("Message: ").append(submitResponse.getMessage());
             }
-
             builder.append("</div>\n\n");
         }
     }
 
-    private static void writeResult(StringBuilder builder, Result result) {
+    private static void appendResult(StringBuilder builder, Result result) {
 
-        builder.append("## Result\n");
-        builder.append("<div class=\"simple\">\n");
-        builder.append("passed: ").append(result.passed).append("&nbsp;&nbsp;&nbsp;&nbsp;");
-        builder.append("failed: ").append(result.failed).append("&nbsp;&nbsp;&nbsp;&nbsp;");
-        builder.append("errors: ").append(result.errors);
-        builder.append("</div>\n");
-        builder.append("\n");
+        builder.append("## Result\n")
+        .append("<div class=\"simple\">\n")
+        .append("passed: ").append(result.passed).append("&nbsp;&nbsp;&nbsp;&nbsp;")
+        .append("failed: ").append(result.failed).append("&nbsp;&nbsp;&nbsp;&nbsp;")
+        .append("errors: ").append(result.errors).append("</div>\n\n");
         if (result.timedOut) {
-            builder.append("\n## Timed Out\n");
-            builder.append("<div class=\"simple\">\n");
-            builder.append("Time Limit: ").append(result.wallTime).append("&nbsp;ms\n").append("&nbsp;&nbsp;&nbsp;&nbsp;");
-            builder.append("Test Time: ").append(result.testTime).append("&nbsp;ms\n");
-            builder.append("</div>\n");
+            builder.append("\n## Timed Out\n").append("<div class=\"simple\">\n")
+            .append("Time Limit: ").append(result.wallTime).append("&nbsp;ms\n").append("&nbsp;&nbsp;&nbsp;&nbsp;")
+            .append("Test Time: ").append(result.testTime).append("&nbsp;ms\n").append("</div>\n");
         }
         if (result.serverError) {
-            builder.append("\n## Server Error\n");
-            builder.append(result.errors).append("errors\n");
-            builder.append("error: ").append(result.error).append("\n");
+            builder.append("\n## Server Error\n")
+            .append(result.errors).append("errors\n")
+            .append("error: ").append(result.error).append("\n");
         }
         builder.append("\n## Output\n");
-        if (result.output != null) {
-            for(var output : result.output) {
-                if (!StringUtil.isBlank(output.v) && output.v.length() > 2 && !output.t.equals("log")) {
-                    builder.append("### ").append(output.v).append("  \n");
-                } else if (!StringUtil.isBlank(output.v) && output.v.length() > 2){
-                    builder.append("### ").append("log  \n");
+        appendOutput(builder, result.output, 1);
+
+//        if (result.output != null) {
+//            for(var output : result.output) {
+//                if (!StringUtil.isBlank(output.v) && output.v.length() > 2 && !output.t.equals("log")) {
+//                    builder.append("### ").append(output.v).append("  \n");
+//                } else if (!StringUtil.isBlank(output.v) && output.v.length() > 2){
+//                    builder.append("### ").append("log  \n");
+//                    builder.append(output.v.replaceAll("(\r\n|\n|\r)", "  $1"));
+//                }
+//                if (output.items != null) {
+//                    for(var item : output.items) {
+//                        if (!StringUtil.isBlank(item.v) && item.v.length() > 2 && !item.t.equals("log")) {
+//                            builder.append("#### ").append(item.v).append("  \n");
+//                        } else if (!StringUtil.isBlank(item.v) && item.v.length() > 2){
+//                            builder.append("#### ").append("log  \n");
+//                            builder.append(item.v.replaceAll("(\r\n|\n|\r)", "  $1"));
+//                        }
+//                        if(item.items != null) {
+//                            for(var nestedItem : item.items) {
+//                                if (nestedItem.t.equals("log")) {
+//                                    builder.append("+ **").append(nestedItem.t).append("** : ").append(nestedItem.v.replaceAll("(\r\n|\n|\r)", "  $1")).append("  \n");
+//                                } else {
+//                                    builder.append("+ **").append(nestedItem.t).append("** : ").append(nestedItem.v).append("  \n");
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+    }
+
+    private static void appendOutput(StringBuilder builder, List<Result.Output> outputs, int depth) {
+        if (outputs == null) return;
+        for (var output : outputs) {
+            if (!StringUtil.isBlank(output.v) && output.v.length() > 2) {
+                String title = output.t.equals("log") ? "log" : output.v;
+                generateHeader(builder, depth, title);
+                if (output.t.equals("log")) {
                     builder.append(output.v.replaceAll("(\r\n|\n|\r)", "  $1"));
-                }
-                if (output.items != null) {
-                    for(var item : output.items) {
-                        if (!StringUtil.isBlank(item.v) && item.v.length() > 2 && !item.t.equals("log")) {
-                            builder.append("#### ").append(item.v).append("  \n");
-                        } else if (!StringUtil.isBlank(item.v) && item.v.length() > 2){
-                            builder.append("#### ").append("log  \n");
-                            builder.append(item.v.replaceAll("(\r\n|\n|\r)", "  $1"));
-                        }
-                        if(item.items != null) {
-                            for(var nestedItem : item.items) {
-                                if (nestedItem.t.equals("log")) {
-                                    builder.append("+ **").append(nestedItem.t).append("** : ").append(nestedItem.v.replaceAll("(\r\n|\n|\r)", "  $1")).append("  \n");
-                                } else {
-                                    builder.append("+ **").append(nestedItem.t).append("** : ").append(nestedItem.v).append("  \n");
-                                }
-                            }
-                        }
-                    }
+                } else if (depth > 2) {
+                    builder.append("+ **").append(output.t).append("** : ").append(output.v).append("  \n");
                 }
             }
+            appendOutput(builder, output.items, depth + 1);
+        }
+    }
+
+    private static void generateHeader(StringBuilder builder, int depth, String content) {
+
+        switch (depth) {
+            case 0:
+                builder.append("\n## ").append(content).append("  \n");
+                break;
+            case 1:
+                builder.append("\n### ").append(content).append("  \n");
+                break;
+            case 2:
+                builder.append("\n#### ").append(content).append("  \n");
+                break;
+            case 3: if(content.equals("log"))
+                        builder.append("+ **").append("log").append("** : ");
         }
     }
 
