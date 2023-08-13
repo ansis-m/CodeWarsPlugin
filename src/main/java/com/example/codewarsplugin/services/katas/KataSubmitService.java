@@ -274,90 +274,33 @@ public class KataSubmitService {
     private static byte[] writeResultToMd(Result result, SubmitResponse submitResponse) {
 
         StringBuilder builder = new StringBuilder();
-        writeError(builder, submitResponse);
-        if (result.output.size() > 0) {
+        appendError(builder, submitResponse);
+        if (result.output != null && result.output.size() > 0) {
             writeResult(builder, result);
         }
-
-        builder
-                .append("\n\n<style>\n")
-                .append("    body {\n")
-                .append("    font-family: 'Arial', sans-serif;\n")
-                .append("    //background-color: #f5f5f5;\n")
-                .append("    padding: 20px;\n")
-                .append("}\n")
-                .append("        h1 {\n")
-                .append("            font-size: 2.5em;\n")
-                .append("            border-bottom: 2px solid #3498db;\n")
-                .append("            padding-bottom: 10px;\n")
-                .append("            margin-bottom: 20px;\n")
-                .append("            margin-left: 0em;")
-                .append("        }\n")
-                .append("        h2 {\n")
-                .append("            font-size: 2em;\n")
-                .append("            border-bottom: 2px solid #e74c3c;\n")
-                .append("            padding-bottom: 8px;\n")
-                .append("            margin-bottom: 18px;\n")
-                .append("            margin-left: 0em;")
-                .append("        }\n")
-                .append("        h3 {\n")
-                .append("            font-size: 1.5em;\n")
-                .append("            margin-bottom: 16px;\n")
-                .append("            margin-left: 1em;")
-                .append("        }\n")
-                .append("        h4 {\n")
-                .append("            font-size: 1.2em;\n")
-                .append("            margin-bottom: 14px;\n")
-                .append("            margin-left: 2em;")
-                .append("        }\n")
-                .append("        p {\n")
-                .append("            font-size: 1.1em;\n")
-                .append("            margin-bottom: 12px;\n")
-                .append("            line-height: 1.5;\n")
-                .append("            margin-left: 3em;")
-                .append("        }\n")
-                .append("        a {\n")
-                .append("            color: #e74c3c;\n")
-                .append("            text-decoration: underline;\n")
-                .append("            margin-left: 3em;")
-                .append("        }")
-                .append("        .simple {\n")
-                .append("            font-size: 1.1em;\n")
-                .append("            margin-bottom: 12px;\n")
-                .append("            line-height: 1.5;\n")
-                .append("            margin-left: 0em;")
-                .append("        }\n")
-                .append("        ul {\n")
-                .append("             padding-left: 5em;\n")
-                .append("         }\n\n")
-                .append("         ul li {\n")
-                .append("             text-indent: 0em;\n")
-                .append("         }")
-                .append("</style>");
-
+        appendStyling(builder);
         return builder.toString().getBytes();
     }
 
-    private static void writeError(StringBuilder builder, SubmitResponse submitResponse) {
-        if (!StringUtil.isBlank(submitResponse.getStderr())) {
-            builder.append("## STDERR").append("  \n");
-        } else {
-            return;
-        }
-        builder.append("\n\n<div class=\"simple\">\n");
-        builder.append("Strerr: " + submitResponse.getStderr()).append("&nbsp;&nbsp;&nbsp;&nbsp;");
-        if (!StringUtil.isBlank(submitResponse.getStdout())) {
-            builder.append("Stdout: ").append(submitResponse.getStdout()).append("&nbsp;&nbsp;&nbsp;&nbsp;");
-        }
-        if (!StringUtil.isBlank(submitResponse.getMessage())) {
-            builder.append("Message: ").append(submitResponse.getMessage());
-        }
-        builder.append("</div>\n\n");
 
+    private static void appendError(StringBuilder builder, SubmitResponse submitResponse) {
+        if (!StringUtil.isBlank(submitResponse.getStderr())) {
+            builder.append("## Stderr  \n");
+            builder.append("\n\n<div class=\"simple\">\n")
+                    .append("Strerr: ").append(submitResponse.getStderr()).append("&nbsp;&nbsp;&nbsp;&nbsp;");
+
+            if (!StringUtil.isBlank(submitResponse.getStdout())) {
+                builder.append("Stdout: ").append(submitResponse.getStdout()).append("&nbsp;&nbsp;&nbsp;&nbsp;");
+            }
+
+            if (!StringUtil.isBlank(submitResponse.getMessage())) {
+                builder.append("Message: ").append(submitResponse.getMessage());
+            }
+
+            builder.append("</div>\n\n");
+        }
     }
 
-
-    //todo fix this abomination
     private static void writeResult(StringBuilder builder, Result result) {
 
         builder.append("## Result\n");
@@ -409,5 +352,21 @@ public class KataSubmitService {
                 }
             }
         }
+    }
+
+
+    private static void appendStyling(StringBuilder builder) {
+        builder.append("\n\n<style>\n")
+                .append("body { font-family: 'Arial', sans-serif; padding: 20px; }\n")
+                .append("h1 { font-size: 2.5em; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 20px; }\n")
+                .append("h2 { font-size: 2em; border-bottom: 2px solid #e74c3c; padding-bottom: 8px; margin-bottom: 18px; }\n")
+                .append("h3 { font-size: 1.5em; margin-bottom: 16px; margin-left: 1em; }\n")
+                .append("h4 { font-size: 1.2em; margin-bottom: 14px; margin-left: 2em; }\n")
+                .append(".simple { font-size: 1.1em; margin-bottom: 12px; line-height: 1.5; margin-left: 0em; }\n")
+                .append("p { font-size: 1.1em; margin-bottom: 12px; line-height: 1.5; margin-left: 3em; }\n")
+                .append("a { color: #e74c3c; text-decoration: underline; margin-left: 3em; }\n")
+                .append("ul { padding-left: 5em; }\n")
+                .append("ul li { text-indent: 0em; }\n")
+                .append("</style>");
     }
 }
