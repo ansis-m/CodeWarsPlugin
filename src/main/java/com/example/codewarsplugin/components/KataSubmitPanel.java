@@ -5,10 +5,13 @@ import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.models.kata.SubmitResponse;
+import com.example.codewarsplugin.services.files.create.AbstractFileService;
+import com.example.codewarsplugin.services.files.create.FileServiceFactory;
 import com.example.codewarsplugin.services.katas.KataSubmitService;
 import com.example.codewarsplugin.services.katas.KataSubmitServiceClient;
 import com.example.codewarsplugin.state.Store;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.AnimatedIcon;
@@ -16,6 +19,8 @@ import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
@@ -178,9 +183,26 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
     @Override
     public void notifyCommitSuccess(HttpResponse<String> response) {
+
+        try{
+            updateRecordFile();
+        } catch (Exception ignored){}
         ApplicationManager.getApplication().invokeLater(() -> {
             stopSpinner(commitCardLayout, commitCardPanel);
             Messages.showMessageDialog("Congrats, you commited your solution! \nSelect a new Kata!", "Commit Success!", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
+        });
+    }
+
+    private void updateRecordFile() throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        var dir = store.getDirectory();
+        dir.getRecord().setCompleted(true);
+        AbstractFileService service = FileServiceFactory.createFileService(dir.getInput(), dir.getRecord(), store.getProject());
+        WriteCommandAction.runWriteCommandAction(store.getProject(), () -> {
+            try {
+                service.updateRecord(dir);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 

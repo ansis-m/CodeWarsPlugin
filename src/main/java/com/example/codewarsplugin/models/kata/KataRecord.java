@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-
 public class KataRecord implements JsonSource{
 
     private String id;
@@ -21,6 +20,8 @@ public class KataRecord implements JsonSource{
     private Rank rank;
     private String[] tags;
     private String workUrl;
+    private boolean completed = false;
+
 
     @Override
     public boolean equals(Object o) {
@@ -148,7 +149,15 @@ public class KataRecord implements JsonSource{
         return workUrl;
     }
 
-    public class Rank {
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public static class Rank {
         int id;
         String name;
         String color;

@@ -318,36 +318,6 @@ public class KataSubmitService {
         }
         builder.append("\n## Output\n");
         appendOutput(builder, result.output, 1);
-
-//        if (result.output != null) {
-//            for(var output : result.output) {
-//                if (!StringUtil.isBlank(output.v) && output.v.length() > 2 && !output.t.equals("log")) {
-//                    builder.append("### ").append(output.v).append("  \n");
-//                } else if (!StringUtil.isBlank(output.v) && output.v.length() > 2){
-//                    builder.append("### ").append("log  \n");
-//                    builder.append(output.v.replaceAll("(\r\n|\n|\r)", "  $1"));
-//                }
-//                if (output.items != null) {
-//                    for(var item : output.items) {
-//                        if (!StringUtil.isBlank(item.v) && item.v.length() > 2 && !item.t.equals("log")) {
-//                            builder.append("#### ").append(item.v).append("  \n");
-//                        } else if (!StringUtil.isBlank(item.v) && item.v.length() > 2){
-//                            builder.append("#### ").append("log  \n");
-//                            builder.append(item.v.replaceAll("(\r\n|\n|\r)", "  $1"));
-//                        }
-//                        if(item.items != null) {
-//                            for(var nestedItem : item.items) {
-//                                if (nestedItem.t.equals("log")) {
-//                                    builder.append("+ **").append(nestedItem.t).append("** : ").append(nestedItem.v.replaceAll("(\r\n|\n|\r)", "  $1")).append("  \n");
-//                                } else {
-//                                    builder.append("+ **").append(nestedItem.t).append("** : ").append(nestedItem.v).append("  \n");
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
     }
 
     private static void appendOutput(StringBuilder builder, List<Result.Output> outputs, int depth) {

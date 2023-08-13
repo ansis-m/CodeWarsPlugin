@@ -24,6 +24,7 @@ public class KataSelectorPanel extends JPanel {
     private final JButton selectorButton = new JButton("Setup Kata");
     private final JButton deleteButton = new JButton("Delete Kata");
     private final JPanel innerPanel = new JPanel(new GridBagLayout());
+    private final JPanel buttonPanel = new JPanel(new FlowLayout());
     private final JLabel title = new JLabel("", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class), JLabel.CENTER);
     private final Store store;
     private final TabManager manager;
@@ -65,15 +66,15 @@ public class KataSelectorPanel extends JPanel {
 
         innerPanel.add(directoryBox, constraints);
 
+
+        buttonPanel.add(selectorButton);
+        buttonPanel.add(deleteButton);
+
         constraints.gridx = 0;
         constraints.gridy = 3;
 
-        innerPanel.add(selectorButton, constraints);
+        innerPanel.add(buttonPanel, constraints);
 
-        constraints.gridx = 0;
-        constraints.gridy = 4;
-
-        innerPanel.add(deleteButton, constraints);
         add(innerPanel, BorderLayout.CENTER);
         addSelectorListeners();
     }

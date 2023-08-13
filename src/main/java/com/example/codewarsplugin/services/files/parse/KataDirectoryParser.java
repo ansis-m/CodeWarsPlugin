@@ -29,7 +29,6 @@ public class KataDirectoryParser {
     private final Project project;
     private List<VirtualFile> sourcesRoots;
     private ArrayList<KataDirectory> directoryList;
-
     public KataDirectoryParser(Project project) {
         this.project = project;
     }
@@ -85,11 +84,13 @@ public class KataDirectoryParser {
                 try {
                     record = mapper.readValue(metafile.contentsToByteArray(), KataRecord.class);
                     kataDirectory.setRecord(record);
+                    kataDirectory.setRecordFile(metafile);
                 } catch (Exception e){ System.out.println("exception record parsing failed"); e.printStackTrace();}
             } else if (!metafile.isDirectory() && metafile.getName().toLowerCase().contains("input.json")){
                 try {
                     input = mapper.readValue(metafile.contentsToByteArray(), KataInput.class);
                     kataDirectory.setInput(input);
+                    kataDirectory.setInputFile(metafile);
                 } catch (Exception e){System.out.println("exception input parsing failed"); e.printStackTrace();}
             }
         }

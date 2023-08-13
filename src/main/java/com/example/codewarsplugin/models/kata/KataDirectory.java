@@ -10,6 +10,8 @@ public class KataDirectory {
     private VirtualFile metaDataDirectory;
     private VirtualFile workFile;
     private VirtualFile testFile;
+    private VirtualFile recordFile;
+    private VirtualFile inputFile;
     private KataRecord record;
     private KataInput input;
 
@@ -17,7 +19,7 @@ public class KataDirectory {
     //toString method used in the selector panel.
     @Override
     public String toString() {
-        return record.getName() + " in " + record.getSelectedLanguage();
+        return record.getName() + " in " + record.getSelectedLanguage() + (record.isCompleted()? " (completed)" : "");
     }
 
     public VirtualFile getDirectory() {
@@ -96,5 +98,21 @@ public class KataDirectory {
 
     public boolean isTheSame(KataDirectory directory) {
         return directory != null && directory.getRecord().equals(this.record);
+    }
+
+    public VirtualFile getRecordFile() {
+        return recordFile;
+    }
+
+    public void setRecordFile(VirtualFile recordFile) {
+        this.recordFile = recordFile;
+    }
+
+    public VirtualFile getInputFile() {
+        return inputFile;
+    }
+
+    public void setInputFile(VirtualFile inputFile) {
+        this.inputFile = inputFile;
     }
 }

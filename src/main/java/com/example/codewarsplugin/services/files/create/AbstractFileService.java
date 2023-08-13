@@ -7,6 +7,7 @@ import com.example.codewarsplugin.models.kata.JsonSource;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -40,6 +41,8 @@ public abstract class AbstractFileService {
     VirtualFile metaData;
     VirtualFile testFile;
     VirtualFile workFile;
+    VirtualFile inputFile;
+    VirtualFile recordFile;
     ArrayList<VirtualFile> sourcesRoots = new ArrayList<>();
     ArrayList<Module> modules = new ArrayList<>();
 
@@ -82,6 +85,10 @@ public abstract class AbstractFileService {
         createJsonFile(input);
     }
 
+    public void updateRecord(KataDirectory dir) throws IOException {
+        dir.getRecordFile().setBinaryContent(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(dir.getRecord()).getBytes(StandardCharsets.UTF_8));
+    }
+
     public void createJsonFile(JsonSource source) throws IOException {
 
         String filename = source instanceof KataRecord? getRecordFileName() : getInputFileName();
@@ -92,8 +99,12 @@ public abstract class AbstractFileService {
             file.refresh(false, true);
             VirtualFile finalFile = file;
             finalFile.setBinaryContent(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(source).getBytes(StandardCharsets.UTF_8));
+            if (source instanceof KataRecord) {
+                recordFile = finalFile;
+            } else {
+                inputFile = recordFile;
+            }
         }
-
     }
 
     public void createWorkFile() throws IOException {
@@ -189,6 +200,5 @@ public abstract class AbstractFileService {
     protected abstract String getInputFileName();
     protected abstract String getDirectoryName();
     protected abstract byte[] getFileContent(boolean isWorkFile);
-
     public abstract void initDirectory();
 }
