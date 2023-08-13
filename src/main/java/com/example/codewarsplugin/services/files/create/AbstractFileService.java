@@ -7,7 +7,6 @@ import com.example.codewarsplugin.models.kata.JsonSource;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -75,7 +74,6 @@ public abstract class AbstractFileService {
         kataDirectory.setTestDirectory(testDirectory);
         kataDirectory.setRecordFile(recordFile);
         kataDirectory.setInputFile(inputFile);
-
         return kataDirectory;
     }
 

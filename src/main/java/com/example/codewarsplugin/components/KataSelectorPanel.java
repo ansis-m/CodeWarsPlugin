@@ -39,11 +39,8 @@ public class KataSelectorPanel extends JPanel {
         removeCurrentDirectory();
         model = new DefaultComboBoxModel<>(kataDirectoryList.toArray());
         directoryBox = new ComboBox<>(model);
-
         this.manager = tabManager;
-
         initComponents();
-
     }
 
     private void initComponents() {

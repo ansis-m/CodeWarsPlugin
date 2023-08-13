@@ -5,7 +5,6 @@ import com.example.codewarsplugin.components.KataSelectorPanel;
 import com.example.codewarsplugin.components.KataSubmitPanel;
 import com.example.codewarsplugin.components.OverlaySpinner;
 import com.example.codewarsplugin.models.kata.KataDirectory;
-import com.example.codewarsplugin.services.files.parse.KataDirectoryParser;
 import com.example.codewarsplugin.services.katas.KataSetupService;
 import com.example.codewarsplugin.services.katas.KataSetupServiceClient;
 import com.example.codewarsplugin.services.cookies.CookieService;
@@ -25,10 +24,7 @@ import org.cef.handler.CefLoadHandler;
 import org.cef.handler.CefLoadHandlerAdapter;
 
 import javax.swing.*;
-
-
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.example.codewarsplugin.config.StringConstants.*;
@@ -46,6 +42,9 @@ public class TabManager implements KataSetupServiceClient {
     private final AtomicBoolean shouldFetchAndCreateFilesOnUrlLoad = new AtomicBoolean(true);
     private final AtomicBoolean shouldReloadUrl = new AtomicBoolean(false);
     private final JPanel browserPanel = new JPanel(new BorderLayout());
+    private JPanel workPanel = new JPanel(new GridBagLayout());
+    private KataSubmitPanel submitPanel = null;
+    private final JLabel emptyWorkspace = new JLabel("Select Kata", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class), JLabel.CENTER);
 
     //EDT on initialization
     public TabManager(Store store, Project project) {
@@ -59,11 +58,11 @@ public class TabManager implements KataSetupServiceClient {
     //EDT on initialization
     public void setupTabs(){
         browserPanel.add(browser.getComponent(), BorderLayout.CENTER);
-        jbTabbedPane.insertTab(DASHBOARD, AllIcons.Javaee.WebService, browserPanel, "Search and select kata!", jbTabbedPane.getTabCount());
+        jbTabbedPane.insertTab(BROWSER, AllIcons.Javaee.WebService, browserPanel, "Search and select kata!", jbTabbedPane.getTabCount());
         final CefLoadHandler handler = getBrowserListener();
         client.addLoadHandler(handler, browser.getCefBrowser());
         browser.loadURL(SIGN_IN_URL);
-
+        emptyWorkspace.setFont(emptyWorkspace.getFont().deriveFont(20f));
         loadAboutTab();
         addTabListeners();
     }
@@ -81,11 +80,11 @@ public class TabManager implements KataSetupServiceClient {
             int selectedIndex = jbTabbedPane.getSelectedIndex();
             String title = jbTabbedPane.getTitleAt(selectedIndex);
             switch (title) {
-                case (PROJECT): {
+                case (WORKSPACE): {
                     loadProjectTab();
                     break;
                 }
-                case (DASHBOARD): {
+                case (BROWSER): {
                     reloadBrowser();
                     break;
                 }
@@ -105,20 +104,30 @@ public class TabManager implements KataSetupServiceClient {
     //called from EDT on login
     private void loadProjectTab() {
 
-        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+        int index = getTabIndex(WORKSPACE);
+        configureWorkPanel();
 
-            ApplicationManager.getApplication().invokeLater(() -> {
-                int index = getTabIndex(PROJECT);
-                KataSelectorPanel selectorPanel = new KataSelectorPanel(store, this);
-                if (index == -1) {
-                    jbTabbedPane.insertTab(PROJECT, AllIcons.Actions.MenuOpen, selectorPanel, "Select kata from the current intellij project!", 1);
-                } else {
-                    jbTabbedPane.setComponentAt(index, selectorPanel);
-                }
-                jbTabbedPane.revalidate();
-                jbTabbedPane.repaint();
-            });
-        });
+        if (index == -1) {
+            jbTabbedPane.insertTab(WORKSPACE, AllIcons.Actions.MenuOpen, workPanel, "Select kata from the current intellij project!", 1);
+        } else {
+            jbTabbedPane.setComponentAt(index, workPanel);
+        }
+        jbTabbedPane.revalidate();
+        jbTabbedPane.repaint();
+    }
+
+    private void configureWorkPanel() {
+        workPanel = new JPanel();
+        workPanel.setLayout(new GridBagLayout());
+        KataSelectorPanel selectorPanel = new KataSelectorPanel(store, this);
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.weightx = 1;
+        constraints.weighty = 0.5;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        workPanel.add(selectorPanel, constraints);
+        constraints.gridy = 1;
+        workPanel.add(submitPanel == null? emptyWorkspace : submitPanel, constraints);
     }
 
     private CefLoadHandler getBrowserListener() {
@@ -180,19 +189,13 @@ public class TabManager implements KataSetupServiceClient {
         store.setCurrentKataDirectory(directory);
         WriteCommandAction.runWriteCommandAction(project, openFiles(directory));
 
-        KataSubmitPanel submitPanel = new KataSubmitPanel(store);
-        int index = getTabIndex(WORKSPACE);
-        int aboutIndex = getTabIndex(ABOUT);
+        submitPanel = new KataSubmitPanel(store);
         if(loadUrl && directory.getRecord().getWorkUrl() != null) {
-            int webIndex = getTabIndex(DASHBOARD);
+            int webIndex = getTabIndex(BROWSER);
             jbTabbedPane.setSelectedIndex(webIndex);
             browser.loadURL(directory.getRecord().getWorkUrl());
         }
-        if (index == -1) {
-            jbTabbedPane.insertTab(WORKSPACE, AllIcons.Actions.Commit, submitPanel, "Test and submit!", aboutIndex != -1? aboutIndex : jbTabbedPane.getTabCount());
-        } else {
-            jbTabbedPane.setComponentAt(index, submitPanel);
-        }
+        configureWorkPanel();
         jbTabbedPane.revalidate();
         jbTabbedPane.repaint();
     }
@@ -206,15 +209,8 @@ public class TabManager implements KataSetupServiceClient {
 
         ApplicationManager.getApplication().invokeLater(() -> {
 
-            KataSubmitPanel submitPanel = new KataSubmitPanel(store);
-            int index = getTabIndex(WORKSPACE);
-            int aboutIndex = getTabIndex(ABOUT);
-
-            if (index == -1) {
-                jbTabbedPane.insertTab(WORKSPACE, AllIcons.Actions.Commit, submitPanel, "Test and submit!", aboutIndex != -1? aboutIndex : jbTabbedPane.getTabCount());
-            } else {
-                jbTabbedPane.setComponentAt(index, submitPanel);
-            }
+            submitPanel = new KataSubmitPanel(store);
+            configureWorkPanel();
             showOverlaySpinner(false);
             jbTabbedPane.revalidate();
             jbTabbedPane.repaint();
@@ -223,7 +219,7 @@ public class TabManager implements KataSetupServiceClient {
 
     public void showOverlaySpinner(boolean show) {
 
-        int index = getTabIndex(DASHBOARD);
+        int index = getTabIndex(BROWSER);
         if(index == -1) {
             return;
         }

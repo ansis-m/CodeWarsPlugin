@@ -10,9 +10,8 @@ public class StringConstants {
 
     public static String MESSAGE_ICON = "/icons/new_cw_logo.svg";
     public static final String FILENAME = "test.md";
-    public static final String DASHBOARD = "Dashboard";
+    public static final String BROWSER = "Browser";
     public static final String WORKSPACE = "Workspace";
-    public static final String PROJECT = "Project";
     public static final String ABOUT = "About";
     public static final String INIT_PY = "__init__.py";
     public static final String PICK_MODULE = "Pick %s Module!";
