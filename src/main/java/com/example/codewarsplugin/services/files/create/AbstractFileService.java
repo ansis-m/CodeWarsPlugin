@@ -73,6 +73,8 @@ public abstract class AbstractFileService {
         kataDirectory.setMetaDataDirectory(metaData);
         kataDirectory.setWorkDirectory(workDirectory);
         kataDirectory.setTestDirectory(testDirectory);
+        kataDirectory.setRecordFile(recordFile);
+        kataDirectory.setInputFile(inputFile);
 
         return kataDirectory;
     }
@@ -102,7 +104,7 @@ public abstract class AbstractFileService {
             if (source instanceof KataRecord) {
                 recordFile = finalFile;
             } else {
-                inputFile = recordFile;
+                inputFile = finalFile;
             }
         }
     }
