@@ -356,6 +356,8 @@ public class KataSubmitService {
 
     }
 
+
+    //todo fix this abomination
     private static void writeResult(StringBuilder builder, Result result) {
 
         builder.append("## Result\n");
@@ -368,8 +370,8 @@ public class KataSubmitService {
         if (result.timedOut) {
             builder.append("\n## Timed Out\n");
             builder.append("<div class=\"simple\">\n");
-            builder.append("Time Limit: ").append(result.wallTime).append("ms\n").append("&nbsp;&nbsp;&nbsp;&nbsp;");
-            builder.append("Test Time: ").append(result.testTime).append("ms\n");
+            builder.append("Time Limit: ").append(result.wallTime).append("&nbsp;ms\n").append("&nbsp;&nbsp;&nbsp;&nbsp;");
+            builder.append("Test Time: ").append(result.testTime).append("&nbsp;ms\n");
             builder.append("</div>\n");
         }
         if (result.serverError) {
@@ -377,14 +379,22 @@ public class KataSubmitService {
             builder.append(result.errors).append("errors\n");
             builder.append("error: ").append(result.error).append("\n");
         }
-        builder.append("\n## Output");
+        builder.append("\n## Output\n");
         if (result.output != null) {
             for(var output : result.output) {
-                builder.append("\n### ").append(output.v).append("\n");
+                if (!StringUtil.isBlank(output.v) && output.v.length() > 2 && !output.t.equals("log")) {
+                    builder.append("### ").append(output.v).append("  \n");
+                } else if (!StringUtil.isBlank(output.v) && output.v.length() > 2){
+                    builder.append("### ").append("log  \n");
+                    builder.append(output.v.replaceAll("(\r\n|\n|\r)", "  $1"));
+                }
                 if (output.items != null) {
                     for(var item : output.items) {
-                        if (!StringUtil.isBlank(item.v) && item.v.length() > 2) {
-                            builder.append("#### ").append(item.v).append("\n");
+                        if (!StringUtil.isBlank(item.v) && item.v.length() > 2 && !item.t.equals("log")) {
+                            builder.append("#### ").append(item.v).append("  \n");
+                        } else if (!StringUtil.isBlank(item.v) && item.v.length() > 2){
+                            builder.append("#### ").append("log  \n");
+                            builder.append(item.v.replaceAll("(\r\n|\n|\r)", "  $1"));
                         }
                         if(item.items != null) {
                             for(var nestedItem : item.items) {
