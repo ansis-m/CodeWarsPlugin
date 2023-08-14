@@ -44,8 +44,10 @@ public class Result {
                 '}';
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Output {
         public String t;
+        public String m;
         public String v;
         public boolean p;
         public List<Output> items;
@@ -61,6 +63,7 @@ public class Result {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Assertions {
         public double passed;
         public double failed;
@@ -76,6 +79,7 @@ public class Result {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Specs {
         public double passed;
         public double failed;
@@ -91,6 +95,7 @@ public class Result {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Unweighted {
         public double passed;
         public double failed;
@@ -104,6 +109,7 @@ public class Result {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Weighted {
         public double passed;
         public double failed;
@@ -117,6 +123,7 @@ public class Result {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Hidden {
         public double passed;
         public double failed;

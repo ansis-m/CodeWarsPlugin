@@ -176,7 +176,7 @@ public abstract class AbstractFileService {
         Module module = pickModule();
 
         ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-        VirtualFile[] roots = this instanceof JavaFileService? moduleRootManager.getSourceRoots(false) : moduleRootManager.getContentRoots();
+        VirtualFile[] roots = this instanceof JavaFileService || this instanceof KotlinFileService? moduleRootManager.getSourceRoots(false) : moduleRootManager.getContentRoots();
 
         System.out.println("roots size: " + roots.length);
         Arrays.stream(roots).filter(root -> !root.getName().equals("resources")).forEach(sourcesRoots::add);
