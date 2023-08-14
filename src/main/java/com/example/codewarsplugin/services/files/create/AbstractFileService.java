@@ -52,7 +52,6 @@ public abstract class AbstractFileService {
     }
 
     public void createDirectory() throws IOException {
-
         VirtualFile newDirectory = sourcesRoot.createChildDirectory(this, getDirectoryName());
         newDirectory.refresh(false, true);
         VirtualFile metaData = newDirectory.createChildDirectory(this, "metadata");
@@ -62,7 +61,6 @@ public abstract class AbstractFileService {
     }
 
     public KataDirectory createKataDirectory() {
-
         KataDirectory kataDirectory = new KataDirectory();
         kataDirectory.setWorkFile(workFile);
         kataDirectory.setTestFile(testFile);
@@ -138,23 +136,17 @@ public abstract class AbstractFileService {
         for (Module module : moduleManager.getModules()) {
             ModuleType<?> moduleType = ModuleType.get(module);
             System.out.println("module name: " + moduleType.getName());
-            if (shouldAddModule(moduleType, language)) {
+            if (shouldAddModule(moduleType)) {
                 modules.add(module);
             }
         }
         if (modules.size() < 1) {
-            if (language.equals("javascript")){
-                throw new ModuleNotFoundException(JS_MODULE_NOT_FOUND);
-            } else {
-                throw new ModuleNotFoundException(MessageFormat.format(MODULE_NOT_FOUND, language));
-            }
+            throwModuleNotFoundException(language);
         }
     }
 
-    private boolean shouldAddModule(@NotNull ModuleType<?> moduleType, String language) {
-        return (moduleType.getName().toLowerCase().contains(language) && !moduleType.getName().toLowerCase().contains("unknown")) ||
-                (moduleType.getName().toLowerCase().contains("web") && language.equals("javascript")) || //javascript inside web modules
-                (language.equals("kotlin") && moduleType.getName().toLowerCase().contains("java") && !moduleType.getName().toLowerCase().contains("unknown")); //kotlin uses java modules
+    public void throwModuleNotFoundException(String language) {
+        throw new ModuleNotFoundException(MessageFormat.format(MODULE_NOT_FOUND, language));
     }
 
     public Module pickModule() {
@@ -171,6 +163,7 @@ public abstract class AbstractFileService {
         }
     }
 
+    //todo split into implementations
     public void getSourcesRoot() {
 
         Module module = pickModule();
@@ -200,9 +193,11 @@ public abstract class AbstractFileService {
     protected String getInputFileName() {
         return "input.json";
     }
-
     public abstract String getTestFileName();
     public abstract String getFileName();
+
+    protected abstract boolean shouldAddModule(@NotNull ModuleType<?> moduleType);
+
     protected abstract String getDirectoryName();
     protected abstract byte[] getFileContent(boolean isWorkFile);
     public abstract void initDirectory();

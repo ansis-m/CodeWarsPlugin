@@ -1,13 +1,19 @@
 package com.example.codewarsplugin.services.files.create;
 
+import com.example.codewarsplugin.exceptions.ModuleNotFoundException;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static com.example.codewarsplugin.config.StringConstants.JS_MODULE_NOT_FOUND;
+import static com.example.codewarsplugin.config.StringConstants.KOTLIN_MODULE_NOT_FOUND;
 
 public class KotlinFileService extends AbstractFileService{
     public KotlinFileService(KataInput input, KataRecord record, Project project) {
@@ -42,6 +48,10 @@ public class KotlinFileService extends AbstractFileService{
         return getFileBaseName(input.getSetup()) + ".kt";
     }
 
+    @Override
+    protected boolean shouldAddModule(@NotNull ModuleType<?> moduleType) {
+        return moduleType.getName().toLowerCase().contains("java") && !moduleType.getName().toLowerCase().contains("unknown");
+    }
 
     public String getFileBaseName(String input){
 
@@ -75,5 +85,10 @@ public class KotlinFileService extends AbstractFileService{
                 Arrays.stream(record.getSlug().split("-"))
                         .map(JavaFileService::sanitizeForPackageName)
                         .collect(Collectors.joining("."));
+    }
+
+    @Override
+    public void throwModuleNotFoundException(String language) {
+        throw new ModuleNotFoundException(KOTLIN_MODULE_NOT_FOUND);
     }
 }

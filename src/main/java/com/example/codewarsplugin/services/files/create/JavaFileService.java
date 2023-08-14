@@ -2,7 +2,9 @@ package com.example.codewarsplugin.services.files.create;
 
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -41,6 +43,11 @@ public class JavaFileService extends AbstractFileService {
     @Override
     public String getFileName() {
         return getFileBaseName(input.getSetup()) + ".java";
+    }
+
+    @Override
+    protected boolean shouldAddModule(@NotNull ModuleType<?> moduleType) {
+        return moduleType.getName().toLowerCase().contains("java") && !moduleType.getName().toLowerCase().contains("unknown");
     }
 
 

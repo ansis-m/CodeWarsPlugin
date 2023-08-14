@@ -2,8 +2,10 @@ package com.example.codewarsplugin.services.files.create;
 
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -19,6 +21,11 @@ public class PythonFileService extends AbstractFileService{
     @Override
     public String getFileName() {
         return "solution.py";
+    }
+
+    @Override
+    protected boolean shouldAddModule(@NotNull ModuleType<?> moduleType) {
+        return moduleType.getName().toLowerCase().contains("python");
     }
 
     @Override

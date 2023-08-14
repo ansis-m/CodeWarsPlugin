@@ -1,11 +1,17 @@
 package com.example.codewarsplugin.services.files.create;
 
+import com.example.codewarsplugin.exceptions.ModuleNotFoundException;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
+import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.example.codewarsplugin.config.StringConstants.*;
 
 public class JavascriptFileService extends AbstractFileService{
 
@@ -31,6 +37,11 @@ public class JavascriptFileService extends AbstractFileService{
         } else {
             return "filename";
         }
+    }
+
+    @Override
+    public boolean shouldAddModule(@NotNull ModuleType<?> moduleType) {
+        return moduleType.getName().toLowerCase().contains("web");
     }
 
     @Override
@@ -61,5 +72,10 @@ public class JavascriptFileService extends AbstractFileService{
 
     private String getExport() {
         return String.format("\n\nmodule.exports = %s;  //required only to run tests locally", getFileBaseName(input.getSetup()));
+    }
+
+    @Override
+    public void throwModuleNotFoundException(String language) {
+        throw new ModuleNotFoundException(JS_MODULE_NOT_FOUND);
     }
 }
