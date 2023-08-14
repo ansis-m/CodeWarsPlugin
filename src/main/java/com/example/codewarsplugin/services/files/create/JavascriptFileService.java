@@ -15,16 +15,6 @@ public class JavascriptFileService extends AbstractFileService{
     }
 
     @Override
-    protected String getRecordFileName() {
-        return "record.json";
-    }
-
-    @Override
-    protected String getInputFileName() {
-        return "input.json";
-    }
-
-    @Override
     public String getDirectoryName() {
         return "codewars-" + record.getSlug().replaceAll("[^a-zA-Z0-9-_]+", "-").replaceAll("-+", "-");
     }

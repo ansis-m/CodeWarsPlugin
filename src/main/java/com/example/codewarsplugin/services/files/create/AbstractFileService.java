@@ -153,7 +153,8 @@ public abstract class AbstractFileService {
 
     private boolean shouldAddModule(@NotNull ModuleType<?> moduleType, String language) {
         return (moduleType.getName().toLowerCase().contains(language) && !moduleType.getName().toLowerCase().contains("unknown")) ||
-                (moduleType.getName().toLowerCase().contains("web") && language.equals("javascript"));
+                (moduleType.getName().toLowerCase().contains("web") && language.equals("javascript")) || //javascript inside web modules
+                (language.equals("kotlin") && moduleType.getName().toLowerCase().contains("java") && !moduleType.getName().toLowerCase().contains("unknown")); //kotlin uses java modules
     }
 
     public Module pickModule() {
@@ -193,11 +194,15 @@ public abstract class AbstractFileService {
             throw new SourcesRootNotFoundException("Sources root directory not found in the current java module. Create sources root and try again!");
         }
     }
+    protected String getRecordFileName() {
+        return "record.json";
+    }
+    protected String getInputFileName() {
+        return "input.json";
+    }
 
     public abstract String getTestFileName();
     public abstract String getFileName();
-    protected abstract String getRecordFileName();
-    protected abstract String getInputFileName();
     protected abstract String getDirectoryName();
     protected abstract byte[] getFileContent(boolean isWorkFile);
     public abstract void initDirectory();

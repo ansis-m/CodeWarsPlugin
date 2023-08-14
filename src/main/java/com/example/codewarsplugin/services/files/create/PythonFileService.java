@@ -22,16 +22,6 @@ public class PythonFileService extends AbstractFileService{
     }
 
     @Override
-    protected String getRecordFileName(){
-        return "record.json";
-    }
-
-    @Override
-    protected String getInputFileName(){
-        return "input.json";
-    }
-
-    @Override
     public String getDirectoryName() {
         return "codewars_" + getFileBaseName(record.getSlug());
 

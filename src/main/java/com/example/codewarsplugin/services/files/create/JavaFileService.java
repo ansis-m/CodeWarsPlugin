@@ -59,17 +59,6 @@ public class JavaFileService extends AbstractFileService {
     }
 
     @Override
-    protected String getRecordFileName(){
-        return getFileBaseName(input.getSetup()) + "Record.json";
-    }
-
-    @Override
-    protected String getInputFileName(){
-        return getFileBaseName(input.getSetup()) + "Input.json";
-    }
-
-
-    @Override
     public String getDirectoryName() {
         return "codewars.java." +
                 Arrays.stream(record.getSlug().split("-"))
@@ -118,7 +107,7 @@ public class JavaFileService extends AbstractFileService {
                 "int", "interface", "long", "native", "new", "package", "private",
                 "protected", "public", "return", "short", "static", "strictfp",
                 "super", "switch", "synchronized", "this", "throw", "throws",
-                "transient", "try", "void", "volatile", "while"};
+                "transient", "try", "void", "volatile", "while", "when", "by", "var", "val"};
 
         for (String keyword : keywords) {
             if (output.equals(keyword)) {

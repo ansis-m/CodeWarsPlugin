@@ -13,7 +13,7 @@ import static org.apache.commons.lang.WordUtils.capitalize;
 
 public class FileServiceFactory {
 
-    public static final List<String> SUPPORTED_LANGUAGES = List.of("java", "python", "javascript");
+    public static final List<String> SUPPORTED_LANGUAGES = List.of("java", "python", "javascript", "kotlin");
 
     private final static String PACKAGE = AbstractFileService.class.getPackageName();
     public static AbstractFileService createFileService(KataInput input, KataRecord record, Project project) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, LanguageNotSupportedException {
