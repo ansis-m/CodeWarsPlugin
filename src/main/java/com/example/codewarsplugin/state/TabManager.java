@@ -134,9 +134,9 @@ public class TabManager implements KataSetupServiceClient {
         return new CefLoadHandlerAdapter() {
             @Override
             public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
-                if(frame.getURL().equals(DASHBOARD_URL) && (previousUrl.equals(SIGN_IN_URL) || previousUrl.equals(""))){
+                if((frame.getURL().equals(DASHBOARD_URL) || frame.getURL().equals(SETUP_URL)) && ((previousUrl.equals(SIGN_IN_URL) || previousUrl.contains("github")) || previousUrl.equals(""))){
                     ApplicationManager.getApplication().invokeLater(() -> getCookies());
-                } else if(browser.getURL().contains("train") && shouldFetchAndCreateFilesOnUrlLoad.get() && !previousUrl.equals(browser.getURL())) {
+                } else if(browser.getURL().contains("train") && !browser.getURL().contains("trainer") && shouldFetchAndCreateFilesOnUrlLoad.get() && !previousUrl.equals(browser.getURL())) {
                     System.out.println("Enter the browser listener: " + shouldFetchAndCreateFilesOnUrlLoad.get());
                     System.out.println("url: " + browser.getURL());
                     ApplicationManager.getApplication().invokeLater(() -> showOverlaySpinner(true));
@@ -182,7 +182,6 @@ public class TabManager implements KataSetupServiceClient {
         });
     }
 
-    //called form the project tab on EDT
     @Override
     public void loadWorkspaceTab(KataDirectory directory, boolean loadUrl) {
 
@@ -196,11 +195,15 @@ public class TabManager implements KataSetupServiceClient {
             browser.loadURL(directory.getRecord().getWorkUrl());
         }
         configureWorkPanel();
-        jbTabbedPane.revalidate();
-        jbTabbedPane.repaint();
+    }
+    public void reloadWorkspace() {
+        System.out.println("\n\nreload workspace\n\n");
+        System.out.println("completed: " + store.getDirectory().getRecord().isCompleted() + "\n\n\n");
+        submitPanel = new KataSubmitPanel(store);
+        configureWorkPanel();
+        loadProjectTab();
     }
 
-    //called from the browser listener
     @Override
     public void loadWorkspace(KataDirectory directory, boolean loadUrl) {
 

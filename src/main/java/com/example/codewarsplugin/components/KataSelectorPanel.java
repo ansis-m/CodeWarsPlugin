@@ -19,8 +19,8 @@ import static com.example.codewarsplugin.config.StringConstants.MESSAGE_ICON;
 
 public class KataSelectorPanel extends JPanel {
 
-    private final ComboBox<Object> directoryBox;
-    DefaultComboBoxModel<Object> model;
+    private final ComboBox<KataDirectory> directoryBox;
+    DefaultComboBoxModel<KataDirectory> model;
     private final JButton selectorButton = new JButton("Setup Kata");
     private final JButton deleteButton = new JButton("Delete Kata");
     private final JPanel innerPanel = new JPanel(new GridBagLayout());
@@ -37,8 +37,9 @@ public class KataSelectorPanel extends JPanel {
         parser = new KataDirectoryParser(store.getProject());
         kataDirectoryList = parser.getDirectoryList();
         removeCurrentDirectory();
-        model = new DefaultComboBoxModel<>(kataDirectoryList.toArray());
+        model = new DefaultComboBoxModel<KataDirectory>(kataDirectoryList.toArray(new KataDirectory[0]));
         directoryBox = new ComboBox<>(model);
+        directoryBox.setRenderer(new KataDirectoryRenderer());
         this.manager = tabManager;
         initComponents();
     }

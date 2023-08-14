@@ -19,7 +19,7 @@ public class KataDirectory {
     //toString method used in the selector panel.
     @Override
     public String toString() {
-        return record.getName() + " in " + record.getSelectedLanguage() + (record.isCompleted()? " (completed)" : "");
+        return record.getName() + " in " + record.getSelectedLanguage();
     }
 
     public VirtualFile getDirectory() {

@@ -19,7 +19,6 @@ import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
@@ -99,7 +98,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         constraints.gridy = 0;
         add(titleLabel, constraints);
 
-        JLabel infoLabel = new JLabel(record.getRank().getName() + " kata in " + record.getSelectedLanguage() + " " + input.getActiveVersion());
+        JLabel infoLabel = new KataDirectoryRenderer(store.getDirectory());
         infoLabel.setFont(titleLabel.getFont().deriveFont(15f));
         infoLabel.setForeground(getColor(record.getRank().getColor()));
 
@@ -183,11 +182,11 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
     @Override
     public void notifyCommitSuccess(HttpResponse<String> response) {
-
         try{
             updateRecordFile();
         } catch (Exception ignored){}
         ApplicationManager.getApplication().invokeLater(() -> {
+            store.getManager().reloadWorkspace();
             stopSpinner(commitCardLayout, commitCardPanel);
             Messages.showMessageDialog("Congrats, you commited your solution! \nSelect a new Kata!", "Commit Success!", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
         });
