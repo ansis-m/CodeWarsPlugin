@@ -13,7 +13,7 @@ import static org.apache.commons.lang.WordUtils.capitalize;
 
 public class FileServiceFactory {
 
-    public static final List<String> SUPPORTED_LANGUAGES = List.of("java", "python", "javascript", "kotlin");
+    public static final List<String> SUPPORTED_LANGUAGES = List.of("java", "python", "javascript", "kotlin", "groovy");
 
     private final static String PACKAGE = AbstractFileService.class.getPackageName();
     public static AbstractFileService createFileService(KataInput input, KataRecord record, Project project) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, LanguageNotSupportedException {
@@ -21,7 +21,7 @@ public class FileServiceFactory {
         SUPPORTED_LANGUAGES.stream()
                 .filter(language -> language.equals(input.getLanguageName()))
                 .findFirst()
-                .orElseThrow(() -> new LanguageNotSupportedException("Sorry, " + input.getLanguageName() + " is not supported. Codewars plugin currently supports " + String.join(", ", SUPPORTED_LANGUAGES)));
+                .orElseThrow(() -> new LanguageNotSupportedException("Sorry, " + input.getLanguageName() + " is not supported. Codewars plugin currently supports " + String.join(", ", SUPPORTED_LANGUAGES)+ "."));
 
         String className = capitalize(input.getLanguageName()) + "FileService";
         Class<?> serviceClass = Class.forName(PACKAGE + "." + className);

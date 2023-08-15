@@ -22,6 +22,7 @@ public class StringConstants {
     public static final String MODULE_NOT_FOUND = "{0} module not found in the current project! To setup Kata in {0} start a new {0} project or create a {0} module in the current project! Also, make sure that {0} is supported by IDE and {0} plugin is installed!";
     public static final String JS_MODULE_NOT_FOUND = "Web/JavaScript module not found in the current project! To setup Kata in JS start a new JS/Web project or create a JS module in the current project! JS is supported only by WebStorm and Intellij Ultimate.";
     public static final String KOTLIN_MODULE_NOT_FOUND = "Kotlin/Java module not found in the current project! To setup Kata in Kotlin start a new Java/Kotlin project or create a Java/Kotlin module in the current project!";
+    public static final String GROOVY_MODULE_NOT_FOUND = "Groovy/Java module not found in the current project! To setup Kata in Groovy start a new Java/Groovy project or create a Java/Groovy module in the current project!";
     public static final String PYTHON_TEST_FRAMEWORK_MESSAGE = "# codewars_test can be installed from https://github.com/codewars/python-test-framework\n" +
             "# run \"pip install git+https://github.com/codewars/python-test-framework.git#egg=codewars_test\"\n\n\n";
 

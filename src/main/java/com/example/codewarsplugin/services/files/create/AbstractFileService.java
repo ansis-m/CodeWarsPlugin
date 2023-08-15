@@ -163,13 +163,11 @@ public abstract class AbstractFileService {
         }
     }
 
-    //todo split into implementations
     public void getSourcesRoot() {
 
         Module module = pickModule();
-
         ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-        VirtualFile[] roots = this instanceof JavaFileService || this instanceof KotlinFileService? moduleRootManager.getSourceRoots(false) : moduleRootManager.getContentRoots();
+        VirtualFile[] roots = thisIsJavaDerivedLanguage() ? moduleRootManager.getSourceRoots(false) : moduleRootManager.getContentRoots();
 
         System.out.println("roots size: " + roots.length);
         Arrays.stream(roots).filter(root -> !root.getName().equals("resources")).forEach(sourcesRoots::add);
@@ -187,6 +185,11 @@ public abstract class AbstractFileService {
             throw new SourcesRootNotFoundException("Sources root directory not found in the current java module. Create sources root and try again!");
         }
     }
+
+    private boolean thisIsJavaDerivedLanguage() {
+        return this instanceof JavaFileService || this instanceof KotlinFileService || this instanceof GroovyFileService;
+    }
+
     protected String getRecordFileName() {
         return "record.json";
     }

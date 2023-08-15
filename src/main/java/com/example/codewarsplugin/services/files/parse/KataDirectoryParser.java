@@ -131,7 +131,7 @@ public class KataDirectoryParser {
             {
                 ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(m);
                 ModuleType<?> moduleType = ModuleType.get(m);
-                System.out.println("module type get name: " + moduleType.getName());
+                System.out.println("module type get name: " + moduleType.getName() + " title: " + m.getName());
                 if (moduleIsJava(moduleType)) {
                     VirtualFile[] roots = moduleRootManager.getSourceRoots(false);
                     Arrays.stream(roots).filter(root -> !root.getName().equals("resources")).forEach(sourcesRoots::add);

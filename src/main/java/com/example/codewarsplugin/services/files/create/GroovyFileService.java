@@ -12,28 +12,26 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.example.codewarsplugin.config.StringConstants.KOTLIN_MODULE_NOT_FOUND;
+import static com.example.codewarsplugin.config.StringConstants.GROOVY_MODULE_NOT_FOUND;
 
-public class KotlinFileService extends AbstractFileService{
-    public KotlinFileService(KataInput input, KataRecord record, Project project) {
+public class GroovyFileService extends AbstractFileService{
+
+
+    private final Pattern classPattern = Pattern.compile("(?<!\\.)\\bclass\\b");
+    private final Pattern functionPattern = Pattern.compile("(?<!\\.)\\bdef\\b");
+
+    public GroovyFileService(KataInput input, KataRecord record, Project project) {
         super(input, record, project);
     }
-    private final Pattern classPattern = Pattern.compile("(?<!\\.)\\bclass\\b");
-    private final Pattern functionPattern = Pattern.compile("(?<!\\.)\\bfun\\b");
-    private final Pattern objectPattern = Pattern.compile("(?<!\\.)\\bobject\\b");
 
     @Override
     public byte[] getFileContent(boolean isWorkFile) {
-        return (getPackage() + (isWorkFile? input.getSetup() : input.getExampleFixture())).getBytes();
-    }
-
-    private String getPackage() {
-        return input.getSetup().contains("package")? "" : "package " + getDirectoryName() + ";\n\n";
+        return (isWorkFile? input.getSetup() : input.getExampleFixture()).getBytes();
     }
 
     @Override
     public String getTestFileName() {
-        return getFileBaseName(input.getExampleFixture()) + ".kt";
+        return getFileBaseName(input.getExampleFixture()) + ".groovy";
     }
 
     @Override
@@ -44,7 +42,7 @@ public class KotlinFileService extends AbstractFileService{
 
     @Override
     public String getFileName() {
-        return getFileBaseName(input.getSetup()) + ".kt";
+        return getFileBaseName(input.getSetup()) + ".groovy";
     }
 
     @Override
@@ -56,16 +54,11 @@ public class KotlinFileService extends AbstractFileService{
 
         final Matcher classMatcher = classPattern.matcher(input);
         final Matcher functionMatcher = functionPattern.matcher(input);
-        final Matcher objectMatcher = objectPattern.matcher(input);
+
 
         if (classMatcher.find()) {
             int classIndex = classMatcher.start();
             int startIndex = classIndex + 5;
-            int endIndex = input.indexOf('{');
-            return endIndex > startIndex? input.substring(startIndex, endIndex).strip().split("[,\\s<]")[0] : "filename";
-        } else if (objectMatcher.find()) {
-            int objectIndex = objectMatcher.start();
-            int startIndex = objectIndex + 6;
             int endIndex = input.indexOf('{');
             return endIndex > startIndex? input.substring(startIndex, endIndex).strip().split("[,\\s<]")[0] : "filename";
         } else if (functionMatcher.find()) {
@@ -80,7 +73,7 @@ public class KotlinFileService extends AbstractFileService{
 
     @Override
     public String getDirectoryName() {
-        return "codewars.kotlin." +
+        return "codewars.groovy." +
                 Arrays.stream(record.getSlug().split("-"))
                         .map(JavaFileService::sanitizeForPackageName)
                         .collect(Collectors.joining("."));
@@ -88,6 +81,7 @@ public class KotlinFileService extends AbstractFileService{
 
     @Override
     public void throwModuleNotFoundException(String language) {
-        throw new ModuleNotFoundException(KOTLIN_MODULE_NOT_FOUND);
+        throw new ModuleNotFoundException(GROOVY_MODULE_NOT_FOUND);
     }
+
 }
