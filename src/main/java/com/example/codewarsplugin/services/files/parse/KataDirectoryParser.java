@@ -123,6 +123,7 @@ public class KataDirectoryParser {
 
     }
 
+    //todo refractor/simplify. currently a mess just for logging purposes
     public void getSourcesRoots() {
 
         ModuleManager moduleManager = ModuleManager.getInstance(project);
@@ -140,6 +141,11 @@ public class KataDirectoryParser {
                     Collections.addAll(sourcesRoots, roots);
                 } else if (moduleType.getName().toLowerCase().contains("web")) {
                     System.out.println("parsing javascript module!!!");
+                    VirtualFile[] roots = moduleRootManager.getContentRoots();
+                    Collections.addAll(sourcesRoots, roots);
+                }
+                else if (moduleType.getName().toLowerCase().contains("ruby")) {
+                    System.out.println("parsing ruby module!!!");
                     VirtualFile[] roots = moduleRootManager.getContentRoots();
                     Collections.addAll(sourcesRoots, roots);
                 }

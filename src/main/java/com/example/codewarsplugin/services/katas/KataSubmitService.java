@@ -171,8 +171,7 @@ public class KataSubmitService {
 
         KataOutput output = new KataOutput();
         output.setLanguage(input.getLanguageName());
-        String code = readWorkFile();
-        output.setCode(code);
+        output.setCode(readFile(true));
         output.setFixture(input.getFixture());
         output.setTestFramework(input.getTestFramework());
         output.setLanguageVersion(input.getActiveVersion());
@@ -180,21 +179,22 @@ public class KataSubmitService {
         return output;
     }
     private KataOutput mapTestOutput() {
-        return mapOutput().setCiphered(new String[] {"setup"}).setFixture(input.getExampleFixture());
+        return mapOutput().setCiphered(new String[] {"setup"}).setFixture(readFile(false));
     }
 
-    private String readWorkFile() {
+    private String readFile(boolean workFile) {
 
         AtomicReference<String> atomicString = new AtomicReference<>("");
         ApplicationManager.getApplication().runReadAction(() -> {
             FileDocumentManager documentManager = FileDocumentManager.getInstance();
-            Document document = documentManager.getDocument(directory.getWorkFile());
+            Document document = documentManager.getDocument(workFile? directory.getWorkFile() : directory.getTestFile());
             if (document != null) {
                 atomicString.set(stripPackage(document.getText()));
             }
         });
         return atomicString.get();
     }
+
 
     private String stripPackage(String text) {
         int begin = text.indexOf("package");
