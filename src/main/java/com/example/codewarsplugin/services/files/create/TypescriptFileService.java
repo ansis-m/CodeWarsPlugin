@@ -64,7 +64,7 @@ public class TypescriptFileService extends AbstractFileService{
                     "{\n" +
                     "  \"compilerOptions\": {\n" +
                     "    \"module\": \"commonjs\",\n" +
-                    "    \"target\": \"es5\",\n" +
+                    "    \"target\": \"es6\",\n" +
                     "    \"sourceMap\": true\n" +
                     "  },\n" +
                     "  \"exclude\": [\n" +

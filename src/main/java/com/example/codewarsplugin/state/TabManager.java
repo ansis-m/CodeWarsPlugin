@@ -57,7 +57,11 @@ public class TabManager implements KataSetupServiceClient {
 
     //EDT on initialization
     public void setupTabs(){
-        browserPanel.add(browser.getComponent(), BorderLayout.CENTER);
+
+        var browserComponent = browser.getComponent();
+        browserComponent.setPreferredSize(new Dimension(5000, 5000));
+
+        browserPanel.add(browserComponent, BorderLayout.CENTER);
         jbTabbedPane.insertTab(BROWSER, AllIcons.Javaee.WebService, browserPanel, "Search and select kata!", jbTabbedPane.getTabCount());
         final CefLoadHandler handler = getBrowserListener();
         client.addLoadHandler(handler, browser.getCefBrowser());
@@ -96,6 +100,8 @@ public class TabManager implements KataSetupServiceClient {
         if (shouldReloadUrl.get() && browser.getCefBrowser().getURL().contains("train")) {
             browser.getCefBrowser().reload();
             shouldFetchAndCreateFilesOnUrlLoad.set(false);
+            jbTabbedPane.revalidate();
+            jbTabbedPane.repaint();
         }
         shouldReloadUrl.set(false);
     }
