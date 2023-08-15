@@ -5,17 +5,18 @@ import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.example.codewarsplugin.config.StringConstants.*;
+import static com.example.codewarsplugin.services.files.create.JavascriptFileService.getImportMessage;
 
-public class JavascriptFileService extends AbstractFileService{
-
+public class TypescriptFileService extends AbstractFileService{
     private final Pattern classPattern = Pattern.compile("(?<!\\.)\\bfunction\\b");
-    public JavascriptFileService(KataInput input, KataRecord record, Project project) {
+    public TypescriptFileService(KataInput input, KataRecord record, Project project) {
         super(input, record, project);
     }
 
@@ -45,33 +46,40 @@ public class JavascriptFileService extends AbstractFileService{
 
     @Override
     public String getFileName() {
-        return "solution.js";
+        return "solution.ts";
     }
 
     @Override
     public String getTestFileName() {
-        return "test.js";
+        return "test.ts";
     }
 
     @Override
     public void initDirectory() {
+
+        try {
+            VirtualFile file = directory.createChildData(this, TS_CONFIG);
+            file.refresh(false, true);
+            file.setBinaryContent((
+                    "{\n" +
+                    "  \"compilerOptions\": {\n" +
+                    "    \"module\": \"commonjs\",\n" +
+                    "    \"target\": \"es5\",\n" +
+                    "    \"sourceMap\": true\n" +
+                    "  },\n" +
+                    "  \"exclude\": [\n" +
+                    "    \"node_modules\"\n" +
+                    "  ]\n" +
+                    "}").getBytes());
+
+        } catch (Exception ignored){}
         testDirectory = directory;
         workDirectory = directory;
     }
 
     @Override
     public byte[] getFileContent(boolean isWorkFile) {
-        return (isWorkFile? input.getSetup() + getExport() : getImportMessage() + input.getExampleFixture()).getBytes();
-    }
-
-    static String getImportMessage() {
-        return "// Install Mocha to run tests locally!" +
-                " Run \"npm install mocha --save-dev\"." +
-                "\n// Install Chai: \"npm install chai --save-dev\"\n\n";
-    }
-
-    private String getExport() {
-        return String.format("\n\nmodule.exports = %s;  //required only to run tests locally", getFileBaseName(input.getSetup()));
+        return (isWorkFile? input.getSetup() : getImportMessage() + input.getExampleFixture()).getBytes();
     }
 
     @Override
