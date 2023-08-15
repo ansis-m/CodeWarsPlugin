@@ -30,7 +30,7 @@ intellij {
 
 
     //plugins.set(listOf("PythonCore:221.6008.17")) //for development only, to be removed in production - for the free intellij
-    plugins.set(listOf("Pythonid:223.8214.52")) //for development only, to be removed in production - for ultimate
+    plugins.set(listOf("Pythonid:223.8214.52", "org.jetbrains.plugins.go:223.8214.52", "org.jetbrains.plugins.ruby:223.8214.52", "com.jetbrains.php:223.8214.64")) //for development only, to be removed in production - for ultimate
 }
 
 tasks {

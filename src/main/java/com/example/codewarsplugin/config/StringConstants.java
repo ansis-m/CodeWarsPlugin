@@ -25,5 +25,6 @@ public class StringConstants {
     public static final String GROOVY_MODULE_NOT_FOUND = "Groovy/Java module not found in the current project! To setup Kata in Groovy start a new Java/Groovy project or create a Java/Groovy module in the current project!";
     public static final String PYTHON_TEST_FRAMEWORK_MESSAGE = "# codewars_test can be installed from https://github.com/codewars/python-test-framework\n" +
             "# run \"pip install git+https://github.com/codewars/python-test-framework.git#egg=codewars_test\"\n\n\n";
+    public static final String RUBY_TEST_FRAMEWORK_MESSAGE = "# To run tests locally a test framework has to be installed manually.\n# Newer katas use RSpec framework while older katas require Codewars Test Framework: \"https://github.com/codewars/ruby-test-framework\"\n# It is not required to install test frameworks.\n# You can modify these tests and submit them to the codewars.com server in the \"workspace\" tab.\n\n";
 
 }
