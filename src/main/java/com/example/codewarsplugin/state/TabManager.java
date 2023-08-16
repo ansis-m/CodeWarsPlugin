@@ -46,16 +46,15 @@ public class TabManager implements KataSetupServiceClient {
     private KataSubmitPanel submitPanel = null;
     private final JLabel emptyWorkspace = new JLabel("Select Kata", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class), JLabel.CENTER);
 
-    //EDT on initialization
     public TabManager(Store store, Project project) {
         this.jbTabbedPane = store.getTabbedPane();
         this.store = store;
         this.browser = store.getBrowser();
         this.client = store.getClient();
         this.project = project;
+        emptyWorkspace.setPreferredSize(new Dimension(5000, 5000));
     }
 
-    //EDT on initialization
     public void setupTabs(){
 
         var browserComponent = browser.getComponent();
@@ -106,8 +105,6 @@ public class TabManager implements KataSetupServiceClient {
         shouldReloadUrl.set(false);
     }
 
-    //called from EDT on tab listener
-    //called from EDT on login
     private void loadProjectTab() {
 
         int index = getTabIndex(WORKSPACE);
@@ -128,12 +125,20 @@ public class TabManager implements KataSetupServiceClient {
         KataSelectorPanel selectorPanel = new KataSelectorPanel(store, this);
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.weightx = 1;
-        constraints.weighty = 0.5;
+        constraints.weighty = 0.25;
         constraints.gridx = 0;
         constraints.gridy = 0;
         workPanel.add(selectorPanel, constraints);
         constraints.gridy = 1;
+        JPanel dummy = new JPanel();
+        dummy.setPreferredSize(new Dimension(5000, 5000));
+        workPanel.add(dummy, constraints);
+        constraints.gridy = 2;
         workPanel.add(submitPanel == null? emptyWorkspace : submitPanel, constraints);
+        constraints.gridy = 3;
+        JPanel dummy2 = new JPanel();
+        dummy2.setPreferredSize(new Dimension(5000, 5000));
+        workPanel.add(dummy2, constraints);
     }
 
     private CefLoadHandler getBrowserListener() {
@@ -257,7 +262,6 @@ public class TabManager implements KataSetupServiceClient {
     public AtomicBoolean getShouldFetchAndCreateFilesOnUrlLoad() {
         return shouldFetchAndCreateFilesOnUrlLoad;
     }
-
     public AtomicBoolean getShouldReloadUrl() {
         return shouldReloadUrl;
     }

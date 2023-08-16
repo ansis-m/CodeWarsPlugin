@@ -20,12 +20,12 @@ import static com.example.codewarsplugin.config.StringConstants.MESSAGE_ICON;
 public class KataSelectorPanel extends JPanel {
 
     private final ComboBox<KataDirectory> directoryBox;
-    DefaultComboBoxModel<KataDirectory> model;
+    private final DefaultComboBoxModel<KataDirectory> model;
     private final JButton selectorButton = new JButton("Setup Kata");
     private final JButton deleteButton = new JButton("Delete Kata");
     private final JPanel innerPanel = new JPanel(new GridBagLayout());
     private final JPanel buttonPanel = new JPanel(new FlowLayout());
-    private final JLabel title = new JLabel("", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class), JLabel.CENTER);
+    private final JLabel title = new JLabel("", null, JLabel.CENTER);
     private final Store store;
     private final TabManager manager;
     private ArrayList<KataDirectory> kataDirectoryList;
@@ -35,16 +35,20 @@ public class KataSelectorPanel extends JPanel {
     public KataSelectorPanel(Store store, TabManager tabManager){
         this.store = store;
         parser = new KataDirectoryParser(store.getProject());
+        this.manager = tabManager;
         kataDirectoryList = parser.getDirectoryList();
         removeCurrentDirectory();
-        model = new DefaultComboBoxModel<KataDirectory>(kataDirectoryList.toArray(new KataDirectory[0]));
+        model = new DefaultComboBoxModel<>(kataDirectoryList.toArray(new KataDirectory[0]));
         directoryBox = new ComboBox<>(model);
-        directoryBox.setRenderer(new KataDirectoryRenderer());
-        this.manager = tabManager;
+
+        if(kataDirectoryList == null || kataDirectoryList.size() < 1) {
+            return;
+        }
         initComponents();
     }
 
     private void initComponents() {
+        directoryBox.setRenderer(new KataDirectoryRenderer());
         setLayout(new BorderLayout());
 
 
@@ -55,7 +59,6 @@ public class KataSelectorPanel extends JPanel {
         constraints.gridx = 0;
         constraints.gridy = 0;
         title.setText(kataDirectoryList.size() > 0 ? "Select Kata From The Current Project" : "Current Project Contains No Previously Started Katas");
-        title.setFont(title.getFont().deriveFont(20f));
         innerPanel.add(title, constraints);
 
 
@@ -80,24 +83,37 @@ public class KataSelectorPanel extends JPanel {
     private void addSelectorListeners() {
         selectorButton.addActionListener((event) -> {
             var directory = directoryBox.getSelectedItem();
+            if (directory == null) {
+                return;
+            }
             manager.getShouldFetchAndCreateFilesOnUrlLoad().set(false);
             manager.loadWorkspaceTab((KataDirectory) directory, true);
         });
 
         deleteButton.addActionListener((event) -> {
             var directory = (KataDirectory) directoryBox.getSelectedItem();
+            if (directory == null) {
+                return;
+            }
             int result = Messages.showOkCancelDialog("All \"" + directory.getRecord().getName() + "\" kata files will be deleted!", "Confirm Delete Kata Files", "Ok", "Cancel", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
             if (result == 0) {
                 new FileManager().deleteFiles(directory, store.getProject());
-
                 kataDirectoryList = parser.getDirectoryList();
                 removeCurrentDirectory();
+                if (kataDirectoryList.size() < 1) {
+                    Box.Filler filler = new Box.Filler(innerPanel.getPreferredSize(), new Dimension(2000, 2000), new Dimension(2000, 2000));
+                    removeAll();
+                    add(filler);
+                    revalidate();
+                    repaint();
+                    return;
+                }
                 model.removeAllElements();
                 model.addAll(kataDirectoryList);
                 if (model.getSize() > 0) {
                     directoryBox.setSelectedIndex(0);
                 }
-                title.setText(kataDirectoryList.size() > 0 ? "Select Kata From The Current Project" : "Current Project Contains No Previously Started Katas");
+                title.setText("Select Kata From The Current Project");
                 revalidate();
                 repaint();
             }
@@ -106,5 +122,10 @@ public class KataSelectorPanel extends JPanel {
 
     private void removeCurrentDirectory() {
         kataDirectoryList.removeIf(directory -> directory.isTheSame(store.getDirectory()));
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(5000, 5000);
     }
 }
