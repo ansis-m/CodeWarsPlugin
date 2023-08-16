@@ -101,6 +101,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         JLabel infoLabel = new KataDirectoryRenderer(store.getDirectory());
         infoLabel.setFont(titleLabel.getFont().deriveFont(15f));
         infoLabel.setForeground(getColor(record.getRank().getColor()));
+        infoLabel.setText(record.getRank().getName() + " kata in " + record.getSelectedLanguage() + " " + input.getActiveVersion());
 
 
         constraints.gridx = 0;
