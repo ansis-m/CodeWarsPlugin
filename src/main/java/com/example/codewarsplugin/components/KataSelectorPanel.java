@@ -87,7 +87,6 @@ public class KataSelectorPanel extends JPanel {
         deleteButton.addActionListener((event) -> {
             var directory = (KataDirectory) directoryBox.getSelectedItem();
             int result = Messages.showOkCancelDialog("All \"" + directory.getRecord().getName() + "\" kata files will be deleted!", "Confirm Delete Kata Files", "Ok", "Cancel", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
-            System.out.println("Message select: " + result);
             if (result == 0) {
                 new FileManager().deleteFiles(directory, store.getProject());
 

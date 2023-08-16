@@ -38,17 +38,11 @@ public class FileManager {
         WriteCommandAction.runWriteCommandAction(project, () -> {
             try{
                 finalService.createDirectory();
-                System.out.println("created dir\n");
                 finalService.initDirectory();
-                System.out.println("init dir\n");
                 finalService.createTestFile();
-                System.out.println("created test files\n");
                 finalService.createWorkFile();
-                System.out.println("created work files\n");
                 finalService.createRecordFile();
-                System.out.println("created record files\n");
                 finalService.createInputFile();
-                System.out.println("created input files\n");
             } catch (Exception e) {
                 client.notifyKataFileCreationFail("Kata setup failed with " + e.getClass().getSimpleName() + ".\n " + e.getMessage());
             }
@@ -60,7 +54,6 @@ public class FileManager {
     public void deleteFiles(KataDirectory directory, Project project) {
 
         WriteCommandAction.runWriteCommandAction(project, () -> {
-            System.out.println("\ndelete the kata\n");
             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
             deleteRecursively(fileEditorManager, directory.getDirectory());
         });

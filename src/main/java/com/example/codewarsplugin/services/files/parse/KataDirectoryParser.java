@@ -85,13 +85,13 @@ public class KataDirectoryParser {
                     record = mapper.readValue(metafile.contentsToByteArray(), KataRecord.class);
                     kataDirectory.setRecord(record);
                     kataDirectory.setRecordFile(metafile);
-                } catch (Exception e){ System.out.println("exception record parsing failed"); e.printStackTrace();}
+                } catch (Exception e){e.printStackTrace();}
             } else if (!metafile.isDirectory() && metafile.getName().toLowerCase().contains("input.json")){
                 try {
                     input = mapper.readValue(metafile.contentsToByteArray(), KataInput.class);
                     kataDirectory.setInput(input);
                     kataDirectory.setInputFile(metafile);
-                } catch (Exception e){System.out.println("exception input parsing failed"); e.printStackTrace();}
+                } catch (Exception e){e.printStackTrace();}
             }
         }
         if(record == null || input == null) {
@@ -132,7 +132,6 @@ public class KataDirectoryParser {
             {
                 ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(m);
                 ModuleType<?> moduleType = ModuleType.get(m);
-                System.out.println("module type get name: " + moduleType.getName() + " title: " + m.getName());
                 if (moduleIsJava(moduleType)) {
                     VirtualFile[] roots = moduleRootManager.getSourceRoots(false);
                     Arrays.stream(roots).filter(root -> !root.getName().equals("resources")).forEach(sourcesRoots::add);
@@ -140,12 +139,10 @@ public class KataDirectoryParser {
                     VirtualFile[] roots = moduleRootManager.getContentRoots();
                     Collections.addAll(sourcesRoots, roots);
                 } else if (moduleType.getName().toLowerCase().contains("web")) {
-                    System.out.println("parsing javascript module!!!");
                     VirtualFile[] roots = moduleRootManager.getContentRoots();
                     Collections.addAll(sourcesRoots, roots);
                 }
                 else if (moduleType.getName().toLowerCase().contains("ruby")) {
-                    System.out.println("parsing ruby module!!!");
                     VirtualFile[] roots = moduleRootManager.getContentRoots();
                     Collections.addAll(sourcesRoots, roots);
                 }

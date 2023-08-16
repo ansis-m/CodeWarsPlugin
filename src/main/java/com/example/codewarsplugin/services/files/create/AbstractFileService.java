@@ -135,7 +135,6 @@ public abstract class AbstractFileService {
         ModuleManager moduleManager = ModuleManager.getInstance(project);
         for (Module module : moduleManager.getModules()) {
             ModuleType<?> moduleType = ModuleType.get(module);
-            System.out.println("module name: " + moduleType.getName());
             if (shouldAddModule(moduleType)) {
                 modules.add(module);
             }
@@ -168,11 +167,8 @@ public abstract class AbstractFileService {
         Module module = pickModule();
         ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
         VirtualFile[] roots = thisIsJavaDerivedLanguage() ? moduleRootManager.getSourceRoots(false) : moduleRootManager.getContentRoots();
-
-        System.out.println("roots size: " + roots.length);
         Arrays.stream(roots).filter(root -> !root.getName().equals("resources")).forEach(sourcesRoots::add);
 
-        System.out.println("list size: " + sourcesRoots.size());
         if (sourcesRoots.size() == 1) {
             this.sourcesRoot = sourcesRoots.get(0);
         } else if (sourcesRoots.size() > 1) {

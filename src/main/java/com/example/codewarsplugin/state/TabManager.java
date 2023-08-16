@@ -143,13 +143,9 @@ public class TabManager implements KataSetupServiceClient {
                 if((frame.getURL().equals(DASHBOARD_URL) || frame.getURL().equals(SETUP_URL)) && ((previousUrl.equals(SIGN_IN_URL) || previousUrl.contains("github")) || previousUrl.equals(""))){
                     ApplicationManager.getApplication().invokeLater(() -> getCookies());
                 } else if(browser.getURL().contains("train") && !browser.getURL().contains("trainer") && shouldFetchAndCreateFilesOnUrlLoad.get() && !previousUrl.equals(browser.getURL())) {
-                    System.out.println("Enter the browser listener: " + shouldFetchAndCreateFilesOnUrlLoad.get());
-                    System.out.println("url: " + browser.getURL());
                     ApplicationManager.getApplication().invokeLater(() -> showOverlaySpinner(true));
                     final String url = browser.getURL();
                     setupKata(url);
-                } else {
-                    System.out.println("Pass the browser listener: " + shouldFetchAndCreateFilesOnUrlLoad.get());
                 }
                 previousUrl = browser.getURL();
                 shouldFetchAndCreateFilesOnUrlLoad.set(true);
@@ -203,8 +199,6 @@ public class TabManager implements KataSetupServiceClient {
         configureWorkPanel();
     }
     public void reloadWorkspace() {
-        System.out.println("\n\nreload workspace\n\n");
-        System.out.println("completed: " + store.getDirectory().getRecord().isCompleted() + "\n\n\n");
         submitPanel = new KataSubmitPanel(store);
         configureWorkPanel();
         loadProjectTab();

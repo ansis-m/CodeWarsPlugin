@@ -74,7 +74,6 @@ public class KataSubmitService {
 
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("token: " + response.body());
             token = objectMapper.readValue(response.body(), Token.class);
 
         } catch (Exception ignored) {}
@@ -89,7 +88,6 @@ public class KataSubmitService {
                 try{
                     mapSubmitResponse(response.body());
                 } catch (Exception e) {
-                    System.out.println("Error writing .md: " + e.getMessage());
                     e.printStackTrace();
                 }
 
@@ -111,7 +109,6 @@ public class KataSubmitService {
                 try{
                     mapSubmitResponse(response.body());
                 } catch (Exception e) {
-                    System.out.println("Error writing .md: " + e.getMessage());
                     e.printStackTrace();
                 }
                 notifyServer(output);
@@ -235,7 +232,6 @@ public class KataSubmitService {
 
     @SuppressWarnings("unchecked")
     private void mapSubmitResponse(String body) {
-        System.out.println("body: " + body);
         submitResponse = gson.fromJson(body, SubmitResponse.class);
         java.lang.reflect.Type type = new com.google.gson.reflect.TypeToken<Map<String, Object>>(){}.getType();
         Map<String, Object> dataMap = gson.fromJson(body, type);
@@ -255,10 +251,6 @@ public class KataSubmitService {
                         testFile.refresh(false, true);
                     }
                     String resultString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(source);
-
-
-                    System.out.println(resultString);
-
                     var result = objectMapper.readValue(resultString, Result.class);
 
                     testFile.setBinaryContent(writeResultToMd(result, submitResponse));
