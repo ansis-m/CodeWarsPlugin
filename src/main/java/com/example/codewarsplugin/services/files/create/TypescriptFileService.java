@@ -22,7 +22,7 @@ public class TypescriptFileService extends AbstractFileService{
 
     @Override
     public String getDirectoryName() {
-        return "codewars-" + record.getSlug().replaceAll("[^a-zA-Z0-9-_]+", "-").replaceAll("-+", "-");
+        return "codewars-ts-" + record.getSlug().replaceAll("[^a-zA-Z0-9-_]+", "-").replaceAll("-+", "-");
     }
 
 

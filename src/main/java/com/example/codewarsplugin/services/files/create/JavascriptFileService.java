@@ -21,7 +21,7 @@ public class JavascriptFileService extends AbstractFileService{
 
     @Override
     public String getDirectoryName() {
-        return "codewars-" + record.getSlug().replaceAll("[^a-zA-Z0-9-_]+", "-").replaceAll("-+", "-");
+        return "codewars-js-" + record.getSlug().replaceAll("[^a-zA-Z0-9-_]+", "-").replaceAll("-+", "-");
     }
 
 
