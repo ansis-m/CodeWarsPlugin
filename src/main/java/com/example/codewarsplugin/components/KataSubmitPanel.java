@@ -55,7 +55,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         this.input = directory.getInput();
         this.record = directory.getRecord();
         addButtonsToList();
-        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
         addElementsToPanel();
         addButtonListeners();
     }
@@ -87,14 +87,6 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         setupTestCardPanel();
         setupCommitCardPanel();
 
-
-        JLabel titleLabel = new KataDirectoryRenderer(store.getDirectory());
-        titleLabel.setFont(titleLabel.getFont().deriveFont(12f));
-        titleLabel.setForeground(getColor(record.getRank().getColor()));
-        titleLabel.setText(record.getName());
-
-        add(titleLabel);
-
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(testCardPanel);
         buttonPanel.add(attemptCardPanel);
@@ -102,12 +94,6 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
         add(buttonPanel);
 
-        JLabel infoLabel = new KataDirectoryRenderer(store.getDirectory());
-        infoLabel.setFont(infoLabel.getFont().deriveFont(12f));
-        infoLabel.setForeground(getColor(record.getRank().getColor()));
-        infoLabel.setText(record.getRank().getName() + " kata in " + record.getSelectedLanguage() + " " + input.getActiveVersion());
-
-        add(infoLabel);
     }
 
     @Override
@@ -123,6 +109,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     public void notifyAttemptSuccess(SubmitResponse submitResponse) {
         ApplicationManager.getApplication().invokeLater(() -> {
             stopSpinner(attemptCardLayout, attemptCardPanel);
+            store.getManager().reloadBrowser();
             if (submitResponse.getExitCode() == 0) {
                 commitButton.setEnabled(true);
                 attemptSuccessful = true;
@@ -148,6 +135,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         ApplicationManager.getApplication().invokeLater(() -> {
             attemptSuccessful = false;
             stopSpinner(testCardLayout, testCardPanel);
+            store.getManager().reloadBrowser();
             if (submitResponse.getExitCode() == 0) {
                 Messages.showMessageDialog("All test cases passed!", "Attempt Success!", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
             } else {

@@ -22,7 +22,6 @@ public class KataSelectorPanel extends JPanel {
     private final DefaultComboBoxModel<KataDirectory> model;
     private final JButton selectorButton = new JButton("Setup Kata");
     private final JButton deleteButton = new JButton("Delete Kata");
-    private final JLabel title = new JLabel("", null, JLabel.CENTER);
     private final Store store;
     private final Manager manager;
     private ArrayList<KataDirectory> kataDirectoryList;
@@ -30,7 +29,7 @@ public class KataSelectorPanel extends JPanel {
 
 
     public KataSelectorPanel(Store store, Manager manager){
-        super(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        super(new FlowLayout(FlowLayout.LEFT, 10, 0));
         this.store = store;
         parser = new KataDirectoryParser(store.getProject());
         this.manager = manager;
@@ -47,8 +46,6 @@ public class KataSelectorPanel extends JPanel {
 
     private void initComponents() {
         directoryBox.setRenderer(new KataDirectoryRenderer());
-
-
 
         add(directoryBox);
         add(selectorButton);

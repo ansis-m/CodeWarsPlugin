@@ -77,7 +77,7 @@ public class Manager implements KataSetupServiceClient {
 
 
     //todo check if needed
-    private void reloadBrowser() {
+    public void reloadBrowser() {
         if (shouldReloadUrl.get() && browser.getCefBrowser().getURL().contains("train")) {
             browser.getCefBrowser().reload();
             shouldFetchAndCreateFilesOnUrlLoad.set(false);
