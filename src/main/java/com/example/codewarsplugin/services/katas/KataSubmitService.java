@@ -69,7 +69,7 @@ public class KataSubmitService {
                 .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.noBody())
+                .POST(HttpRequest.BodyPublishers.ofByteArray("{}".getBytes(StandardCharsets.UTF_8)))
                 .build();
 
         try {
@@ -215,7 +215,7 @@ public class KataSubmitService {
                 .header("Authorization", token.getToken())
                 .header("X-Csrf-Token", URLDecoder.decode(csrfToken, StandardCharsets.UTF_8))
                 .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
-                .POST(HttpRequest.BodyPublishers.noBody())
+                .POST(HttpRequest.BodyPublishers.ofByteArray("{}".getBytes(StandardCharsets.UTF_8)))
                 .build();
         try {
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());

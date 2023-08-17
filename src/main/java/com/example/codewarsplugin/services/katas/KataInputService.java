@@ -29,15 +29,18 @@ public class KataInputService {
                 .header("Cookie", "CSRF-TOKEN=" + csrfToken + "; _session_id=" + sessionId)
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.noBody())
+                .POST(HttpRequest.BodyPublishers.ofByteArray("{}".getBytes(StandardCharsets.UTF_8)))
                 .build();
         try {
             HttpResponse<String> response = CookieService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println("body: " + response.body() + "\n\n\n");
             KataInput kata = objectMapper.readValue(response.body(), KataInput.class);
             kata.setPath(record.getPath());
             return kata;
 
         } catch (Exception e) {
+            System.out.println(e.getClass() + "   " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
 

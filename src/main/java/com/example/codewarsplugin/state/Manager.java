@@ -91,9 +91,9 @@ public class Manager implements KataSetupServiceClient {
     private void refresh() {
         KataSelectorPanel selectorPanel = new KataSelectorPanel(store, this);
         sidePanel.add(new JLabel("north"), BorderLayout.NORTH);
-        sidePanel.add(new JLabel("south"), BorderLayout.SOUTH);
+        sidePanel.add(new JLabel("north"), BorderLayout.NORTH);
 //        sidePanel.add(selectorPanel, BorderLayout.SOUTH);
-//        sidePanel.add(submitPanel == null? emptyWorkspace : submitPanel, BorderLayout.NORTH);
+        sidePanel.add(submitPanel == null? emptyWorkspace : submitPanel, BorderLayout.NORTH);
         sidePanel.revalidate();
         sidePanel.repaint();
     }
