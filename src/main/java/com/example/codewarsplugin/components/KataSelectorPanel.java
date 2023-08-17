@@ -6,6 +6,7 @@ import com.example.codewarsplugin.services.files.create.FileManager;
 import com.example.codewarsplugin.services.files.parse.KataDirectoryParser;
 import com.example.codewarsplugin.state.Manager;
 import com.example.codewarsplugin.state.Store;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
@@ -46,6 +47,14 @@ public class KataSelectorPanel extends JPanel {
 
     private void initComponents() {
         directoryBox.setRenderer(new KataDirectoryRenderer());
+
+        selectorButton.setToolTipText("Setup a previously started kata from the currently opened project!");
+        selectorButton.setIcon(AllIcons.Actions.Selectall);
+
+
+        deleteButton.setToolTipText("Delete a previously started kata from the currently opened project!");
+        deleteButton.setIcon(AllIcons.Actions.DeleteTagHover);
+
 
         add(directoryBox);
         add(selectorButton);

@@ -10,6 +10,7 @@ import com.example.codewarsplugin.services.files.create.FileServiceFactory;
 import com.example.codewarsplugin.services.katas.KataSubmitService;
 import com.example.codewarsplugin.services.katas.KataSubmitServiceClient;
 import com.example.codewarsplugin.state.Store;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.ui.Messages;
@@ -43,19 +44,20 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     private final ArrayList<JButton> buttonList = new ArrayList<>();
     private boolean attemptSuccessful = false;
     private final KataSubmitService submitService;
-    private final KataInput input;
-    private final KataRecord record;
+    private final JButton aboutButton = new JButton("About");
+    private final JButton reloadButton = new JButton("Reload codewars");
     private final Store store;
+    private final KataDirectory directory;
 
     public KataSubmitPanel(Store store) {
         super();
+        this.directory = store.getDirectory();
         this.store = store;
         KataDirectory directory = store.getDirectory();
         this.submitService = new KataSubmitService(store, directory, this);
-        this.input = directory.getInput();
-        this.record = directory.getRecord();
+
         addButtonsToList();
-        setLayout(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         addElementsToPanel();
         addButtonListeners();
     }
@@ -87,13 +89,24 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         setupTestCardPanel();
         setupCommitCardPanel();
 
-        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         buttonPanel.add(testCardPanel);
         buttonPanel.add(attemptCardPanel);
         buttonPanel.add(commitCardPanel);
 
-        add(buttonPanel);
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        aboutButton.setToolTipText("Unsure how to use the plugin? Read the \"About\" in the browser!");
+        aboutButton.setIcon(AllIcons.Actions.Help);
+        rightPanel.add(aboutButton);
 
+
+        reloadButton.setToolTipText("Reload codewars.com in the browser!");
+        reloadButton.setIcon(AllIcons.Actions.Refresh);
+        rightPanel.add(reloadButton);
+
+        add(buttonPanel);
+        add(Box.createHorizontalGlue());
+        add(rightPanel);
     }
 
     @Override
@@ -204,18 +217,24 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     private void setupCommitCardPanel() {
         commitButton.setEnabled(false);
         commitCardPanel.setLayout(commitCardLayout);
+        commitButton.setToolTipText("\"" + directory.getRecord().getName() + "\" a " + directory.getRecord().getRank().getName() + " kata in " + directory.getRecord().getSelectedLanguage() + " " + directory.getInput().getActiveVersion());
+        commitButton.setIcon(AllIcons.Actions.Commit);
         commitCardPanel.add(commitButton, "button");
         commitCardPanel.add(commitSpinner, "spinner");
     }
 
     private void setupTestCardPanel() {
         testCardPanel.setLayout(testCardLayout);
+        testButton.setIcon(AllIcons.RunConfigurations.TestState.Run);
+        testButton.setToolTipText("\"" + directory.getRecord().getName() + "\" a " + directory.getRecord().getRank().getName() + " kata in " + directory.getRecord().getSelectedLanguage() + " " + directory.getInput().getActiveVersion());
         testCardPanel.add(testButton, "button");
         testCardPanel.add(testSpinner, "spinner");
     }
 
     private void setupAttemptCardPanel() {
         attemptCardPanel.setLayout(attemptCardLayout);
+        attemptButton.setIcon(AllIcons.RunConfigurations.TestState.Run_run);
+        attemptButton.setToolTipText("\"" + directory.getRecord().getName() + "\" a " + directory.getRecord().getRank().getName() + " kata in " + directory.getRecord().getSelectedLanguage() + " " + directory.getInput().getActiveVersion());
         attemptCardPanel.add(attemptButton, "button");
         attemptCardPanel.add(attemptSpinner, "spinner");
     }
