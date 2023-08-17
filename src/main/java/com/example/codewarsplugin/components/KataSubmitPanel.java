@@ -89,13 +89,28 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         
         var constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.CENTER;
+
+
+
+
+        constraints.insets = JBUI.insetsBottom(20);
+
+        JLabel primaryTitleLabel = new JLabel("WORKSPACE");
+        primaryTitleLabel.setFont(primaryTitleLabel.getFont().deriveFont(30f));
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        add(primaryTitleLabel, constraints);
+
+
+
         constraints.insets = JBUI.insetsBottom(10);
 
         JLabel titleLabel = new JLabel(record.getName());
         titleLabel.setFont(titleLabel.getFont().deriveFont(20f));
 
         constraints.gridx = 0;
-        constraints.gridy = 0;
+        constraints.gridy = 1;
         add(titleLabel, constraints);
 
         JLabel infoLabel = new KataDirectoryRenderer(store.getDirectory());
@@ -105,7 +120,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
 
         constraints.gridx = 0;
-        constraints.gridy = 1;
+        constraints.gridy = 2;
         add(infoLabel, constraints);
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
@@ -114,7 +129,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         buttonPanel.add(commitCardPanel);
 
         constraints.gridx = 0;
-        constraints.gridy = 2;
+        constraints.gridy = 3;
 
         add(buttonPanel, constraints);
     }

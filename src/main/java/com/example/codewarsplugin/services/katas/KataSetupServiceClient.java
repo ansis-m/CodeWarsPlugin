@@ -9,7 +9,7 @@ public interface KataSetupServiceClient {
 
     void notifyKataFileCreationFail(String message);
 
-    void loadWorkspaceTab(KataDirectory directory, boolean loadUrl);
+    void loadWorkspaceComponent(KataDirectory directory, boolean loadUrl);
 
     void loadWorkspace(KataDirectory directory, boolean loadUrl);
 }

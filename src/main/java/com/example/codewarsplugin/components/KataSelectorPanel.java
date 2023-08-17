@@ -4,12 +4,11 @@ import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.services.files.create.FileManager;
 import com.example.codewarsplugin.services.files.parse.KataDirectoryParser;
+import com.example.codewarsplugin.state.Manager;
 import com.example.codewarsplugin.state.Store;
-import com.example.codewarsplugin.state.TabManager;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,15 +26,15 @@ public class KataSelectorPanel extends JPanel {
     private final JPanel buttonPanel = new JPanel(new FlowLayout());
     private final JLabel title = new JLabel("", null, JLabel.CENTER);
     private final Store store;
-    private final TabManager manager;
+    private final Manager manager;
     private ArrayList<KataDirectory> kataDirectoryList;
     private final KataDirectoryParser parser;
 
 
-    public KataSelectorPanel(Store store, TabManager tabManager){
+    public KataSelectorPanel(Store store, Manager manager){
         this.store = store;
         parser = new KataDirectoryParser(store.getProject());
-        this.manager = tabManager;
+        this.manager = manager;
         kataDirectoryList = parser.getDirectoryList();
         removeCurrentDirectory();
         model = new DefaultComboBoxModel<>(kataDirectoryList.toArray(new KataDirectory[0]));
@@ -54,7 +53,6 @@ public class KataSelectorPanel extends JPanel {
 
         var constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.CENTER;
-        constraints.insets = JBUI.insetsBottom(10);
 
         constraints.gridx = 0;
         constraints.gridy = 0;
@@ -87,7 +85,7 @@ public class KataSelectorPanel extends JPanel {
                 return;
             }
             manager.getShouldFetchAndCreateFilesOnUrlLoad().set(false);
-            manager.loadWorkspaceTab((KataDirectory) directory, true);
+            manager.loadWorkspaceComponent((KataDirectory) directory, true);
         });
 
         deleteButton.addActionListener((event) -> {
