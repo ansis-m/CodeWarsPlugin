@@ -22,8 +22,6 @@ public class KataSelectorPanel extends JPanel {
     private final DefaultComboBoxModel<KataDirectory> model;
     private final JButton selectorButton = new JButton("Setup Kata");
     private final JButton deleteButton = new JButton("Delete Kata");
-    private final JPanel innerPanel = new JPanel(new GridBagLayout());
-    private final JPanel buttonPanel = new JPanel(new FlowLayout());
     private final JLabel title = new JLabel("", null, JLabel.CENTER);
     private final Store store;
     private final Manager manager;
@@ -32,6 +30,7 @@ public class KataSelectorPanel extends JPanel {
 
 
     public KataSelectorPanel(Store store, Manager manager){
+        super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         this.store = store;
         parser = new KataDirectoryParser(store.getProject());
         this.manager = manager;
@@ -48,33 +47,12 @@ public class KataSelectorPanel extends JPanel {
 
     private void initComponents() {
         directoryBox.setRenderer(new KataDirectoryRenderer());
-        setLayout(new BorderLayout());
 
 
-        var constraints = new GridBagConstraints();
-        constraints.anchor = GridBagConstraints.CENTER;
 
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        title.setText(kataDirectoryList.size() > 0 ? "Select Kata From The Current Project" : "Current Project Contains No Previously Started Katas");
-        innerPanel.add(title, constraints);
-
-
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-
-        innerPanel.add(directoryBox, constraints);
-
-
-        buttonPanel.add(selectorButton);
-        buttonPanel.add(deleteButton);
-
-        constraints.gridx = 0;
-        constraints.gridy = 3;
-
-        innerPanel.add(buttonPanel, constraints);
-
-        add(innerPanel, BorderLayout.CENTER);
+        add(directoryBox);
+        add(selectorButton);
+        add(deleteButton);
         addSelectorListeners();
     }
 
@@ -85,7 +63,7 @@ public class KataSelectorPanel extends JPanel {
                 return;
             }
             manager.getShouldFetchAndCreateFilesOnUrlLoad().set(false);
-            manager.loadWorkspaceComponent((KataDirectory) directory, true);
+            manager.loadKata((KataDirectory) directory, true);
         });
 
         deleteButton.addActionListener((event) -> {
@@ -96,24 +74,7 @@ public class KataSelectorPanel extends JPanel {
             int result = Messages.showOkCancelDialog("All \"" + directory.getRecord().getName() + "\" kata files will be deleted!", "Confirm Delete Kata Files", "Ok", "Cancel", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class));
             if (result == 0) {
                 new FileManager().deleteFiles(directory, store.getProject());
-                kataDirectoryList = parser.getDirectoryList();
-                removeCurrentDirectory();
-                if (kataDirectoryList.size() < 1) {
-                    Box.Filler filler = new Box.Filler(innerPanel.getPreferredSize(), new Dimension(2000, 2000), new Dimension(2000, 2000));
-                    removeAll();
-                    add(filler);
-                    revalidate();
-                    repaint();
-                    return;
-                }
-                model.removeAllElements();
-                model.addAll(kataDirectoryList);
-                if (model.getSize() > 0) {
-                    directoryBox.setSelectedIndex(0);
-                }
-                title.setText("Select Kata From The Current Project");
-                revalidate();
-                repaint();
+                manager.refresh();
             }
         });
     }
@@ -122,8 +83,7 @@ public class KataSelectorPanel extends JPanel {
         kataDirectoryList.removeIf(directory -> directory.isTheSame(store.getDirectory()));
     }
 
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(5000, 5000);
+    public int getCount(){
+        return kataDirectoryList.size();
     }
 }

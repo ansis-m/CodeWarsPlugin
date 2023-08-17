@@ -55,7 +55,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         this.input = directory.getInput();
         this.record = directory.getRecord();
         addButtonsToList();
-        setLayout(new GridBagLayout());
+        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         addElementsToPanel();
         addButtonListeners();
     }
@@ -86,52 +86,28 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         setupAttemptCardPanel();
         setupTestCardPanel();
         setupCommitCardPanel();
-        
-        var constraints = new GridBagConstraints();
-        constraints.anchor = GridBagConstraints.CENTER;
 
 
+        JLabel titleLabel = new KataDirectoryRenderer(store.getDirectory());
+        titleLabel.setFont(titleLabel.getFont().deriveFont(12f));
+        titleLabel.setForeground(getColor(record.getRank().getColor()));
+        titleLabel.setText(record.getName());
 
-
-        constraints.insets = JBUI.insetsBottom(20);
-
-        JLabel primaryTitleLabel = new JLabel("WORKSPACE");
-        primaryTitleLabel.setFont(primaryTitleLabel.getFont().deriveFont(30f));
-
-        constraints.gridx = 0;
-        constraints.gridy = 0;
-        add(primaryTitleLabel, constraints);
-
-
-
-        constraints.insets = JBUI.insetsBottom(10);
-
-        JLabel titleLabel = new JLabel(record.getName());
-        titleLabel.setFont(titleLabel.getFont().deriveFont(20f));
-
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        add(titleLabel, constraints);
-
-        JLabel infoLabel = new KataDirectoryRenderer(store.getDirectory());
-        infoLabel.setFont(titleLabel.getFont().deriveFont(15f));
-        infoLabel.setForeground(getColor(record.getRank().getColor()));
-        infoLabel.setText(record.getRank().getName() + " kata in " + record.getSelectedLanguage() + " " + input.getActiveVersion());
-
-
-        constraints.gridx = 0;
-        constraints.gridy = 2;
-        add(infoLabel, constraints);
+        add(titleLabel);
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(testCardPanel);
         buttonPanel.add(attemptCardPanel);
         buttonPanel.add(commitCardPanel);
 
-        constraints.gridx = 0;
-        constraints.gridy = 3;
+        add(buttonPanel);
 
-        add(buttonPanel, constraints);
+        JLabel infoLabel = new KataDirectoryRenderer(store.getDirectory());
+        infoLabel.setFont(infoLabel.getFont().deriveFont(12f));
+        infoLabel.setForeground(getColor(record.getRank().getColor()));
+        infoLabel.setText(record.getRank().getName() + " kata in " + record.getSelectedLanguage() + " " + input.getActiveVersion());
+
+        add(infoLabel);
     }
 
     @Override

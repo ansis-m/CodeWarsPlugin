@@ -73,7 +73,6 @@ public class Manager implements KataSetupServiceClient {
         browser.loadURL(SIGN_IN_URL);
         sidePanel.revalidate();
         sidePanel.repaint();
-        System.out.println("Setup complete");
     }
 
 
@@ -88,15 +87,17 @@ public class Manager implements KataSetupServiceClient {
         shouldReloadUrl.set(false);
     }
 
-    private void refresh() {
+    public void refresh() {
+        
+        sidePanel.removeAll();
+        sidePanel.add(cardPanel, BorderLayout.CENTER);
         KataSelectorPanel selectorPanel = new KataSelectorPanel(store, this);
-        sidePanel.add(new JLabel("north"), BorderLayout.NORTH);
-        sidePanel.add(new JLabel("north"), BorderLayout.NORTH);
-//        sidePanel.add(selectorPanel, BorderLayout.SOUTH);
+        sidePanel.add(selectorPanel, BorderLayout.SOUTH);
         sidePanel.add(submitPanel == null? emptyWorkspace : submitPanel, BorderLayout.NORTH);
         sidePanel.revalidate();
         sidePanel.repaint();
     }
+
 
     private CefLoadHandler getBrowserListener() {
         return new CefLoadHandlerAdapter() {
@@ -152,16 +153,17 @@ public class Manager implements KataSetupServiceClient {
     }
 
     @Override
-    public void loadWorkspaceComponent(KataDirectory directory, boolean loadUrl) {
+    public void loadKata(KataDirectory directory, boolean loadUrl) {
 
         store.setCurrentKataDirectory(directory);
         WriteCommandAction.runWriteCommandAction(project, openFiles(directory));
 
         submitPanel = new KataSubmitPanel(store);
+        refresh();
         if(loadUrl && directory.getRecord().getWorkUrl() != null) {
             browser.loadURL(directory.getRecord().getWorkUrl());
         }
-        refresh();
+
     }
     public void reloadWorkspace() {
         submitPanel = new KataSubmitPanel(store);
