@@ -2,8 +2,6 @@ package com.example.codewarsplugin.components;
 
 import com.example.codewarsplugin.SidePanel;
 import com.example.codewarsplugin.models.kata.KataDirectory;
-import com.example.codewarsplugin.models.kata.KataInput;
-import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.models.kata.SubmitResponse;
 import com.example.codewarsplugin.services.files.create.AbstractFileService;
 import com.example.codewarsplugin.services.files.create.FileServiceFactory;
@@ -16,15 +14,12 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.AnimatedIcon;
-import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -32,7 +27,6 @@ import java.util.ArrayList;
 
 import static com.example.codewarsplugin.config.StringConstants.DASHBOARD_URL;
 import static com.example.codewarsplugin.config.StringConstants.MESSAGE_ICON;
-import static com.example.codewarsplugin.services.utils.Colors.getColor;
 
 public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
@@ -135,13 +129,14 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
 
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        aboutButton.setToolTipText("Unsure how to use the plugin? Read the \"About\" in the browser!");
-        aboutButton.setIcon(AllIcons.Actions.Help);
-        rightPanel.add(aboutButton);
 
         reloadButton.setToolTipText("Reload the page of the current kata or navigate to the codewars.com if the workspace is empty.");
         reloadButton.setIcon(AllIcons.Actions.Refresh);
         rightPanel.add(reloadButton);
+
+        aboutButton.setToolTipText("Unsure how to use the plugin? Read the \"About\" in the browser!");
+        aboutButton.setIcon(AllIcons.Actions.Help);
+        rightPanel.add(aboutButton);
 
         add(Box.createHorizontalGlue());
         add(rightPanel);

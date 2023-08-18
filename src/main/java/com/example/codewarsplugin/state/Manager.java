@@ -58,19 +58,12 @@ public class Manager implements KataSetupServiceClient {
 
         var browserComponent = browser.getComponent();
         browserComponent.setPreferredSize(new Dimension(5000, 5000));
-
         browserPanel.add(browserComponent, BorderLayout.CENTER);
-
         cardPanel.add(browserPanel, "browser");
         cardPanel.add(spinner, "spinner");
-
         sidePanel.add(cardPanel, BorderLayout.CENTER);
-
-
-
         final CefLoadHandler handler = getBrowserListener();
         client.addLoadHandler(handler, browser.getCefBrowser());
-        browser.loadURL(SIGN_IN_URL);
         sidePanel.revalidate();
         sidePanel.repaint();
     }
@@ -101,6 +94,12 @@ public class Manager implements KataSetupServiceClient {
 
         sidePanel.add(selectorPanel, BorderLayout.SOUTH);
         sidePanel.add(submitPanel, BorderLayout.NORTH);
+
+        if(store.getDirectory() != null && !browser.getCefBrowser().getURL().equals(store.getDirectory().getRecord().getWorkUrl())) {
+            browser.loadURL(store.getDirectory().getRecord().getWorkUrl());
+        }
+
+
         sidePanel.revalidate();
         sidePanel.repaint();
     }
@@ -110,7 +109,10 @@ public class Manager implements KataSetupServiceClient {
         return new CefLoadHandlerAdapter() {
             @Override
             public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
-                if((frame.getURL().equals(DASHBOARD_URL) || frame.getURL().equals(SETUP_URL)) && ((previousUrl.equals(SIGN_IN_URL) || previousUrl.contains("github")) || previousUrl.equals(""))){
+                if(frame.getURL().equals(SIGN_IN_URL)) {
+                    sidePanel.removeAll();
+                    setupTabs();
+                } else if((frame.getURL().equals(DASHBOARD_URL) || frame.getURL().equals(SETUP_URL)) && ((previousUrl.equals(SIGN_IN_URL) || previousUrl.contains("github")) || previousUrl.equals(""))){
                     ApplicationManager.getApplication().invokeLater(() -> getCookies());
                 } else if(browser.getURL().contains("train") && !browser.getURL().contains("trainer") && shouldFetchAndCreateFilesOnUrlLoad.get() && !previousUrl.equals(browser.getURL())) {
                     ApplicationManager.getApplication().invokeLater(() -> {

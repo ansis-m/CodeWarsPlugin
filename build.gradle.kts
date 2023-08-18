@@ -13,11 +13,8 @@ repositories {
 
 
 dependencies {
-
-    implementation("org.springframework.boot:spring-boot-starter-logging:2.5.4") {
-    }
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.5")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.12.5")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.1")
 }
 
 // Configure Gradle IntelliJ Plugin

@@ -5,41 +5,52 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>CodeWarsPlugin</name>
+    <name>CodeWars</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="maleckisansis@gmail.com" url="https://www.yourcompany.com">MyCompany</vendor>
+    <vendor email="maleckisansis@gmail.com" url="https://github.com/ansis-m/CodeWarsPlugin">Ansis Maleckis</vendor>
 
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    CodeWars Intellij Plugin<br>
-    <em>retrieve tasks and submit solutions from the Intellij</em>
+    <h2>Retrieve katas and submit solutions</h2>
+    <p>Not an official codewars.com plugin. This is an open source project by a regular kata warrior. See the source code at <a href="https://github.com/ansis-m/CodeWarsPlugin">https://github.com/ansis-m/CodeWarsPlugin</a>!</p>
+    <p>
+        The plugin currently supports katas in:
+    <ul>
+        <li><strong>Java</strong> in Intellij community and ultimate</li>
+        <li><strong>Kotlin</strong> in Intellij community and ultimate</li>
+        <li><strong>Groovy</strong> in Intellij community and ultimate</li>
+        <li><strong>Python</strong> in PyCharm, Intellij community and ultimate</li>
+        <li><strong>JavaScript</strong> and <strong>Typescript</strong> in Intellij ultimate and WebStorm</li>
+        <li><strong>Ruby</strong> in Intellij ultimate and RubyMine</li>
+    </ul>
+        <p>
+            In order for plugin to work properly a language support must be provided by the IDE or alternatively by an additional plugin.
+            For example, python katas work in PyCharm without additional plugins but require installed python plugin in Intellij community/ultimate.
+        </p>
+    </p>
   ]]></description>
+
+
+    <incompatible-with>com.jetbrains.clion</incompatible-with>
+    <incompatible-with>com.jetbrains.goland</incompatible-with>
+    <incompatible-with>com.jetbrains.phpstorm</incompatible-with>
+
+
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
 
 
-    <!-- Extension points defined by the plugin.
-         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <toolWindow id="CodeWars"
                     anchor="right"
                     factoryClass="com.example.codewarsplugin.CodewarsToolWindowFactory"
                     secondary="false"
                     icon="/icons/cw_logo_13.svg"/>
-
     </extensions>
 
-    <application-components>
-
-    </application-components>
-
-
-    <actions>
-
-    </actions>
 </idea-plugin>
