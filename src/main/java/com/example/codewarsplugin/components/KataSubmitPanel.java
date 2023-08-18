@@ -96,7 +96,6 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         });
 
         reloadButton.addActionListener((e) -> {
-
             String url = DASHBOARD_URL;
             var dir = store.getDirectory();
             if (dir != null) {

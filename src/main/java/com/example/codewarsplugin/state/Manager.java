@@ -42,7 +42,8 @@ public class Manager implements KataSetupServiceClient {
     private final AtomicBoolean shouldFetchAndCreateFilesOnUrlLoad = new AtomicBoolean(true);
     private final AtomicBoolean shouldReloadUrl = new AtomicBoolean(false);
     private final JPanel browserPanel = new JPanel(new BorderLayout());
-    private KataSubmitPanel submitPanel = null;
+    private KataSubmitPanel submitPanel;
+    private KataSelectorPanel selectorPanel;
 
     public Manager(Store store, Project project, SidePanel sidePanel) {
         this.sidePanel = sidePanel;
@@ -85,10 +86,19 @@ public class Manager implements KataSetupServiceClient {
     }
 
     public void refresh() {
+
+
+
+        if (submitPanel != null && selectorPanel != null) {
+            sidePanel.remove(submitPanel);
+            sidePanel.remove(selectorPanel);
+        }
+
         submitPanel = new KataSubmitPanel(store);
-        sidePanel.removeAll();
-        sidePanel.add(cardPanel, BorderLayout.CENTER);
-        KataSelectorPanel selectorPanel = new KataSelectorPanel(store, this);
+        selectorPanel = new KataSelectorPanel(store, this);
+
+
+
         sidePanel.add(selectorPanel, BorderLayout.SOUTH);
         sidePanel.add(submitPanel, BorderLayout.NORTH);
         sidePanel.revalidate();
@@ -159,7 +169,6 @@ public class Manager implements KataSetupServiceClient {
         WriteCommandAction.runWriteCommandAction(project, openFiles(directory));
     }
     public void reloadWorkspace() {
-        submitPanel = new KataSubmitPanel(store);
         refresh();
     }
 
@@ -171,7 +180,6 @@ public class Manager implements KataSetupServiceClient {
 
         ApplicationManager.getApplication().invokeLater(() -> {
 
-            submitPanel = new KataSubmitPanel(store);
             showOverlaySpinner(false);
             refresh();
         });
