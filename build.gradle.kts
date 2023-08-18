@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.example"
-version = "1.0-SNAPSHOT"
+version = "3.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -20,14 +20,14 @@ dependencies {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2022.3.1")
-    type.set("IU") // Target IDE Platform
-    //version.set("2022.1.4")
-    //type.set("IC") // Target IDE Platform //need to reset also jdk
+//    version.set("2022.3.1")
+//    type.set("IU") // Target IDE Platform
+    version.set("2022.1.1")
+    type.set("IC") // Target IDE Platform //need to reset also jdk
 
 
     //plugins.set(listOf("PythonCore:221.6008.17")) //for development only, to be removed in production - for the free intellij
-    plugins.set(listOf("Pythonid:223.8214.52", "org.jetbrains.plugins.go:223.8214.52", "org.jetbrains.plugins.ruby:223.8214.52", "com.jetbrains.php:223.8214.64")) //for development only, to be removed in production - for ultimate
+//    plugins.set(listOf("Pythonid:223.8214.52", "org.jetbrains.plugins.go:223.8214.52", "org.jetbrains.plugins.ruby:223.8214.52", "com.jetbrains.php:223.8214.64")) //for development only, to be removed in production - for ultimate
 }
 
 tasks {
