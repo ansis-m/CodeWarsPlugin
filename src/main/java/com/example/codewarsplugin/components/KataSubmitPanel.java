@@ -20,8 +20,14 @@ import com.intellij.util.ui.JBUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 import static com.example.codewarsplugin.config.StringConstants.DASHBOARD_URL;
@@ -90,7 +96,26 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         });
 
         reloadButton.addActionListener((e) -> {
-            store.getManager().getBrowser().loadURL(DASHBOARD_URL);
+
+            String url = DASHBOARD_URL;
+            var dir = store.getDirectory();
+            if (dir != null) {
+                url = dir.getRecord().getWorkUrl();
+            }
+            store.getManager().getBrowser().loadURL(url);
+        });
+
+        aboutButton.addActionListener((e) -> {
+            try {
+                InputStream stream = KataSubmitPanel.class.getResourceAsStream("/about.html");
+                File tempFile = File.createTempFile("about", ".html");
+                Files.copy(stream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                stream.close();
+                store.getManager().getBrowser().loadURL(tempFile.toURI().toURL().toString());
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+            }
+
         });
 
 
@@ -115,7 +140,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         aboutButton.setIcon(AllIcons.Actions.Help);
         rightPanel.add(aboutButton);
 
-        reloadButton.setToolTipText("Reload codewars.com.");
+        reloadButton.setToolTipText("Reload the page of the current kata or navigate to the codewars.com if the workspace is empty.");
         reloadButton.setIcon(AllIcons.Actions.Refresh);
         rightPanel.add(reloadButton);
 

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+            background-color: #2b2b2b;
+            color: #a9b7c6;
+        }
+
+
+        h1 {
+            color: #a9b7c6;
+        }
+
+        p {
+            color: #a9b7c6;
+        }
+
+        a {
+            color: #6A8759;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+
+<body>
+<h1>Codewars plugin</h1>
+<p>
+    This is not an official codewars.com plugin.
+    This is an open source project created by a fellow warrior.
+    The source code can be found at <a href="https://github.com/ansis-m/CodeWarsPlugin">https://github.com/ansis-m/CodeWarsPlugin</a>.
+</p>
+<p>
+    I am still working on the project and the plugin is quite buggy.
+    Please report bugs and send suggestions to <a href="maleckisansis@gmail.com">maleckisansis@gmail.com</a>.
+    Also, consider contributing to the project on github.
+    The codebase is very raw and there is a lot of room for improvement.
+</p>
+<p>
+    The plugin currently supports:
+    <ul>
+        <li><strong>Java</strong> in Intellij community and ultimate</li>
+        <li><strong>Kotlin</strong> in Intellij community and ultimate</li>
+        <li><strong>Groovy</strong> in Intellij community and ultimate</li>
+        <li><strong>Python</strong> in PyCharm, Intellij community and ultimate</li>
+        <li><strong>JavaScript</strong> and <strong>Typescript</strong> in Intellij ultimate and WebStorm</li>
+        <li><strong>Ruby</strong> in Intellij ultimate and RubyMine</li>
+    </ul>
+</p>
+<p>
+    To start a kata in any of the supported languages you first need to create a project (or at least a module) for that specific language.
+    Next, sign-in to codewars.com in the embedded browser. Chose a kata, select language and press "train".
+    Navigation to the training page triggers creation of the kata files which will be opened in your Intellij workspace.
+    Each kata will have a separate directory that will contain also a test file (for local testing) and some metafiles for the normal functioning of the plugin.
+
+    Edit the work/test file and once you are done submit the local file for testing via "test" or "attempt" buttons.
+    When you pass the "attempt" you will be able to submit the solution.
+</p>
+
+<p>
+    You can start several/many katas in the same project/module.
+    If the current project contains several katas, you can jump between them by using the drop-down menu on the bottom.
+    The completed katas will have a green checkmark. You can also delete all the kata files.
+</p>
+
+<h2>
+   Happy coding!
+
+</h2>
+
+</body>
+
+</html>
