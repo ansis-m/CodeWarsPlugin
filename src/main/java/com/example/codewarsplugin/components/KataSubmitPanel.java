@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 
+import static com.example.codewarsplugin.config.StringConstants.DASHBOARD_URL;
 import static com.example.codewarsplugin.config.StringConstants.MESSAGE_ICON;
 import static com.example.codewarsplugin.services.utils.Colors.getColor;
 
@@ -43,18 +44,25 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
     private final CardLayout commitCardLayout = new CardLayout();
     private final ArrayList<JButton> buttonList = new ArrayList<>();
     private boolean attemptSuccessful = false;
-    private final KataSubmitService submitService;
+    private KataSubmitService submitService;
     private final JButton aboutButton = new JButton("About");
     private final JButton reloadButton = new JButton("Reload codewars");
     private final Store store;
     private final KataDirectory directory;
+    private boolean isWorkspaceEmpty = false;
 
     public KataSubmitPanel(Store store) {
         super();
         this.directory = store.getDirectory();
         this.store = store;
-        KataDirectory directory = store.getDirectory();
-        this.submitService = new KataSubmitService(store, directory, this);
+
+        if (directory == null) {
+            isWorkspaceEmpty = true;
+        } else {
+            KataDirectory directory = store.getDirectory();
+            this.submitService = new KataSubmitService(store, directory, this);
+        }
+
 
         addButtonsToList();
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -81,30 +89,36 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
             ApplicationManager.getApplication().executeOnPooledThread(this.submitService::commit);
         });
 
+        reloadButton.addActionListener((e) -> {
+            store.getManager().getBrowser().loadURL(DASHBOARD_URL);
+        });
+
+
     }
 
     private void addElementsToPanel() {
 
-        setupAttemptCardPanel();
-        setupTestCardPanel();
-        setupCommitCardPanel();
+        if (!isWorkspaceEmpty){
+            setupAttemptCardPanel();
+            setupTestCardPanel();
+            setupCommitCardPanel();
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+            buttonPanel.add(testCardPanel);
+            buttonPanel.add(attemptCardPanel);
+            buttonPanel.add(commitCardPanel);
+            add(buttonPanel);
+        }
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        buttonPanel.add(testCardPanel);
-        buttonPanel.add(attemptCardPanel);
-        buttonPanel.add(commitCardPanel);
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         aboutButton.setToolTipText("Unsure how to use the plugin? Read the \"About\" in the browser!");
         aboutButton.setIcon(AllIcons.Actions.Help);
         rightPanel.add(aboutButton);
 
-
-        reloadButton.setToolTipText("Reload codewars.com in the browser!");
+        reloadButton.setToolTipText("Reload codewars.com.");
         reloadButton.setIcon(AllIcons.Actions.Refresh);
         rightPanel.add(reloadButton);
 
-        add(buttonPanel);
         add(Box.createHorizontalGlue());
         add(rightPanel);
     }
@@ -261,5 +275,7 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
         buttonList.add(testButton);
         buttonList.add(attemptButton);
         buttonList.add(commitButton);
+        buttonList.add(aboutButton);
+        buttonList.add(reloadButton);
     }
 }

@@ -33,13 +33,11 @@ public class KataInputService {
                 .build();
         try {
             HttpResponse<String> response = CookieService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println("body: " + response.body() + "\n\n\n");
             KataInput kata = objectMapper.readValue(response.body(), KataInput.class);
             kata.setPath(record.getPath());
             return kata;
 
         } catch (Exception e) {
-            System.out.println(e.getClass() + "   " + e.getMessage());
             e.printStackTrace();
             return null;
         }

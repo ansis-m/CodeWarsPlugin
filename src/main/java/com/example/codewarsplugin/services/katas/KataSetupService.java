@@ -17,7 +17,6 @@ public class KataSetupService implements FileServiceClient {
     //this is called from a browser listener - suspect side thread. for this reason we put it on a 'good thread'
     public void setup(String url, Project project, KataSetupServiceClient client) {
 
-        System.out.println("setup: " + url);
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
 
             KataRecord record = null;
@@ -27,11 +26,8 @@ public class KataSetupService implements FileServiceClient {
                 record = KataRecordService.getKataRecord(tokens[4]);
                 record.setWorkUrl(url);
                 record.setSelectedLanguage(tokens[6]);
-                System.out.println("record: " + record);
                 input = KataInputService.getKata(record);
-                System.out.println("input: " + input);
             } catch (Exception e) {
-                System.out.println(e.getMessage() + "   \n" + e.getClass());
                 e.printStackTrace();
                 client.notifyKataFileCreationFail("Kata setup failed. Reason: something went wrong with the REST calls to the codewars.com. Try singing in again!");
                 return;

@@ -43,7 +43,6 @@ public class Manager implements KataSetupServiceClient {
     private final AtomicBoolean shouldReloadUrl = new AtomicBoolean(false);
     private final JPanel browserPanel = new JPanel(new BorderLayout());
     private KataSubmitPanel submitPanel = null;
-    private final JLabel emptyWorkspace = new JLabel("Select Kata", IconLoader.getIcon(MESSAGE_ICON, SidePanel.class), JLabel.CENTER);
 
     public Manager(Store store, Project project, SidePanel sidePanel) {
         this.sidePanel = sidePanel;
@@ -75,8 +74,6 @@ public class Manager implements KataSetupServiceClient {
         sidePanel.repaint();
     }
 
-
-    //todo check if needed
     public void reloadBrowser() {
         if (shouldReloadUrl.get() && browser.getCefBrowser().getURL().contains("train")) {
             browser.getCefBrowser().reload();
@@ -88,12 +85,12 @@ public class Manager implements KataSetupServiceClient {
     }
 
     public void refresh() {
-        
+        submitPanel = new KataSubmitPanel(store);
         sidePanel.removeAll();
         sidePanel.add(cardPanel, BorderLayout.CENTER);
         KataSelectorPanel selectorPanel = new KataSelectorPanel(store, this);
         sidePanel.add(selectorPanel, BorderLayout.SOUTH);
-        sidePanel.add(submitPanel == null? emptyWorkspace : submitPanel, BorderLayout.NORTH);
+        sidePanel.add(submitPanel, BorderLayout.NORTH);
         sidePanel.revalidate();
         sidePanel.repaint();
     }
@@ -123,7 +120,6 @@ public class Manager implements KataSetupServiceClient {
 
     private void getCookies() {
         CookieService.getCookies(browser);
-        System.out.println("get cookies");
         refresh();
     }
 
@@ -156,14 +152,11 @@ public class Manager implements KataSetupServiceClient {
     public void loadKata(KataDirectory directory, boolean loadUrl) {
 
         store.setCurrentKataDirectory(directory);
-        WriteCommandAction.runWriteCommandAction(project, openFiles(directory));
-
-        submitPanel = new KataSubmitPanel(store);
         refresh();
         if(loadUrl && directory.getRecord().getWorkUrl() != null) {
             browser.loadURL(directory.getRecord().getWorkUrl());
         }
-
+        WriteCommandAction.runWriteCommandAction(project, openFiles(directory));
     }
     public void reloadWorkspace() {
         submitPanel = new KataSubmitPanel(store);
@@ -203,5 +196,9 @@ public class Manager implements KataSetupServiceClient {
     }
     public AtomicBoolean getShouldReloadUrl() {
         return shouldReloadUrl;
+    }
+
+    public JBCefBrowser getBrowser() {
+        return browser;
     }
 }
