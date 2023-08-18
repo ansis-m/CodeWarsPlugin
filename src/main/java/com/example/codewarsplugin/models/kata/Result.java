@@ -14,7 +14,7 @@ public class Result {
     public double passed;
     public double failed;
     public double errors;
-    public String error; // Object?
+    public String error;
     public Assertions assertions;
     public Specs specs;
     public Unweighted unweighted;

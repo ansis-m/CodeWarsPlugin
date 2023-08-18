@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class CodewarsToolWindowFactory implements ToolWindowFactory {
 
-
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         SidePanel panel = new SidePanel(project);

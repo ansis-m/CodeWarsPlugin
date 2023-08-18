@@ -8,6 +8,8 @@ import java.net.http.HttpClient;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static com.example.codewarsplugin.config.StringConstants.BASE_URL;
+
 public class CookieService {
 
     private static String csrfToken;
@@ -21,7 +23,7 @@ public class CookieService {
 
     public static void getCookies(JBCefBrowser browser) {
         try {
-            List<JBCefCookie> allCookies = browser.getJBCefCookieManager().getCookies("https://www.codewars.com", true).get();
+            List<JBCefCookie> allCookies = browser.getJBCefCookieManager().getCookies(BASE_URL, true).get();
             csrfCookie = allCookies.stream().filter(cookie -> cookie.getName().contains("CSRF-TOKEN")).findFirst().get();
             sessionIdCookie = allCookies.stream().filter(cookie -> cookie.getName().contains("session_id")).findFirst().get();
             csrfToken = csrfCookie.getValue();

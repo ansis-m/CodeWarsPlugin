@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.example.codewarsplugin.config.StringConstants.MESSAGE_ICON;
 
@@ -123,7 +124,6 @@ public class KataDirectoryParser {
 
     }
 
-    //todo refractor/simplify. currently a mess just for logging purposes
     public void getSourcesRoots() {
 
         ModuleManager moduleManager = ModuleManager.getInstance(project);
@@ -135,14 +135,7 @@ public class KataDirectoryParser {
                 if (moduleIsJava(moduleType)) {
                     VirtualFile[] roots = moduleRootManager.getSourceRoots(false);
                     Arrays.stream(roots).filter(root -> !root.getName().equals("resources")).forEach(sourcesRoots::add);
-                } else if (moduleType.getName().toLowerCase().contains("python")) {
-                    VirtualFile[] roots = moduleRootManager.getContentRoots();
-                    Collections.addAll(sourcesRoots, roots);
-                } else if (moduleType.getName().toLowerCase().contains("web")) {
-                    VirtualFile[] roots = moduleRootManager.getContentRoots();
-                    Collections.addAll(sourcesRoots, roots);
-                }
-                else if (moduleType.getName().toLowerCase().contains("ruby")) {
+                } else if (Stream.of("python", "web", "ruby").anyMatch(moduleType.getName().toLowerCase()::contains)) {
                     VirtualFile[] roots = moduleRootManager.getContentRoots();
                     Collections.addAll(sourcesRoots, roots);
                 }

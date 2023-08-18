@@ -63,7 +63,6 @@ public class KataSubmitPanel extends JPanel implements KataSubmitServiceClient {
             this.submitService = new KataSubmitService(store, directory, this);
         }
 
-
         addButtonsToList();
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         addElementsToPanel();

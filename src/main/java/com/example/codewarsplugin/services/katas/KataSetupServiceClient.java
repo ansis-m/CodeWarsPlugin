@@ -5,7 +5,7 @@ import com.intellij.openapi.project.Project;
 
 public interface KataSetupServiceClient {
 
-    public Project getProject();
+    Project getProject();
 
     void notifyKataFileCreationFail(String message);
 

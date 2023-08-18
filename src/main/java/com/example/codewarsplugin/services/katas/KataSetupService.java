@@ -4,17 +4,14 @@ import com.example.codewarsplugin.models.kata.KataDirectory;
 import com.example.codewarsplugin.models.kata.KataInput;
 import com.example.codewarsplugin.models.kata.KataRecord;
 import com.example.codewarsplugin.services.files.create.FileManager;
-import com.example.codewarsplugin.services.files.create.FileServiceClient;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 
-public class KataSetupService implements FileServiceClient {
+public class KataSetupService {
 
     private String[] tokens;
 
 
-
-    //this is called from a browser listener - suspect side thread. for this reason we put it on a 'good thread'
     public void setup(String url, Project project, KataSetupServiceClient client) {
 
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
@@ -40,19 +37,4 @@ public class KataSetupService implements FileServiceClient {
         });
     }
 
-
-    @Override
-    public void notifyFileExists() {
-
-    }
-
-    @Override
-    public void transitionToWorkView(KataDirectory directory) {
-
-    }
-
-    @Override
-    public void notifyKataDirectoryCreationFailed() {
-
-    }
 }

@@ -22,7 +22,6 @@ public class KataDirectoryRenderer extends JLabel implements javax.swing.ListCel
     public Component getListCellRendererComponent(JList<? extends KataDirectory> list, KataDirectory directory, int index, boolean isSelected, boolean cellHasFocus) {
 
         setupWithDirectory(directory);
-
         if (isSelected) {
             setBackground(list.getSelectionBackground());
             setForeground(list.getSelectionForeground());
@@ -31,7 +30,6 @@ public class KataDirectoryRenderer extends JLabel implements javax.swing.ListCel
             setForeground(list.getForeground());
         }
         setFont(list.getFont());
-
         return this;
     }
 

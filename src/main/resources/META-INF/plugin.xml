@@ -30,6 +30,9 @@
             In order for plugin to work properly a language support must be provided by the IDE or alternatively by an additional plugin.
             For example, python katas work in PyCharm without additional plugins but require installed python plugin in Intellij community/ultimate.
         </p>
+        <p>
+        This plugin is licensed under the MIT License. <a href="https://github.com/ansis-m/CodeWarsPlugin/blob/master/LICENSE">View license.</a>
+        <p/>
     </p>
   ]]></description>
 

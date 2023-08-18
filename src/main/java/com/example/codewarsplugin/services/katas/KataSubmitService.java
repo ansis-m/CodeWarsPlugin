@@ -37,7 +37,6 @@ import static com.example.codewarsplugin.config.StringConstants.*;
 public class KataSubmitService {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private final static HttpClient httpClient = HttpClient.newHttpClient();
     private SubmitResponse submitResponse;
     private final KataInput input;
     private final KataDirectory directory;
@@ -52,7 +51,6 @@ public class KataSubmitService {
         this.client = client;
         this.project = store.getProject();
     }
-
 
     private void getToken(){
 
@@ -73,7 +71,7 @@ public class KataSubmitService {
                 .build();
 
         try {
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = CookieService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             token = objectMapper.readValue(response.body(), Token.class);
 
         } catch (Exception ignored) {}
@@ -131,7 +129,7 @@ public class KataSubmitService {
                 .POST(HttpRequest.BodyPublishers.ofString(new GsonBuilder().create().toJson(output)))
                 .build();
 
-        return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        return CookieService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     private void notifyServer(KataOutput output) throws IOException, InterruptedException {
@@ -161,7 +159,7 @@ public class KataSubmitService {
                 .POST(HttpRequest.BodyPublishers.ofString(new GsonBuilder().create().toJson(code)))
                 .build();
 
-        httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        CookieService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     private KataOutput mapOutput() {
@@ -218,7 +216,7 @@ public class KataSubmitService {
                 .POST(HttpRequest.BodyPublishers.ofByteArray("{}".getBytes(StandardCharsets.UTF_8)))
                 .build();
         try {
-            var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            var response = CookieService.getHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() >= 200 && response.statusCode() < 300) {
                 client.notifyCommitSuccess(response);
             } else {

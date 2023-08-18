@@ -25,7 +25,7 @@ public class KataSelectorPanel extends JPanel {
     private final JButton deleteButton = new JButton("Delete Kata");
     private final Store store;
     private final Manager manager;
-    private ArrayList<KataDirectory> kataDirectoryList;
+    private final ArrayList<KataDirectory> kataDirectoryList;
     private final KataDirectoryParser parser;
 
 

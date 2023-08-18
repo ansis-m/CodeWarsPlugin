@@ -56,103 +56,78 @@ public class KataRecord implements JsonSource{
     public Rank getRank() {
         return rank;
     }
-
     public void setRank(Rank rank) {
         this.rank = rank;
     }
-
     public String[] getTags() {
         return tags;
     }
-
     public void setTags(String[] tags) {
         this.tags = tags;
     }
-
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
-
     public String getSelectedLanguage() {
         return selectedLanguage;
     }
-
     public void setSelectedLanguage(String selectedLanguage) {
         this.selectedLanguage = selectedLanguage;
     }
-
     public String getPath() {
         return path;
     }
-
     public void setPath(String path) {
         this.path = path;
     }
-
     public String getId() {
         return id;
     }
-
     public void setId(String id) {
         this.id = id;
     }
-
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
-
     public String getSlug() {
         return slug;
     }
-
     public void setSlug(String slug) {
         this.slug = slug;
     }
-
     public String getUrl() {
         return url;
     }
-
     public void setUrl(String url) {
         this.url = url;
     }
-
     public String getCategory() {
         return category;
     }
-
     public void setCategory(String category) {
         this.category = category;
     }
-
     public String[] getLanguages() {
         return languages;
     }
-
     public void setLanguages(String[] languages) {
         this.languages = languages;
     }
-
     public void setWorkUrl(String url) {
         this.workUrl = url;
     }
-
     public String getWorkUrl() {
         return workUrl;
     }
-
     public boolean isCompleted() {
         return completed;
     }
-
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
@@ -161,7 +136,6 @@ public class KataRecord implements JsonSource{
         int id;
         String name;
         String color;
-
         @Override
         public String toString() {
             return "Rank{" +
@@ -173,23 +147,18 @@ public class KataRecord implements JsonSource{
         public int getId() {
             return id;
         }
-
         public void setId(int id) {
             this.id = id;
         }
-
         public String getName() {
             return name;
         }
-
         public void setName(String name) {
             this.name = name;
         }
-
         public String getColor() {
             return color;
         }
-
         public void setColor(String color) {
             this.color = color;
         }
