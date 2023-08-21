@@ -22,7 +22,7 @@ Essentially, every time you click "train" in the browser tab, the kata files wil
 
 Further instructions on how to use the plugin can be found in the plugins "About" tab.
 
-Currently, <u> the plugin is still work in progress and is not </u> in the Intellij marketplace, however you can easily install it from the disk. The whole process takes less than 2 minutes.
+Currently, <u> the plugin is still work in progress </u>. Plugin is available in the Intellij marketplace. In addition, you can easily install it from the disk. The whole process takes less than 2 minutes.
 Below are the installation instructions:
 
 1. clone the repo and open the plugin project in Intellij
