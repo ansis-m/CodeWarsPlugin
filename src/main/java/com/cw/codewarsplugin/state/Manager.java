@@ -110,8 +110,11 @@ public class Manager implements KataSetupServiceClient {
             @Override
             public void onLoadEnd(CefBrowser browser, CefFrame frame, int httpStatusCode) {
                 if(frame.getURL().equals(SIGN_IN_URL)) {
-                    sidePanel.removeAll();
-                    setupTabs();
+                    ApplicationManager.getApplication().invokeLater(() -> {
+                        sidePanel.removeAll();
+                        setupTabs();
+                    });
+
                 } else if((frame.getURL().equals(DASHBOARD_URL) || frame.getURL().equals(SETUP_URL)) && ((previousUrl.equals(SIGN_IN_URL) || previousUrl.contains("github")) || previousUrl.equals(""))){
                     ApplicationManager.getApplication().invokeLater(() -> getCookies());
                 } else if(browser.getURL().contains("train") && !browser.getURL().contains("trainer") && shouldFetchAndCreateFilesOnUrlLoad.get() && !previousUrl.equals(browser.getURL())) {
