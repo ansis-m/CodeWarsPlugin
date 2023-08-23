@@ -165,6 +165,7 @@ public class KataSubmitService {
         KataOutput output = new KataOutput();
         output.setLanguage(input.getLanguageName());
         output.setCode(readFile(true));
+        output.setSetup(input.get_package());
         output.setFixture(input.getFixture());
         output.setTestFramework(input.getTestFramework());
         output.setLanguageVersion(input.getActiveVersion());

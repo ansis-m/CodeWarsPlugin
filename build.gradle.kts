@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.example"
-version = "3.0-SNAPSHOT"
+version = "4.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -22,7 +22,7 @@ dependencies {
 intellij {
 //    version.set("2022.3.1")
 //    type.set("IU") // Target IDE Platform
-    version.set("2022.1.1")
+    version.set("2023.2")
     type.set("IC") // Target IDE Platform //need to reset also jdk
 
 
@@ -33,14 +33,14 @@ intellij {
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
         options.compilerArgs.add("-Xlint:unchecked")
     }
 
     patchPluginXml {
-        sinceBuild.set("221")
-        untilBuild.set("231.*")
+        sinceBuild.set("232")
+        untilBuild.set("232.*")
     }
 
     signPlugin {
