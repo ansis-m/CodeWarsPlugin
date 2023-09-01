@@ -27,9 +27,9 @@ Below are the installation instructions:
 
 1. clone the repo and open the plugin project in Intellij
 2. let the Gradle download dependencies and build the project (go to the Gradle tab and select Tasks/build/build)
-3. after the build your project will contain the build directory. The compiled plugin: build/libs/CodeWarsPlugin-1.0-SNAPSHOT.jar
-4. copy the absolute path to the build/libs/CodeWarsPlugin-1.0-SNAPSHOT.jar
-5. In Intellij now open File/Settings/Plugins and click "gear wheel" button, then click "Install plugin from disk" and paste the path to CodeWarsPlugin-1.0-SNAPSHOT.jar
+3. after the build your project will contain the build directory. The compiled plugin: build/libs/CodeWarsPlugin-X.0-SNAPSHOT.jar
+4. copy the absolute path to the build/libs/CodeWarsPlugin-X.0-SNAPSHOT.jar
+5. In Intellij now open File/Settings/Plugins and click "gear wheel" button, then click "Install plugin from disk" and paste the path to CodeWarsPlugin-X.0-SNAPSHOT.jar
 
 Below are images to illustrate the plugin installation process.
 For suggestions, comments or bugreports email me at maleckisansis@gmail.com.
